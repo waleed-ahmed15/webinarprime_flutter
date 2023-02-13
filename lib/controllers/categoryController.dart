@@ -18,6 +18,7 @@ class CategoryContorller extends GetxController {
 
   Future<void> getCategoriesList() async {
     try {
+      categoriesList.clear();
       Uri url = Uri.parse("${AppConstants.baseURL}/category/all");
       final response = await http.get(url);
       var data = jsonDecode(response.body);
@@ -26,10 +27,10 @@ class CategoryContorller extends GetxController {
           categoriesList.add(CategoryModel.fromJson(category));
         }
       }
-      // print(data);
+      print(categoriesList);
 
       // print('object');
-      // print(categoriesList[0].name);
+      print(categoriesList[0].name);
       isLoading = false;
     } catch (e) {
       print(e);

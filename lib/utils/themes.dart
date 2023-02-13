@@ -11,11 +11,15 @@ ThemeData lightTheme = ThemeData(
 
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
+  fontFamily: 'JosefinSans',
+
   inputDecorationTheme: InputDecorationTheme(
+  
     border: InputBorder.none,
   ),
   accentColor: AppColors.DTforgroundColor,
   primaryColor: AppColors.LTsecondaryColor,
+
   secondaryHeaderColor: AppColors.LTsecondaryColor,
   scaffoldBackgroundColor: AppColors.DTbackGroundColor,
   textTheme: TextTheme(

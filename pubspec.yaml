@@ -34,7 +34,9 @@ dependencies:
     sdk: flutter
   flutter_form_builder: ^7.7.0
   flutter_stripe: ^7.0.0
+  gap: ^2.0.1
   get: ^4.6.5
+  google_fonts: ^4.0.3
   google_nav_bar: ^5.0.6
   http: ^0.13.5
   image_picker: ^0.8.6
@@ -43,6 +45,8 @@ dependencies:
   mongo_dart: ^0.8.0
   multi_select_flutter: ^4.1.2
   shared_preferences: ^2.0.15
+  shimmer: ^2.0.0
+  textfield_tags: ^2.0.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -81,10 +85,50 @@ flutter:
           weight: 700
         - asset: assets/font/Montserrat-Black.ttf
           weight: 900
-    - family: Inspiration-Regular
+    - family: josefinSans ExtraLight
       fonts:
-        - asset: assets/font/Inspiration-Regular.ttf
-          #       - asset: fonts/TrajanPro_Bold.ttf
-          weight: 700
+        - asset: assets/font/JosefinSans-ExtraLight.ttf
+    - family: JosefinSans Regular
+      fonts:
+        - asset: assets/font/JosefinSans-Regular.ttf
+    - family: JosefinSans Bold
+      fonts:
+        - asset: assets/font/JosefinSans-Bold.ttf
+    - family: JosefinSans SemiBold
+      fonts:
+        - asset: assets/font/JosefinSans-SemiBold.ttf
+    - family: JosefinSans Light
+      fonts:
+        - asset: assets/font/JosefinSans-Light.ttf
+    - family: JosefinSans Medium
+      fonts:
+        - asset: assets/font/JosefinSans-Medium.ttf
+    - family: JosefinSans Thin
+      fonts:
+        - asset: assets/font/JosefinSans-Thin.ttf
+    - family: JosefinSans Italic
+      fonts:
+        - asset: assets/font/JosefinSans-Italic.ttf
+    - family: JosefinSans BoldItalic
+      fonts:
+        - asset: assets/font/JosefinSans-BoldItalic.ttf
+    - family: JosefinSans SemiBoldItalic
+      fonts:
+        - asset: assets/font/JosefinSans-SemiBoldItalic.ttf
+    - family: JosefinSans LightItalic
+      fonts:
+        - asset: assets/font/JosefinSans-LightItalic.ttf
+    - family: JosefinSans MediumItalic
+      fonts:
+        - asset: assets/font/JosefinSans-MediumItalic.ttf
+    - family: JosefinSans ThinItalic
+      fonts:
+        - asset: assets/font/JosefinSans-ThinItalic.ttf
+    - family: JosefinSans ExtraLightItalic
+      fonts:
+        - asset: assets/font/JosefinSans-ExtraLightItalic.ttf
+    - family: JosefinSans ExtraLight
+      fonts:
+        - asset: assets/font/JosefinSans-ExtraLight.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

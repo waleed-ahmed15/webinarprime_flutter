@@ -20,6 +20,7 @@ class AuthController extends GetxController {
   Map<String, dynamic> currentUser = {};
   String? current_email;
   String? token;
+  List<dynamic> searchedUsers = [];
 
   @override
   void onInit() async {
@@ -38,6 +39,23 @@ class AuthController extends GetxController {
     String formattedDate = formatter.format(now);
     print(formattedDate);
     return formattedDate; // 2016-01-25
+  }
+
+  Future<void> deleteAccout() async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/delete");
+      print(currentUser);
+      var response = await http.post(
+        url,
+        body: {
+          "email": currentUser['email'],
+        },
+      );
+      print(jsonDecode(response.body));
+      logout();
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> signUpUser(
@@ -75,11 +93,12 @@ class AuthController extends GetxController {
 
   Future<void> authenticateUser(bool rememberMe) async {
     try {
+      print('authenticate user called');
       final sharedPreferences = Get.find<SharedPreferences>();
       print(sharedPreferences.getString('token'));
       final response = await http.get(headers: {
         'content-type': 'application/json; charset=UTF-8',
-        'Authorization': '${Get.find<SharedPreferences>().getString('token')}',
+        'Authorization': sharedPreferences.getString('token')!,
       }, Uri.parse('${AppConstants.baseURL}/user/authenticate'));
 
       if (response.statusCode == 200) {
@@ -88,6 +107,7 @@ class AuthController extends GetxController {
         print(data);
         print(data['user']['name']);
         currentUser = data['user'];
+        print(currentUser);
         if (!rememberMe) {
           sharedPreferences.remove('token');
         }
@@ -97,10 +117,24 @@ class AuthController extends GetxController {
         // print(currentUser['email']);
         // print(currentUser['registration_number']);
       } else {
+        print('invalid token');
+        // Get.offAllNamed(RoutesHelper.signInRoute);
         print(response.body.toString());
       }
+      update();
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> getUserById(String id) async {
+    final response =
+        await http.get(Uri.parse('${AppConstants.baseURL}/user/$id'));
+    if (response.statusCode == 200) {
+      final data = await jsonDecode(response.body);
+      print(data);
+      currentUser = data['user'];
+      print(currentUser);
     }
   }
 
@@ -131,6 +165,11 @@ class AuthController extends GetxController {
         options: Options(headers: {'Content-Type': 'multipart/form-data'}));
 
     print(response.toString());
+
+    await getUserById(currentUser['id']);
+    print('new user data is');
+    print(currentUser);
+    update();
   }
 
   Future uploadDataWithoutImage(
@@ -159,11 +198,13 @@ class AuthController extends GetxController {
       Map body = {"email": email.toString(), "password": password.toString()};
       var response = await http.post(url, body: body);
       var data = jsonDecode(response.body);
+
       if (response.statusCode == 200) {
         print(data['token']);
         // final SharedPreferences sharedPreferences = Get.find();
 
         sharedPreferences.setString("token", data['token']);
+        token = sharedPreferences.getString('token');
         await authenticateUser(rememberMe);
         ShowCustomSnackBar('login successful',
             isError: false, title: 'Welcome');
@@ -171,7 +212,7 @@ class AuthController extends GetxController {
         print("regno:");
         print(currentUser['registration_number']);
         if (currentUser.containsKey('birthdate')) {
-          Get.offAll(() => HomeScreen());
+          Get.offAll(() => const HomeScreen());
         } else {
           Get.toNamed(RoutesHelper.uploadProfileRoute);
         }
@@ -189,15 +230,20 @@ class AuthController extends GetxController {
   }
 
   Future<void> initialRoute() async {
+    print(1);
     if (sharedPreferences.getString('token') != null) {
       await authenticateUser(true);
-      if (!currentUser.containsKey('birthdate')) {
-        Get.toNamed(RoutesHelper.uploadProfileRoute);
-      } else {
+      print(2);
+      print(currentUser.isEmpty);
+      if (currentUser.isEmpty) {
+        Get.toNamed(RoutesHelper.signInRoute);
+      } else if (currentUser.containsKey('birthdate')) {
         Get.toNamed(RoutesHelper.homeScreenRoute);
+      } else {
+        Get.toNamed(RoutesHelper.uploadProfileRoute);
       }
     } else {
-      // Get.offAllNamed(RoutesHelper.signInRoute);
+      // Get.toNamed(RoutesHelper.signInRoute);
     }
   }
 
@@ -257,9 +303,60 @@ class AuthController extends GetxController {
       );
       ShowCustomSnackBar(
           title: "interests added sucessfully", isError: false, "");
-      Get.toNamed(RoutesHelper.homeScreenRoute);
+      // authenticateUser(sharedPreferences.getString('token') != null);
+      Get.offAllNamed(RoutesHelper.homeScreenRoute);
+      // Get.to(RoutesHelper.homeScreenRoute);
     } catch (e) {
       print(e);
     }
   }
+
+  // search user via keywords
+
+  Future<bool> searchUser(String keyword) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/search/$keyword");
+      print("keyword is{$keyword}");
+      Map body = {"keyword": keyword.toString()};
+      var response = await http.get(url);
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        print(data);
+        searchedUsers = data['users'];
+      } else {
+        print(data.toString());
+      }
+    } catch (e) {
+      print(e);
+    }
+    update();
+    return false;
+  }
+
+  //serach user via keywords new method
+
+  Future<bool> searchUserNew(String keyword,String searchType, String webinarId,) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/search/$keyword/$searchType/$webinarId");
+      print("keyword is{$keyword}");
+      Map body = {"keyword": keyword.toString()};
+      var response = await http.get(url);
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        print(data);
+        searchedUsers = data['users'];
+      } else {
+        print(data.toString());
+      }
+    } catch (e) {
+      print(e);
+    }
+    update();
+    return false;
+
+  }
+  // Future<void> updateAuthController() async {
+  // print('update auth controller called');
+  // update();
+  // }
 }

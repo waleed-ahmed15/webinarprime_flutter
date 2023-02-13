@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,7 +20,6 @@ class UploadProfileScreen extends StatefulWidget {
 
 class _UploadProfileScreenState extends State<UploadProfileScreen> {
   final formKey = GlobalKey<FormState>(); //key for form
-
   final ImagePicker imagePicker = ImagePicker();
   File? _imagefile;
   Uint8List? imagebyte;
@@ -266,14 +264,14 @@ class _UploadProfileScreenState extends State<UploadProfileScreen> {
                           height: AppLayout.getHeight(15),
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             AuthController authController = Get.find();
                             print('save was tapped');
                             print(authController.currentUser);
                             if (formKey.currentState!.validate()) {
                               print('form is valid');
                               if (_imagefile != null) {
-                                authController.uploadCompleteData(
+                                await authController.uploadCompleteData(
                                   authController.currentUser['email'],
                                   _imagefile!,
                                   dateController.text.toString(),
@@ -288,7 +286,7 @@ class _UploadProfileScreenState extends State<UploadProfileScreen> {
                                     dateController.text.toString(),
                                     "$reg_year_value-$department_value-${regNoController.text}");
                               }
-                              Get.find<CategoryContorller>()
+                              await Get.find<CategoryContorller>()
                                   .getCategoriesList();
                               Get.toNamed(RoutesHelper.selectInterestRoute);
                             }

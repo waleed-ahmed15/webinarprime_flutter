@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/categoryController.dart';
 import 'package:webinarprime/models/category_model.dart';
+import 'package:webinarprime/routes/routes.dart';
 import 'package:webinarprime/utils/dimension.dart';
 
 class SelectInterstScreen extends StatefulWidget {
@@ -14,71 +15,70 @@ class SelectInterstScreen extends StatefulWidget {
 
 class _SelectInterstScreenState extends State<SelectInterstScreen> {
   List<String> pickedIntersts = [];
+  CategoryContorller controller = Get.find();
+
   List<CategoryModel> interestList1 =
       Get.find<CategoryContorller>().categoriesList;
 
   @override
   Widget build(BuildContext context) {
     interestList1.sort((a, b) => a.name!.length.compareTo(b.name!.length));
-    print(interestList1[0].image);
-    return Builder(builder: (context) {
-      return SafeArea(
-        child: Scaffold(
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.green,
-            onPressed: () async {
-              await Get.find<AuthController>().addInterests(pickedIntersts);
-              // Get.offAllNamed(RoutesHelper.homeScreenRoute);
-            },
-            child: const Icon(Icons.done),
-          ),
-          body: SingleChildScrollView(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              SizedBox(
-                height: AppLayout.getHeight(40),
-              ),
-              Text("Select Your Interests",
-                  style: TextStyle(
-                      letterSpacing: 2,
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Montserrat-Regular')),
-              GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-                itemCount: interestList1.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    child: Item(
-                      category: interestList1[index],
-                      onselected: (bool value) {
-                        if (value) {
-                          setState(() {
-                            print('1value');
-                            pickedIntersts
-                                .add(interestList1[index].id.toString());
-                            print(pickedIntersts);
-                          });
-                        } else {
-                          setState(() {
-                            print('value');
-                            pickedIntersts.remove(interestList1[index].id);
-                          });
-                        }
-                      },
-                    ),
-                  );
-                },
-              ),
-            ]),
-          ),
+    print(interestList1);
+    return SafeArea(
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.green,
+          onPressed: () async {
+            await Get.find<AuthController>().addInterests(pickedIntersts);
+            Get.offAllNamed(RoutesHelper.homeScreenRoute);
+          },
+          child: const Icon(Icons.done),
         ),
-      );
-    });
+        body: SingleChildScrollView(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            SizedBox(
+              height: AppLayout.getHeight(40),
+            ),
+            Text("Select Your Interests",
+                style: TextStyle(
+                    letterSpacing: 2,
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Montserrat-Regular')),
+            GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemCount: interestList1.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  child: Item(
+                    category: interestList1[index],
+                    onselected: (bool value) {
+                      if (value) {
+                        setState(() {
+                          print('1value');
+                          pickedIntersts
+                              .add(interestList1[index].id.toString());
+                          print(pickedIntersts);
+                        });
+                      } else {
+                        setState(() {
+                          print('value');
+                          pickedIntersts.remove(interestList1[index].id);
+                        });
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
+          ]),
+        ),
+      ),
+    );
   }
 }
 
@@ -151,27 +151,6 @@ class _ItemState extends State<Item> {
                   ),
                 ),
               ),
-              // child: Column(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Container(
-              //       width: AppLayout.getWidth(200),
-              //       margin: const EdgeInsets.all(10),
-              //       padding: EdgeInsets.symmetric(
-              //           vertical: AppLayout.getHeight(36),
-              //           horizontal: AppLayout.getWidth(36)),
-              //       child: Text(
-              //         widget.category.name!,
-              //         style: const TextStyle(
-              //             color: Colors.white,
-              //             fontSize: 20,
-              //             // fontWeight: FontWeight.bold,
-              //             fontFamily: 'Montserrat-Regular'),
-              //         textAlign: TextAlign.center,
-              //       ),
-              //     ),
-              //   ],
-              // ),
             ),
             isSelected
                 ? Positioned(
