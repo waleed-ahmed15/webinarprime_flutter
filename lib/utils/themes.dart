@@ -11,7 +11,7 @@ ThemeData lightTheme = ThemeData(
 
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
-  fontFamily: 'JosefinSans',
+  fontFamily: 'Montserrat',
 
   inputDecorationTheme: InputDecorationTheme(
   

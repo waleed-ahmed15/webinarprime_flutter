@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
 
@@ -46,32 +47,22 @@ class ProfileScreenTextFieldWidget extends StatelessWidget {
                 size: 20,
               ),
               const Gap(5),
-              Text(
-                "$label : ",
-                style: TextStyle(
-                    fontFamily: 'montserrat',
-                    fontWeight: FontWeight.w400,
-                    fontSize: AppLayout.getHeight(15)),
-              ),
+              Text("$label : ", style: AppConstants.paragraphStyle),
             ],
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               SizedBox(
                 // color: Colors.red,
                 width: AppLayout.getWidth(180),
                 child: Text(
-                  textAlign: TextAlign.right,
-                  initialValue,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: 'montserrat',
-                    fontWeight: FontWeight.w400,
-                    fontSize: AppLayout.getHeight(20),
-                  ),
-                ),
+                    textAlign: TextAlign.right,
+                    initialValue,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppConstants.paragraphStyle),
               ),
-              const Gap(4),
+              Gap(AppLayout.getWidth(4)),
               GestureDetector(
                 onTap: onEditIconPressed,
                 child: Icon(

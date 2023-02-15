@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,14 +32,33 @@ class _HomeScreenState extends State<HomeScreen> {
       color: Theme.of(Get.context!).colorScheme.secondary);
 
   static final List<Widget> _widgetOptions = <Widget>[
-    const Text(
-      'Home11',
-      style: TextStyle(
-        fontFamily: AppFont.jsLight,
-        fontSize: 30,
-        color: Colors.red,
-      ),
+    Column(
+      children: [
+        Text(' Priramy heading11', style: AppConstants.PrimarayheadingStyle),
+        const Gap(10),
+        const Text(
+          'Secondary Heading11',
+          style: TextStyle(
+              fontFamily: AppFont.secondaryHeading1,
+              fontSize: 20,
+              fontWeight: FontWeight.w500
+
+              //
+              //fontSize: AppLayout.getHeight(30),
+              ),
+        ),
+        Text(
+          'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+          style: AppConstants.paragraphStyle,
+          textAlign: TextAlign.justify,
+        ),
+      ],
     ),
+    // decoration: const BoxDecoration(
+    //     image: DecorationImage(
+    //         image: NetworkImage(
+    //             'http://10.0.2.2:5000/webinar/bannerImage-1670108609744WIN_20220307_11_33_38_Pro.jpg'),
+    //         fit: BoxFit.fitWidth)),
 
     const Text(
       'Likes',
@@ -69,30 +89,42 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                    color: AppColors.LTprimaryColor.withOpacity(0.8)),
-                child: GetBuilder<AuthController>(builder: (controller) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      backgroundImage: NetworkImage(Get.find<AuthController>()
-                                  .currentUser['profile_image'][0] ==
-                              'h'
-                          ? Get.find<AuthController>()
-                              .currentUser['profile_image']
-                          : AppConstants.baseURL +
-                              Get.find<AuthController>()
-                                  .currentUser['profile_image']),
-                    ),
-                    title: Text(Get.find<AuthController>().currentUser['name'],
-                        style: listTile_text_Style),
-                    subtitle: Text(
-                      Get.find<AuthController>().currentUser['email'],
-                      style: listTile_text_Style,
-                    ),
-                  );
-                }),
+              SizedBox(
+                height: 130,
+                child: DrawerHeader(
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                      color: AppColors.LTprimaryColor.withOpacity(0.8)),
+                  child: GetBuilder<AuthController>(builder: (controller) {
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(Get.find<AuthController>()
+                                    .currentUser['profile_image'][0] ==
+                                'h'
+                            ? Get.find<AuthController>()
+                                .currentUser['profile_image']
+                            : AppConstants.baseURL +
+                                Get.find<AuthController>()
+                                    .currentUser['profile_image']),
+                      ),
+                      title: Text(
+                        Get.find<AuthController>().currentUser['name'],
+                        style: AppConstants.paragraphStyle
+                            .copyWith(letterSpacing: 2),
+                      ),
+                      subtitle: Text(
+                        Get.find<AuthController>().currentUser['email'],
+                        style: AppConstants.secondaryHeadingStyle.copyWith(
+                          letterSpacing: 1,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    );
+                  }),
+                ),
               ),
               Column(
                 children: [

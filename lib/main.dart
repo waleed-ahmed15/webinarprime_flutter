@@ -30,8 +30,8 @@ class MyApp extends StatelessWidget {
       getPages: RoutesHelper.routes,
       theme: lightTheme,
       darkTheme: darkTheme,
-      // themeMode: ThemeMode.light,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
+      // themeMode: ThemeMode.dark,
     );
   }
 }

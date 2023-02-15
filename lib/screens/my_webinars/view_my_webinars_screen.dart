@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/screens/user_search/user_search_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
+import 'package:webinarprime/utils/app_fonts.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
+
+import '../webinar_management/view_webinar_screen/webinar_details_screen.dart';
 
 class View_my_Webinar_Screen extends StatelessWidget {
   const View_my_Webinar_Screen({super.key});
@@ -14,10 +17,28 @@ class View_my_Webinar_Screen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-         
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios,
+                color: Theme.of(context).colorScheme.secondary),
+            onPressed: () {
+              Get.back();
+            },
+          ),
+          actions: const [
+            // TextButton(
+            //     onPressed: () {},
+            //     child: Text('Save', style: AppConstants.secondaryHeadingStyle)),
+          ],
+          elevation: 0,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           centerTitle: true,
-          backgroundColor: AppColors.LTprimaryColor,
-          title: const Text("My Webinars"),
+          title: Text(
+            "My Webinars",
+            style: AppConstants.paragraphStyle.copyWith(
+                color: Theme.of(context).colorScheme.secondary,
+                letterSpacing: 2,
+                fontSize: AppLayout.getHeight(20)),
+          ),
         ),
         body: GetBuilder<WebinarManagementController>(
           builder: (controller) {
@@ -26,6 +47,10 @@ class View_my_Webinar_Screen extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
+                    Get.to(() => WebinarDetailsScreen(
+                          webinarDetails:
+                              WebinarManagementController.webinarsList[index],
+                        ));
                     print('view my webinars detials screen');
                   },
                   child: Container(
@@ -40,16 +65,16 @@ class View_my_Webinar_Screen extends StatelessWidget {
                       color: Theme.of(context).scaffoldBackgroundColor,
                       boxShadow: [
                         BoxShadow(
-                          offset: const Offset(7, 7),
-                          blurRadius: 7,
+                          offset: const Offset(3, 3),
+                          blurRadius: 4,
                           color: Theme.of(context)
                               .colorScheme
                               .secondary
                               .withOpacity(0.1),
                         ),
                         BoxShadow(
-                          offset: const Offset(-7, -7),
-                          blurRadius: 7,
+                          offset: const Offset(-3, -3),
+                          blurRadius: 4,
                           color: Theme.of(context)
                               .colorScheme
                               .secondary
@@ -66,34 +91,22 @@ class View_my_Webinar_Screen extends StatelessWidget {
                                 onTap: () {
                                   print("Edit");
                                 },
-                                child: const Text(
-                                  "Edit",
-                                  style: TextStyle(
-                                      fontFamily: 'Montserrat-Regular',
-                                      fontSize: 14),
-                                ),
+                                child: Text("Edit",
+                                    style: AppConstants.popmenuitemStyle),
                               ),
                               PopupMenuItem(
                                 onTap: () {
                                   print("Post Notification");
                                 },
-                                child: const Text(
-                                  "Post Notification",
-                                  style: TextStyle(
-                                      fontFamily: 'Montserrat-Regular',
-                                      fontSize: 14),
-                                ),
+                                child: Text("Post Notification",
+                                    style: AppConstants.popmenuitemStyle),
                               ),
                               PopupMenuItem(
                                 onTap: () {
                                   print("add webinar event schedule");
                                 },
-                                child: const Text(
-                                  "Event Schedule",
-                                  style: TextStyle(
-                                      fontFamily: 'Montserrat-Regular',
-                                      fontSize: 14),
-                                ),
+                                child: Text("Event Schedule",
+                                    style: AppConstants.popmenuitemStyle),
                               ),
                               PopupMenuItem(
                                 onTap: () async {
@@ -106,40 +119,35 @@ class View_my_Webinar_Screen extends StatelessWidget {
                                           .webinarsList[index]['_id']));
                                   print("add organizers to webinar pressed");
                                 },
-                                child: const Text(
-                                  "add organizers",
-                                  style: TextStyle(
-                                      fontFamily: 'Montserrat-Regular',
-                                      fontSize: 14),
-                                ),
+                                child: Text("Add Organizers",
+                                    style: AppConstants.popmenuitemStyle),
                               ),
                               PopupMenuItem(
                                 onTap: () {
                                   print("Join requests tapped");
                                 },
-                                child: const Text(
-                                  "Join Requests",
-                                  style: TextStyle(
-                                      fontFamily: 'Montserrat-Regular',
-                                      fontSize: 14),
-                                ),
+                                child: Text("Join Requests",
+                                    style: AppConstants.popmenuitemStyle),
                               ),
                             ],
                           ),
                           title: Text(
                             WebinarManagementController.webinarsList[index]
                                 ['name'],
-                            style: TextStyle(
+                            style: AppConstants.paragraphStyle.copyWith(
+                              overflow: TextOverflow.ellipsis,
                               fontSize: AppLayout.getHeight(20),
-                              fontFamily: 'Montserrat-Regular',
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1,
                             ),
                           ),
                           subtitle: Text(
                             WebinarManagementController.webinarsList[index]
                                 ['tagline'],
                             style: TextStyle(
-                                fontFamily: 'Montserrat-Regular',
-                                fontSize: 14,
+                                overflow: TextOverflow.ellipsis,
+                                fontFamily: AppFont.primaryText,
+                                fontSize: 15,
                                 color: Theme.of(context)
                                     .colorScheme
                                     .secondary
@@ -219,7 +227,7 @@ class View_my_Webinar_Screen extends StatelessWidget {
                                           color: Colors.white,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
-                                          fontFamily: 'Montserrat-Regular'))),
+                                          fontFamily: AppFont.jsRegular))),
                             ),
                             InkWell(
                               onTap: () {
@@ -246,7 +254,7 @@ class View_my_Webinar_Screen extends StatelessWidget {
                                           color: Colors.white,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
-                                          fontFamily: 'Montserrat-Regular'))),
+                                          fontFamily: AppFont.jsRegular))),
                             ),
                           ],
                         ),

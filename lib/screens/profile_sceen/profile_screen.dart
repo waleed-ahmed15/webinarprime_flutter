@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/utils/app_constants.dart';
+import 'package:webinarprime/utils/app_fonts.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
 import 'package:webinarprime/widgets/profile_screen_textfields.dart';
@@ -163,18 +164,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Get.find<AuthController>().currentUser;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios,
+              color: Theme.of(context).colorScheme.secondary),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        actions: const [
+          // TextButton(
+          //     onPressed: () {},
+          //     child: Text('Save', style: AppConstants.secondaryHeadingStyle)),
+        ],
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         centerTitle: true,
         title: Text(
-          'Profile ',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.secondary,
-            letterSpacing: 2,
-            fontFamily: 'montserrat',
-            fontSize: 30,
-            fontWeight: FontWeight.w400,
-          ),
+          'Details',
+          style: AppConstants.paragraphStyle.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: AppLayout.getHeight(20)),
         ),
       ),
       body: Container(
@@ -215,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Colors.blue,
                 shape: BoxShape.circle,
               ),
-              height: AppLayout.getHeight(200),
+              height: AppLayout.getHeight(150),
               child: Column(
                 children: [
                   const Spacer(),
@@ -224,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     decoration: BoxDecoration(
                         borderRadius:
                             BorderRadius.circular(AppLayout.getHeight(4)),
-                        color: Colors.white),
+                        color: Theme.of(context).scaffoldBackgroundColor),
                     child: GestureDetector(
                       onTap: () {
                         print('edit icon for image was pressed');
@@ -239,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            const Gap(20),
+            Gap(AppLayout.getHeight(20)),
             ProfileScreenTextFieldWidget(
               onEditIconPressed: () async {
                 // InputDialogForName(context, profileData["Name"]!);
@@ -253,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               editIcon: Icons.edit,
               prefixIcon: Icons.person,
             ),
-            const Gap(20),
+            Gap(AppLayout.getHeight(20)),
             ProfileScreenTextFieldWidget(
               onEditIconPressed: () async {
                 // simpleDialog(context: );
@@ -264,7 +273,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               prefixIcon: Icons.email,
               editIcon: Icons.edit,
             ),
-            const Gap(20),
+            Gap(AppLayout.getHeight(20)),
             ProfileScreenTextFieldWidget(
               onEditIconPressed: () async {
                 // _displayTextInputDialog(context, 'name');
@@ -274,17 +283,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
               prefixIcon: Icons.calendar_month,
               editIcon: Icons.edit,
             ),
-            const Gap(20),
-            Text(
-              "Change password",
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: AppColors.LTprimaryColor,
-                  fontWeight: FontWeight.w400,
-                  fontSize: AppLayout.getWidth(20)),
+            Gap(AppLayout.getHeight(20)),
+            Container(
+              padding: EdgeInsets.only(bottom: AppLayout.getHeight(5)),
+              child: Text("Change Password",
+                  textAlign: TextAlign.right,
+                  style: AppConstants.secondaryHeadingStyle.copyWith(
+                    fontSize: AppLayout.getHeight(20),
+                    decoration: TextDecoration.underline,
+                    letterSpacing: 2,
+                    color: AppColors.LTprimaryColor,
+                  )
+
+                  // TextStyle(
+                  //     letterSpacing: 2,
+                  //     decoration: TextDecoration.underline,
+                  //     fontFamily: AppFont.jsLight,
+                  //     color: AppColors.LTprimaryColor,
+                  //     // fontWeight: FontWeight.w400,
+                  //     fontSize: AppLayout.getWidth(20)),
+                  ),
             ),
-            const Gap(20),
+            Gap(AppLayout.getHeight(20)),
             TextButton(
               onPressed: () {
                 Get.find<AuthController>().deleteAccout();
@@ -305,7 +325,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Text(
                 "Delete Account",
                 style: TextStyle(
-                    fontWeight: FontWeight.w400,
+                    fontFamily: AppFont.jsThin,
+                    letterSpacing: 2,
+                    // fontWeight: FontWeight.w600,
                     fontSize: AppLayout.getWidth(20)),
               ),
             ),
