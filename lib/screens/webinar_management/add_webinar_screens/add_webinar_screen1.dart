@@ -82,7 +82,7 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                 key: formKey1,
                 child: Column(
                   children: [
-                    Text("Create New Webinar",
+                    const Text("Create New Webinar",
                         style: TextStyle(
                             letterSpacing: 2,
                             fontFamily: 'Montserrat-Regular',
@@ -206,7 +206,7 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                           border: UnderlineInputBorder(),
                           suffixIcon: Icon(Icons.access_time),
                           // icon: Icon(Icons.timer), //icon of text field
-                          labelText: "Enter Time" //label text of field
+                          labelText: "Select Time" //label text of field
                           ),
                       readOnly:
                           true, //set it true, so that user will not able to edit text

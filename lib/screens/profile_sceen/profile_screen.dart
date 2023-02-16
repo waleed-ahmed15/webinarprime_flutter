@@ -275,6 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Gap(AppLayout.getHeight(20)),
             ProfileScreenTextFieldWidget(
+            
               onEditIconPressed: () async {
                 // _displayTextInputDialog(context, 'name');
               },

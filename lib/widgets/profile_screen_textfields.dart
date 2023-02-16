@@ -44,9 +44,9 @@ class ProfileScreenTextFieldWidget extends StatelessWidget {
               Icon(
                 prefixIcon,
                 color: AppColors.LTprimaryColor,
-                size: 20,
+                size: AppLayout.getHeight(20),
               ),
-              const Gap(5),
+              Gap(AppLayout.getWidth(5)),
               Text("$label : ", style: AppConstants.paragraphStyle),
             ],
           ),
@@ -55,7 +55,7 @@ class ProfileScreenTextFieldWidget extends StatelessWidget {
             children: [
               SizedBox(
                 // color: Colors.red,
-                width: AppLayout.getWidth(180),
+                width: AppLayout.getWidth(160),
                 child: Text(
                     textAlign: TextAlign.right,
                     initialValue,

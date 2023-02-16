@@ -57,6 +57,8 @@ class _LoginPage extends State<LoginPage> {
                       decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
                           labelText: 'Enter email',
+                          labelStyle: TextStyle(
+                              color: Color.fromARGB(255, 134, 163, 160)),
                           suffixIcon: Icon(
                             Icons.email_outlined,
                             color: Color.fromARGB(255, 134, 163, 160),
@@ -77,12 +79,15 @@ class _LoginPage extends State<LoginPage> {
                       controller: passController,
                       obscureText: true,
                       decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          suffixIcon: Icon(
-                            Icons.lock_outline,
-                            color: Colors.grey,
-                          ),
-                          labelText: 'Enter Password'),
+                        border: UnderlineInputBorder(),
+                        suffixIcon: Icon(
+                          Icons.lock_outline,
+                          color: Colors.grey,
+                        ),
+                        labelText: 'Enter Password',
+                        labelStyle: TextStyle(
+                            color: Color.fromARGB(255, 134, 163, 160)),
+                      ),
                       validator: (value) {
                         if (value!.isEmpty || value.length <= 7) {
                           return "enter password of lengther greater than 7";

@@ -46,10 +46,12 @@ class View_my_Webinar_Screen extends StatelessWidget {
               itemCount: WebinarManagementController.webinarsList.length,
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    await WebinarManagementController().getwebinarById(
+                        WebinarManagementController.webinarsList[index]['_id']);
                     Get.to(() => WebinarDetailsScreen(
                           webinarDetails:
-                              WebinarManagementController.webinarsList[index],
+                              WebinarManagementController.currentWebinar,
                         ));
                     print('view my webinars detials screen');
                   },

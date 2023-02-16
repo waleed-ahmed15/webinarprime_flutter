@@ -67,6 +67,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
                           labelText: 'Enter Username',
+                          labelStyle: TextStyle(
+                              color: Color.fromARGB(255, 134, 163, 160)),
                           suffixIcon: Icon(
                             Icons.person_outline,
                             color: Color.fromARGB(255, 134, 163, 160),
@@ -88,6 +90,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
                           labelText: 'Enter Email',
+                          labelStyle: TextStyle(
+                              color: Color.fromARGB(255, 134, 163, 160)),
                           suffixIcon: Icon(
                             Icons.email_outlined,
                             color: Color.fromARGB(255, 134, 163, 160),
@@ -108,6 +112,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: confirmemailController,
                       decoration: const InputDecoration(
                           labelText: 'Confirm Email',
+                          labelStyle: TextStyle(
+                              color: Color.fromARGB(255, 134, 163, 160)),
                           border: UnderlineInputBorder(),
                           suffixIcon: Icon(
                             Icons.email_outlined,
@@ -134,18 +140,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: passController,
                       obscureText: hidePassword,
                       decoration: InputDecoration(
-                          border: const UnderlineInputBorder(),
-                          suffixIcon: IconButton(
-                              onPressed: () {
-                                hidePassword = !hidePassword;
-                                setState(() {});
-                              },
-                              icon: Icon(
+                        border: const UnderlineInputBorder(),
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              hidePassword = !hidePassword;
+                              setState(() {});
+                            },
+                            icon: Icon(
                                 hidePassword
                                     ? Icons.visibility
                                     : Icons.visibility_off,
-                              )),
-                          labelText: 'Enter Password'),
+                                color:
+                                    const Color.fromARGB(255, 134, 163, 160))),
+                        labelText: 'Enter Password',
+                        labelStyle: const TextStyle(
+                            color: Color.fromARGB(255, 134, 163, 160)),
+                      ),
                       validator: (value) {
                         if (value!.isEmpty || value.length <= 7) {
                           return "enter password of lengther greater than 7";

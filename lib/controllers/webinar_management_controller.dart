@@ -31,7 +31,7 @@ class WebinarManagementController extends GetxController {
             "name": webinardata['title'],
             "tagline": webinardata['tagline'],
             "description": webinardata['description'],
-            "datetime": webinardata['date'] + webinardata['time'],
+            "datetime": webinardata['date'] + " " + webinardata['time'],
             "duration": webinardata['duration'],
             "price": webinardata['price'],
             "categories": webinardata['categories'],
@@ -114,7 +114,8 @@ class WebinarManagementController extends GetxController {
       var data = jsonDecode(response.body);
       // print(data);
       currentWebinar = data['webinar'];
-      // print('=======================current webinar====================');
+      print(currentWebinar);
+      print('=======================current webinar====================');
       // print(currentWebinar['guests']);
       // print('=======================current webinar====================');
 
