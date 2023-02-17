@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/screens/user_search/user_search_screen.dart';
+import 'package:webinarprime/screens/webinar_management/edit_webinar_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/app_fonts.dart';
 import 'package:webinarprime/utils/colors.dart';
@@ -90,8 +91,17 @@ class View_my_Webinar_Screen extends StatelessWidget {
                           trailing: PopupMenuButton(
                             itemBuilder: (context) => [
                               PopupMenuItem(
-                                onTap: () {
-                                  print("Edit");
+                                onTap: () async {
+                                  await WebinarManagementController()
+                                      .getwebinarById(
+                                          WebinarManagementController
+                                              .webinarsList[index]['_id']);
+
+                                  Get.to(() => EditWebinarScreen(
+                                        webinarDetails:
+                                            WebinarManagementController
+                                                .currentWebinar,
+                                      ));
                                 },
                                 child: Text("Edit",
                                     style: AppConstants.popmenuitemStyle),

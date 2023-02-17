@@ -192,6 +192,7 @@ class AuthController extends GetxController {
 
   Future<void> signIn(String email, String password, bool rememberMe) async {
     try {
+      print('login called start');
       Uri url = Uri.parse("${AppConstants.baseURL}/user/login");
       print("email is{$email}");
       print("password is{$password}");
@@ -335,9 +336,14 @@ class AuthController extends GetxController {
 
   //serach user via keywords new method
 
-  Future<bool> searchUserNew(String keyword,String searchType, String webinarId,) async {
+  Future<bool> searchUserNew(
+    String keyword,
+    String searchType,
+    String webinarId,
+  ) async {
     try {
-      Uri url = Uri.parse("${AppConstants.baseURL}/user/search/$keyword/$searchType/$webinarId");
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/user/search/$keyword/$searchType/$webinarId");
       print("keyword is{$keyword}");
       Map body = {"keyword": keyword.toString()};
       var response = await http.get(url);
@@ -353,7 +359,6 @@ class AuthController extends GetxController {
     }
     update();
     return false;
-
   }
   // Future<void> updateAuthController() async {
   // print('update auth controller called');

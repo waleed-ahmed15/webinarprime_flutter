@@ -7,16 +7,16 @@ import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
 import 'package:webinarprime/widgets/expandable_text.dart';
 
-class WebinarDetailsScreen extends StatefulWidget {
+class EditWebinarScreen extends StatefulWidget {
   final Map<String, dynamic> webinarDetails;
 
-  const WebinarDetailsScreen({super.key, required this.webinarDetails});
+  const EditWebinarScreen({super.key, required this.webinarDetails});
 
   @override
-  State<WebinarDetailsScreen> createState() => _WebinarDetailsScreenState();
+  State<EditWebinarScreen> createState() => _EditWebinarScreenState();
 }
 
-class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
+class _EditWebinarScreenState extends State<EditWebinarScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late ScrollController _scrollController;

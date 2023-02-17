@@ -17,6 +17,7 @@ class _LoginPage extends State<LoginPage> {
   var emailController = TextEditingController();
 
   void Login() {
+    print('ererer');
     AuthController authController = Get.find();
     authController.signIn(emailController.text.trim(),
         passController.text.trim(), rememberMeValue);
@@ -145,7 +146,7 @@ class _LoginPage extends State<LoginPage> {
                       height: AppLayout.getHeight(25),
                     ),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         if (formKey.currentState!.validate()) {
                           Login();
                           print('valid data ');
@@ -196,7 +197,6 @@ class _LoginPage extends State<LoginPage> {
                                   () => Get.to(() => const SignUpScreen()),
                             text: 'Create',
                             style: TextStyle(
-                              decoration: TextDecoration.underline,
                               fontFamily: 'Montserrat-Bold',
                               color: Theme.of(context).primaryColor,
                               fontSize: AppLayout.getHeight(20),
