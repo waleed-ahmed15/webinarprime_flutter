@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:webinarprime/screens/forgot_password_screen.dart';
-import 'package:webinarprime/screens/home_screen.dart';
+import 'package:webinarprime/screens/home_screen/home_screen.dart';
 import 'package:webinarprime/screens/login/login_page.dart';
 import 'package:webinarprime/screens/my_webinars/view_my_webinars_screen.dart';
 import 'package:webinarprime/screens/payment/paymnet_screen.dart';
