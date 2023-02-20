@@ -1,11 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
-import 'package:webinarprime/widgets/expandable_text.dart';
 
 class WebinarDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> webinarDetails;
@@ -152,7 +152,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     ),
                     Positioned(
                       top: AppLayout.getHeight(50.0),
-                      left: AppLayout.getWidth(115.0),
+                      left: AppLayout.getWidth(110.0),
                       child: Container(
                         width: AppLayout.getWidth(180),
                         height: AppLayout.getHeight(220),
@@ -201,7 +201,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                 '${widget.webinarDetails['datetime']} - ${widget.webinarDetails['duration']} Mins',
                                 style: TextStyle(
                                   fontSize: AppLayout.getHeight(20),
-                                  fontFamily: 'JosefinSans',
+                                  fontFamily: 'JosefinSans Bold',
                                   letterSpacing: 0.2,
                                   fontWeight: FontWeight.w500,
                                   color: const Color.fromRGBO(122, 121, 121, 1),
@@ -223,7 +223,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: AppLayout.getHeight(40),
-                              fontFamily: 'JosefinSans',
+                              fontFamily: 'JosefinSans Bold',
                               fontWeight: FontWeight.w700,
                               color: Get.isDarkMode
                                   ? Colors.white.withOpacity(0.98)
@@ -242,7 +242,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             '${widget.webinarDetails['attendees'].length} people attending',
                             style: TextStyle(
                               fontSize: AppLayout.getHeight(16),
-                              fontFamily: 'JosefinSans',
+                              fontFamily: 'JosefinSans Bold',
                               fontWeight: FontWeight.w500,
                               color: Get.isDarkMode
                                   ? const Color.fromRGBO(74, 229, 239, 1)
@@ -264,7 +264,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   indicatorColor: AppColors.LTprimaryColor,
                   unselectedLabelStyle: TextStyle(
                     fontSize: AppLayout.getHeight(10),
-                    fontFamily: 'JosefinSans',
+                    fontFamily: 'JosefinSans Bold',
                     fontWeight: FontWeight.w300,
                     color: Get.isDarkMode
                         ? Colors.white.withOpacity(0.8)
@@ -277,8 +277,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         style: TextStyle(
                           letterSpacing: 1,
                           height: 1.5,
-                          fontSize: AppLayout.getHeight(16),
-                          fontFamily: 'JosefinSans',
+                          fontSize: AppLayout.getHeight(12),
+                          fontFamily: 'JosefinSans Bold',
                           fontWeight: FontWeight.w600,
                           color: Get.isDarkMode
                               ? Colors.white.withOpacity(0.8)
@@ -293,8 +293,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           style: TextStyle(
                             height: 1.5,
                             letterSpacing: 1,
-                            fontSize: AppLayout.getHeight(16),
-                            fontFamily: 'JosefinSans',
+                            fontSize: AppLayout.getHeight(12),
+                            fontFamily: 'JosefinSans Bold',
                             fontWeight: FontWeight.w600,
                             color: Get.isDarkMode
                                 ? Colors.white.withOpacity(0.8)
@@ -309,8 +309,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         style: TextStyle(
                           height: 1.5,
                           letterSpacing: 1,
-                          fontSize: AppLayout.getHeight(14),
-                          fontFamily: 'JosefinSans',
+                          fontSize: AppLayout.getHeight(12),
+                          fontFamily: 'JosefinSans Bold',
                           fontWeight: FontWeight.w600,
                           color: Get.isDarkMode
                               ? Colors.white.withOpacity(0.8)
@@ -324,8 +324,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         style: TextStyle(
                           height: 1.5,
                           letterSpacing: 1,
-                          fontSize: AppLayout.getHeight(14),
-                          fontFamily: 'JosefinSans',
+                          fontSize: AppLayout.getHeight(12),
+                          fontFamily: 'JosefinSans Bold',
                           fontWeight: FontWeight.w600,
                           color: Get.isDarkMode
                               ? Colors.white.withOpacity(0.8)
@@ -359,7 +359,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           ? const Color(0xffA1a1aa)
                           : const Color(0xff475569),
                       fontSize: AppLayout.getHeight(20),
-                      fontFamily: 'JosefinSans'),
+                      fontFamily: 'JosefinSans Regular'),
                 ),
                 Gap(
                   AppLayout.getHeight(20),
@@ -377,7 +377,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             "\$ ${widget.webinarDetails['price']}",
                             maxLines: 1,
                             style: TextStyle(
-                                fontFamily: 'JosefinSans',
+                                fontFamily: 'JosefinSans Bold',
                                 letterSpacing: 1,
                                 fontWeight: FontWeight.w500,
                                 color: Get.isDarkMode
@@ -426,7 +426,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                 color: Colors.white.withOpacity(.98),
                                 fontWeight: FontWeight.w600,
                                 fontSize: AppLayout.getHeight(20),
-                                fontFamily: 'JosefinSans'),
+                                fontFamily: 'JosefinSans Bold'),
                           ),
                         ),
                       ],
@@ -503,13 +503,14 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     title: Text(
                       widget.webinarDetails['createdBy']['name'],
                       style: TextStyle(
+                        height: 1.5,
                         fontSize: AppLayout.getHeight(16),
                         color: Get.isDarkMode
                             ? Colors.white.withOpacity(0.9)
                             : Colors.black.withOpacity(0.9),
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1,
-                        fontFamily: 'JosefinSans',
+                        fontFamily: 'JosefinSans Regular',
                       ),
                     ),
                     subtitle: Text(
@@ -518,7 +519,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         letterSpacing: 1,
                         fontSize: AppLayout.getHeight(14),
                         fontWeight: FontWeight.w500,
-                        fontFamily: 'JosefinSans',
+                        fontFamily: 'JosefinSans Medium',
                       ),
                     ),
                   ),
@@ -580,7 +581,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           child: AutoSizeText(
                             widget.webinarDetails['categories'][index]['name'],
                             style: TextStyle(
-                                fontFamily: 'JosefinSans',
+                                fontFamily: 'JosefinSans Bold',
                                 fontWeight: FontWeight.w500,
                                 color: Get.isDarkMode
                                     ? const Color.fromRGBO(212, 212, 216, 1)
@@ -607,7 +608,21 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   ),
                 ),
                 Gap(AppLayout.getHeight(16)),
-                ExpandableText(text: widget.webinarDetails['description']),
+                ExpandableText(
+                  widget.webinarDetails['description'],
+                  expandText: 'Show more',
+                  collapseText: 'Show less',
+                  maxLines: 5,
+                  linkColor: Colors.blue,
+                  style: TextStyle(
+                      height: 1.5,
+                      fontFamily: 'JosefinSans Regular',
+                      fontWeight: FontWeight.w500,
+                      color: Get.isDarkMode
+                          ? const Color(0xffa1a1aa)
+                          : const Color(0xff475569),
+                      fontSize: AppLayout.getHeight(17)),
+                ),
 
                 Gap(AppLayout.getHeight(28)),
                 Text(
@@ -631,8 +646,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         spacing: 10,
                         runSpacing: 15,
                         children: List.generate(
-                            widget.webinarDetails['categories'].length,
-                            (index) {
+                            widget.webinarDetails['tags'].length, (index) {
                           return Container(
                             width: 90,
                             height: 50,
@@ -668,7 +682,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                 widget.webinarDetails['tags'][index],
                                 maxLines: 1,
                                 style: TextStyle(
-                                    fontFamily: 'JosefinSans',
+                                    fontFamily: 'JosefinSans Bold',
                                     fontWeight: FontWeight.w500,
                                     color: Get.isDarkMode
                                         ? const Color.fromRGBO(212, 212, 216, 1)
@@ -731,7 +745,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             : Colors.black.withOpacity(0.9),
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1,
-                        fontFamily: 'JosefinSans',
+                        fontFamily: 'JosefinSans Regular',
                       ),
                     ),
                     subtitle: Text(
@@ -740,7 +754,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         letterSpacing: 1,
                         fontSize: AppLayout.getHeight(14),
                         fontWeight: FontWeight.w500,
-                        fontFamily: 'JosefinSans',
+                        fontFamily: 'JosefinSans Regular',
                       ),
                     ),
                   ),
@@ -795,7 +809,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             : Colors.black.withOpacity(0.9),
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1,
-                        fontFamily: 'JosefinSans',
+                        fontFamily: 'JosefinSans Regular',
                       ),
                     ),
                     subtitle: Text(
@@ -804,7 +818,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         letterSpacing: 1,
                         fontSize: AppLayout.getHeight(14),
                         fontWeight: FontWeight.w500,
-                        fontFamily: 'JosefinSans',
+                        fontFamily: 'JosefinSans Regular',
                       ),
                     ),
                   ),

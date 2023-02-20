@@ -57,7 +57,7 @@ class _HomeState extends State<AddWebinarScreen2> {
                 const SizedBox(
                   height: 10,
                 ),
-                Text("Tags and Categories",
+                const Text("Tags and Categories",
                     style: TextStyle(
                         letterSpacing: 2,
                         fontFamily: 'Montserrat-Regular',
@@ -89,13 +89,13 @@ class _HomeState extends State<AddWebinarScreen2> {
                           controller: tec,
                           focusNode: fn,
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: AppColors.LTprimaryColor,
                                 width: 1.0,
                               ),
                             ),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: AppColors.LTprimaryColor,
                                 width: 1.0,
@@ -114,8 +114,8 @@ class _HomeState extends State<AddWebinarScreen2> {
                                     child: Row(
                                         children: tags.map((String tag) {
                                       return Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
                                             Radius.circular(20.0),
                                           ),
                                           color: AppColors.LTprimaryColor,
@@ -180,7 +180,7 @@ class _HomeState extends State<AddWebinarScreen2> {
                   SizedBox(
                     height: AppLayout.getHeight(10),
                   ),
-                  Text("Select Your Interests",
+                  const Text("Select Your Interests",
                       style: TextStyle(
                         letterSpacing: 2,
                         color: AppColors.LTprimaryColor,

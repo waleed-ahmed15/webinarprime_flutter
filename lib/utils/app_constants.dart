@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AppConstants {
-  static String baseURL = 'http://192.168.100.3:5000';
+  static String baseURL = 'http://192.168.100.9:5000';
   static TextStyle popmenuitemStyle = TextStyle(
       fontFamily: 'Montserrats',
       fontWeight: FontWeight.w300,

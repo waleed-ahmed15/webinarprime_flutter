@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 
 import 'package:dio/dio.dart';
@@ -19,6 +20,7 @@ class WebinarManagementController extends GetxController {
 
   static final List<dynamic> webinarsList = [];
   static Map<String, dynamic> currentWebinar = {};
+  static List<dynamic> currentwebinarPendingMembers = [];
   Future<void> AddWebinardata(Map<String, dynamic> webinardata) async {
     print('add webinar data called');
     print(webinardata);
@@ -90,6 +92,8 @@ class WebinarManagementController extends GetxController {
 
   Future<void> getAllwebinars() async {
     print('get webinar called');
+    webinarsList.clear();
+
     try {
       Uri url = Uri.parse("${AppConstants.baseURL}/webinar/home");
       final response =
@@ -97,8 +101,8 @@ class WebinarManagementController extends GetxController {
       var data = jsonDecode(response.body);
 
       // print(data['webinars']);
-
       webinarsList.addAll(data['webinars']);
+      update();
     } catch (e) {
       print(e);
     }
@@ -114,8 +118,8 @@ class WebinarManagementController extends GetxController {
       var data = jsonDecode(response.body);
       // print(data);
       currentWebinar = data['webinar'];
-      print(currentWebinar);
-      print('=======================current webinar====================');
+      // print(currentWebinar);
+      // print('=======================current webinar====================');
       // print(currentWebinar['guests']);
       // print('=======================current webinar====================');
 
@@ -125,16 +129,6 @@ class WebinarManagementController extends GetxController {
     } catch (e) {
       print(e);
     }
-  }
-
-  /// ========check if guest is already added to webinar or not
-  bool guestalreadyAdded(String guestId) {
-    if (currentWebinar['guests'].contains(guestId)) {
-      print(guestId);
-
-      return true;
-    }
-    return false;
   }
 
   // add guest to webinar by id
@@ -188,7 +182,11 @@ class WebinarManagementController extends GetxController {
             "organizerId": organizerId,
           }));
       var data = jsonDecode(response.body);
-      // print(data);
+      print('===============response from add organizer to webinar by id');
+
+      print(data);
+      print('response from add organizer to webinar by id================');
+
       getwebinarById(id);
       // update();
     } catch (e) {
@@ -251,6 +249,294 @@ class WebinarManagementController extends GetxController {
       // update();
     } catch (e) {
       print(e);
+    }
+  }
+
+  /// get organizers for a webinar by webinarId
+  /// this function is used to get the organizers for a webinar
+
+  Future<void> getOrganizersForWebinar(String id) async {
+    print('get organizers for webinar called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/organizers");
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+      });
+      var data = jsonDecode(response.body);
+      // print(data);
+      // print('=======================organizers====================');
+      print(data['organizers']);
+      // print('=======================organizers====================');
+      currentwebinarPendingMembers = data['organizers'];
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // get attendees for a webinar by webinarId
+  Future<void> getAttendeesForWebinar(String id) async {
+    print('get attendees for webinar called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/attendees");
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+      });
+      var data = jsonDecode(response.body);
+      // print(data);
+      // print('=======================attendees====================');
+      print(data['attendees']);
+      // print('=======================attendees====================');
+      currentwebinarPendingMembers.clear();
+      currentwebinarPendingMembers = data['attendees'];
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // get guests for a webinar by webinarId
+  Future<void> getGuestsForWebinar(String id) async {
+    print('get guests for webinar called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/guests");
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+      });
+      var data = jsonDecode(response.body);
+      // print(data);
+      // print('=======================guests====================');
+      print(data['guests']);
+      // print('=======================guests====================');
+      currentwebinarPendingMembers = data['guests'];
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // this is the method to add member to webinar
+  Future<bool> addmemberTowebinar(
+      String webinarId, String memberid, String role) async {
+    print('add member to webinar called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/addmember");
+      final response = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "webinarId": webinarId,
+            "userId": memberid,
+            "role": role,
+          }));
+      var data = jsonDecode(response.body);
+      print(data);
+      if (data['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // ================================================these are edit functions for the webinar details===============================================================================
+
+  // edit webinar title
+  Future<void> editWebinarName(String id, String name) async {
+    print('edit webinar title called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/name");
+      final response = await http.put(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "name": name,
+          }));
+      var data = jsonDecode(response.body);
+      // print(data);
+      getwebinarById(id);
+      // update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // edit tagline=============
+  Future<void> editWebinarTagline(String id, String tagline) async {
+    print('edit webinar tagline called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/tagline");
+      final response = await http.put(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "tagline": tagline,
+          }));
+      var data = jsonDecode(response.body);
+      // print(data);
+      getwebinarById(id);
+      // update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //edit webinar description
+  Future<void> editWebinarDescription(String id, String description) async {
+    print('edit webinar description called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/description");
+      final response = await http.put(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "description": description,
+          }));
+      var data = jsonDecode(response.body);
+      // print(data);
+      getwebinarById(id);
+      // update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //edit webinar datetime
+  Future<void> editWebinarDateTime(String id, String dateTime) async {
+    print('edit webinar datetime called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/datetime");
+      final response = await http.put(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "datetime": dateTime,
+          }));
+      var data = jsonDecode(response.body);
+      // print(data);
+      getwebinarById(id);
+      // update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //edit duration
+  Future<void> editWebinarDuration(String id, String duration) async {
+    print('edit webinar duration called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/duration");
+      final response = await http.put(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "duration": duration,
+          }));
+      var data = jsonDecode(response.body);
+      // print(data);
+      getwebinarById(id);
+      // update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // edit tags of webinar
+  Future<void> editWebinarTags(String id, List<String> tags) async {
+    print('edit webinar tags called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/tags");
+      final response = await http.put(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "tags": tags,
+          }));
+      var data = jsonDecode(response.body);
+      print(data);
+      getwebinarById(id);
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // edit cover image of webinar=========================================================================
+  Future<String> editWebinarCoverImage(String id, File coverImage) async {
+    print('edit webinar cover image called');
+    try {
+      String mimeType = mime(coverImage.path) ?? 'image/jpg';
+      String mimee = mimeType.split('/')[0];
+      String type = mimeType.split('/')[1];
+      print(mimee);
+      print(type);
+      Dio dio = Dio();
+      String bannerfileName = coverImage.path.split('/').last;
+      String coverfileName = coverImage.path.split('/').last;
+
+      // print(bannerfileName);
+      // print(coverfileName);
+      FormData formData = FormData.fromMap(
+        {
+          "coverImage": await MultipartFile.fromFile(
+            filename: coverfileName,
+            coverImage.path,
+            // filename: "some.jpg",
+            contentType: MediaType(mimee, type),
+          ),
+        },
+      );
+      Response response1 = await dio.put(
+          "${AppConstants.baseURL}/webinar/$id/coverimage",
+          data: formData,
+          options: Options(headers: {'Content-Type': 'multipart/form-data'}));
+      print(response1.data['coverPath']);
+      getwebinarById(id);
+      print('edit cover updated added sucessfully');
+      update();
+      getAllwebinars();
+
+      return response1.data['coverPath'];
+    } catch (e) {
+      print(e);
+      return 'error';
+    }
+  }
+
+  // edit banner image of webinar=========================================================================
+  Future<String> editWebinarBannerImage(String id, File bannerImage) async {
+    print('edit webinar banner image called');
+    try {
+      String mimeType = mime(bannerImage.path) ?? 'image/jpg';
+      String mimee = mimeType.split('/')[0];
+      String type = mimeType.split('/')[1];
+      print(mimee);
+      print(type);
+      Dio dio = Dio();
+      String bannerfileName = bannerImage.path.split('/').last;
+      String coverfileName = bannerImage.path.split('/').last;
+
+      // print(bannerfileName);
+      // print(coverfileName);
+      FormData formData = FormData.fromMap(
+        {
+          "bannerImage": await MultipartFile.fromFile(
+            filename: bannerfileName,
+            bannerImage.path,
+            // filename: "some.jpg",
+            contentType: MediaType(mimee, type),
+          ),
+        },
+      );
+      Response response1 = await dio.put(
+          "${AppConstants.baseURL}/webinar/$id/bannerimage",
+          data: formData,
+          options: Options(headers: {'Content-Type': 'multipart/form-data'}));
+      print(response1.data['bannerPath']);
+      getwebinarById(id);
+      print('edit banner updated added sucessfully');
+      update();
+      getAllwebinars();
+      return response1.data['bannerPath'];
+    } catch (e) {
+      print(e);
+      return 'error';
     }
   }
 }

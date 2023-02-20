@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/utils/dimension.dart';
 import 'package:webinarprime/widgets/small_text.dart';
 
-class ExpandableText extends StatefulWidget {
+class CustomExpandableText extends StatefulWidget {
   final String text;
-  const ExpandableText({Key? key, required this.text}) : super(key: key);
+  const CustomExpandableText({Key? key, required this.text}) : super(key: key);
 
   @override
-  State<ExpandableText> createState() => _ExpandableTextState();
+  State<CustomExpandableText> createState() => _CustomExpandableTextState();
 }
 
-class _ExpandableTextState extends State<ExpandableText> {
+class _CustomExpandableTextState extends State<CustomExpandableText> {
   late String firsthalf;
   late String secondHalf;
   bool hiddenText = true;
@@ -34,32 +35,35 @@ class _ExpandableTextState extends State<ExpandableText> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: secondHalf.isEmpty
-          ? SmallText(
-              text: firsthalf,
-              size: AppLayout.getHeight(16),
-            )
-          : Column(
-              children: [
-                InkWell(
-                  onTap: (() {
-                    setState(() {
-                      hiddenText = !hiddenText;
-                    });
-                  }),
-                  child: SmallText(
-                    color: Get.isDarkMode
-                        ? const Color(0xffa1a1aa)
-                        : const Color(0xff475569),
-                    num_line: hiddenText ? 3 : 300,
-                    size: AppLayout.getHeight(16),
-                    text:
-                        hiddenText ? "$firsthalf...." : firsthalf + secondHalf,
+    return GetBuilder<WebinarManagementController>(builder: (controller) {
+      return Container(
+        child: secondHalf.isEmpty
+            ? SmallText(
+                text: firsthalf,
+                size: AppLayout.getHeight(16),
+              )
+            : Column(
+                children: [
+                  InkWell(
+                    onTap: (() {
+                      setState(() {
+                        hiddenText = !hiddenText;
+                      });
+                    }),
+                    child: SmallText(
+                      color: Get.isDarkMode
+                          ? const Color(0xffa1a1aa)
+                          : const Color(0xff475569),
+                      num_line: hiddenText ? 3 : 300,
+                      size: AppLayout.getHeight(16),
+                      text: hiddenText
+                          ? "$firsthalf...."
+                          : firsthalf + secondHalf,
+                    ),
                   ),
-                ),
-              ],
-            ),
-    );
+                ],
+              ),
+      );
+    });
   }
 }
