@@ -271,8 +271,8 @@ class WebinarManagementController extends GetxController {
       currentwebinarPendingMembers
           .removeWhere((element) => element['status'] != 'pending');
 
-      print('=======================organizers====================');
-      print(currentwebinarPendingMembers);
+      print('======================accepted=organizers====================');
+      print(currentWebinar['organizers']);
       print('=======================organizers====================');
 
       update();
@@ -296,6 +296,8 @@ class WebinarManagementController extends GetxController {
       // print('=======================attendees====================');
       currentwebinarPendingMembers.clear();
       currentwebinarPendingMembers = data['attendees'];
+      currentwebinarPendingMembers
+          .removeWhere((element) => element['status'] != 'pending');
       update();
     } catch (e) {
       print(e);
@@ -315,7 +317,10 @@ class WebinarManagementController extends GetxController {
       // print('=======================guests====================');
       print(data['guests']);
       // print('=======================guests====================');
+      currentwebinarPendingMembers.clear();
       currentwebinarPendingMembers = data['guests'];
+      currentwebinarPendingMembers
+          .removeWhere((element) => element['status'] != 'pending');
       update();
     } catch (e) {
       print(e);
@@ -340,6 +345,33 @@ class WebinarManagementController extends GetxController {
       if (data['success'] == true) {
         return true;
       } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // remove from webinar===============================================================
+
+  Future<bool> removeWebinarMember(
+      {required String memeberId, required String webinarId}) async {
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/webinar/member/$memeberId/$webinarId");
+      http.Response response = await http.delete(url, headers: {
+        'Content-Type': 'application/json',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print(jsonDecode(response.body));
+        update();
+        print('member removed from webinar');
+        return true;
+      } else {
+        print('member not found');
+
         return false;
       }
     } catch (e) {
@@ -560,8 +592,8 @@ class WebinarManagementController extends GetxController {
           }));
       var data = jsonDecode(response.body);
       print(data);
-     await getAllwebinars();
-     await getwebinarById(id);
+      await getAllwebinars();
+      await getwebinarById(id);
       update();
     } catch (e) {
       print(e);

@@ -77,7 +77,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                         .getwebinarById(widget.webinarId);
                   },
                 ),
-                hintText: 'SSearch. . .',
+                hintText: 'Search. . .',
                 hintStyle: Mystyles.myhintTextstyle,
                 border: InputBorder.none,
               ),
@@ -345,7 +345,93 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                   );
                 }
               }),
-              const Text('conenet 3'),
+              GetBuilder<WebinarManagementController>(builder: (controller) {
+                String membersType = 'organizers';
+                if (widget.usersType == 1) {
+                  membersType = 'organizers';
+                } else if (widget.usersType == 2) {
+                  membersType = 'guests';
+                } else {
+                  membersType = 'attendees';
+                }
+                print(WebinarManagementController.currentWebinar[membersType]);
+                print(WebinarManagementController.currentWebinar[membersType]);
+                if (WebinarManagementController
+                    .currentWebinar[membersType].isEmpty) {
+                  if (widget.usersType == 1) {
+                    return Center(
+                        child: Text("No  Organizers Joined yet",
+                            style: Mystyles.myhintTextstyle));
+                  } else if (widget.usersType == 2) {
+                    return Center(
+                        child: Text("No   Guests Joined yet",
+                            style: Mystyles.myhintTextstyle));
+                  } else {
+                    return Center(
+                        child: Text("No  Attendees Joined yet",
+                            style: Mystyles.myhintTextstyle));
+                  }
+                } else {
+                  return ListView.builder(
+                    itemCount: WebinarManagementController
+                        .currentWebinar[membersType].length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(AppConstants.baseURL +
+                              WebinarManagementController
+                                      .currentWebinar[membersType][index]
+                                  ['profile_image']),
+                        ),
+                        title: Text(
+                          WebinarManagementController
+                              .currentWebinar[membersType][index]['name'],
+                          style: TextStyle(
+                              fontFamily: 'JosefinSans SemiBold',
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1,
+                              fontSize: AppLayout.getHeight(19)),
+                        ),
+                        subtitle: Text(WebinarManagementController
+                            .currentWebinar[membersType][index]['email']),
+                        trailing: IconButton(
+                          icon: const Icon(
+                            Icons.remove_circle_outline,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                          onPressed: () async {
+                            bool removed = await controller.removeWebinarMember(
+                              memeberId: WebinarManagementController
+                                  .currentWebinar[membersType][index]['_id'],
+                              webinarId: widget.webinarId,
+                            );
+                            print(WebinarManagementController
+                                .currentWebinar[membersType][index]['_id']);
+                            print(WebinarManagementController
+                                .currentWebinar[membersType][index]['email']);
+                            if (removed) {
+                              WebinarManagementController
+                                  .currentWebinar[membersType]
+                                  .removeWhere((element) =>
+                                      element['_id'] ==
+                                      WebinarManagementController
+                                              .currentWebinar[membersType]
+                                          [index]['_id']);
+                              WebinarManagementController().update();
+                            }
+                            Get.showSnackbar(GetBar(
+                              message: 'Member Removed',
+                              duration: const Duration(seconds: 2),
+                            ));
+                            print('remove pressed ');
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
+              }),
             ],
           ),
         ),

@@ -34,8 +34,8 @@ class MyApp extends StatelessWidget {
             theme: lightTheme,
             darkTheme: darkTheme,
             // themeMode: ThemeMode.system,
-            // themeMode: ThemeMode.light,
-            themeMode: ThemeMode.dark,
+            themeMode: ThemeMode.light,
+            // themeMode: ThemeMode.dark,
           );
         },
         designSize: const Size(392.7, 803));

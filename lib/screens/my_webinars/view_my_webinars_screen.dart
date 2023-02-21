@@ -178,13 +178,8 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
             elevation: 0,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             centerTitle: true,
-            title: Text(
-              "My Webinars",
-              style: AppConstants.paragraphStyle.copyWith(
-                  color: Theme.of(context).colorScheme.secondary,
-                  letterSpacing: 2,
-                  fontSize: AppLayout.getHeight(20)),
-            ),
+            title: Text("My Webinars",
+                style: Mystyles.bigTitleStyle.copyWith(fontSize: 20.h)),
           ),
           body: GetBuilder<WebinarManagementController>(
             builder: (controller) {
@@ -208,29 +203,7 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                           horizontal: AppLayout.getWidth(10),
                           vertical: AppLayout.getHeight(10)),
                       // padding: EdgeInsets.symmetric(horizontal: AppLayout.getWidth(10)),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(AppLayout.getHeight(10)),
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        boxShadow: [
-                          BoxShadow(
-                            offset: const Offset(3, 3),
-                            blurRadius: 4,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withOpacity(0.1),
-                          ),
-                          BoxShadow(
-                            offset: const Offset(-3, -3),
-                            blurRadius: 4,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withOpacity(0.1),
-                          )
-                        ],
-                      ),
+                      decoration: MyBoxDecorations.listtileDecoration,
                       child: Column(
                         children: [
                           ListTile(
@@ -253,7 +226,7 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                                         ));
                                   },
                                   child: Text("Edit",
-                                      style: AppConstants.popmenuitemStyle),
+                                      style: Mystyles.popupHeadingStyle),
                                 ),
                                 PopupMenuItem(
                                   onTap: () async {
@@ -265,21 +238,26 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                                     print("Post Notification tapped");
                                   },
                                   child: Text("Post Notification",
-                                      style: AppConstants.popmenuitemStyle),
+                                      style: Mystyles.popupHeadingStyle),
                                 ),
                                 PopupMenuItem(
                                   onTap: () async {
                                     print("add webinar event schedule");
                                   },
                                   child: Text("Event Schedule",
-                                      style: AppConstants.popmenuitemStyle),
+                                      style: Mystyles.popupHeadingStyle),
                                 ),
                                 PopupMenuItem(
                                   onTap: () async {
                                     await Future.delayed(
                                         const Duration(seconds: 1));
 
-                                    // method will get organizers for the webinar tapped
+                                    // t
+                                    await WebinarManagementController()
+                                        .getwebinarById(
+                                            WebinarManagementController
+                                                .webinarsList[index]['_id']);
+                                    // method will get all organizers for the webinar tapped
                                     await WebinarManagementController()
                                         .getOrganizersForWebinar(
                                             WebinarManagementController
@@ -293,14 +271,14 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                                     print("add organizers to webinar pressed");
                                   },
                                   child: Text("Add Organizers",
-                                      style: AppConstants.popmenuitemStyle),
+                                      style: Mystyles.popupHeadingStyle),
                                 ),
                                 PopupMenuItem(
                                   onTap: () {
                                     print("Join requests tapped");
                                   },
                                   child: Text("Join Requests",
-                                      style: AppConstants.popmenuitemStyle),
+                                      style: Mystyles.popupHeadingStyle),
                                 ),
                               ],
                             ),
@@ -379,10 +357,14 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   print("Add Guests/Speakers");
+                                  await WebinarManagementController()
+                                      .getwebinarById(
+                                          WebinarManagementController
+                                              .webinarsList[index]['_id']);
 
-                                  WebinarManagementController()
+                                  await WebinarManagementController()
                                       .getGuestsForWebinar(
                                           WebinarManagementController
                                               .webinarsList[index]['_id']);
@@ -411,6 +393,10 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                               ),
                               InkWell(
                                 onTap: () async {
+                                  await WebinarManagementController()
+                                      .getwebinarById(
+                                          WebinarManagementController
+                                              .webinarsList[index]['_id']);
                                   await WebinarManagementController()
                                       .getAttendeesForWebinar(
                                           WebinarManagementController

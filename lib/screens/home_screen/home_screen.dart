@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -78,12 +79,6 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       ],
     ),
-    // decoration: const BoxDecoration(
-    //     image: DecorationImage(
-    //         image: NetworkImage(
-    //             'http://10.0.2.2:5000/webinar/bannerImage-1670108609744WIN_20220307_11_33_38_Pro.jpg'),
-    //         fit: BoxFit.fitWidth)),
-
     const Text(
       'Likes',
       style: optionStyle,
@@ -101,80 +96,60 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     SharedPreferences sharedPreferences = Get.find();
     AuthController authController = Get.find();
-    // authController
-    // .authenticateUser(sharedPreferences.getString('token') != null);
-    // print(authController.currentUser);
-    // print('hereauth');
 
     return SafeArea(
       child: Scaffold(
         key: scaffoldKey,
         drawer: Drawer(
+          width: 0.7.sw,
+          backgroundColor: Get.isDarkMode
+              ? const Color(0xff0A2647)
+              : const Color(0xffFDFDF6),
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              SizedBox(
-                height: 130,
-                child: DrawerHeader(
-                  padding: EdgeInsets.zero,
-                  decoration: BoxDecoration(
-                      color: AppColors.LTprimaryColor.withOpacity(0.8)),
-                  child: GetBuilder<AuthController>(builder: (controller) {
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: NetworkImage(Get.find<AuthController>()
-                                    .currentUser['profile_image'][0] ==
-                                'h'
-                            ? Get.find<AuthController>()
-                                .currentUser['profile_image']
-                            : AppConstants.baseURL +
-                                Get.find<AuthController>()
-                                    .currentUser['profile_image']),
-                      ),
-                      title: Text(
-                        Get.find<AuthController>().currentUser['name'],
-                        style: AppConstants.paragraphStyle
-                            .copyWith(letterSpacing: 2),
-                      ),
-                      subtitle: Text(
-                        Get.find<AuthController>().currentUser['email'],
-                        style: AppConstants.secondaryHeadingStyle.copyWith(
-                          letterSpacing: 1,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    );
-                  }),
+              const Gap(20),
+              UnconstrainedBox(
+                child: Container(
+                  margin: const EdgeInsets.all(10),
+                  height: 150.h,
+                  width: 150.h,
+                  decoration: MyBoxDecorations.listtileDecoration.copyWith(
+                      borderRadius: BorderRadius.circular(300.r),
+                      image: DecorationImage(
+                          image: NetworkImage(
+                            Get.find<AuthController>()
+                                        .currentUser['profile_image'][0] ==
+                                    'h'
+                                ? Get.find<AuthController>()
+                                    .currentUser['profile_image']
+                                : AppConstants.baseURL +
+                                    Get.find<AuthController>()
+                                        .currentUser['profile_image'],
+                          ),
+                          fit: BoxFit.cover)),
                 ),
               ),
+              Gap(10.h),
               Column(
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.person),
-                    title: GestureDetector(
-                      onTap: () {
-                        Get.to(() => const ProfileScreen());
-                      },
-                      child: Text(
-                        'Profile',
-                        style: listTile_text_Style.copyWith(
-                            color: Theme.of(context).colorScheme.secondary),
-                      ),
-                    ),
                     onTap: () {
-                      // Update the state of the app.
-                      // ...
+                      Get.to(() => const ProfileScreen());
                     },
+                    leading: const Icon(Icons.person),
+                    title: Text(
+                      'Profile',
+                      style: Mystyles.listtileTitleStyle
+                          .copyWith(height: 1.5.h, fontSize: 18.sp),
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.notifications),
                     title: Text(
                       'Notifications',
-                      style: listTile_text_Style.copyWith(
-                          color: Theme.of(context).colorScheme.secondary),
+                      style: Mystyles.listtileTitleStyle
+                          .copyWith(height: 1.5, fontSize: 18.sp),
                     ),
                     onTap: () {
                       // Update the state of the app.
@@ -186,18 +161,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         authController.currentUser['accountType'] == 'organizer'
                             ? const Icon(Icons.add)
                             : const Icon(Icons.mail),
-                    title: authController.currentUser['accountType'] ==
-                            'organizer'
-                        ? Text(
-                            'Create new webinar',
-                            style: listTile_text_Style.copyWith(
-                                color: Theme.of(context).colorScheme.secondary),
-                          )
-                        : Text(
-                            'Apply for organizer',
-                            style: listTile_text_Style.copyWith(
-                                color: Theme.of(context).colorScheme.secondary),
-                          ),
+                    title:
+                        authController.currentUser['accountType'] == 'organizer'
+                            ? Text(
+                                'Create new webinar',
+                                style: Mystyles.listtileTitleStyle
+                                    .copyWith(height: 1.5, fontSize: 18.sp),
+                              )
+                            : Text(
+                                'Apply for organizer',
+                                style: Mystyles.listtileTitleStyle
+                                    .copyWith(height: 1.5, fontSize: 18.sp),
+                              ),
                     onTap: () {
                       // Update the state of the app.
                       if (authController.currentUser['accountType'] ==
@@ -213,8 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     leading: const Icon(Icons.web),
                     title: Text(
                       'My Webinars',
-                      style: listTile_text_Style.copyWith(
-                          color: Theme.of(context).colorScheme.secondary),
+                      style: Mystyles.listtileTitleStyle
+                          .copyWith(height: 1.5, fontSize: 18.sp),
                     ),
                     onTap: () {
                       // Update the state of the app.
@@ -234,15 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.settings),
-                    title: Text(
-                      'Settings',
-                      style: TextStyle(
-                          letterSpacing: 2,
-                          fontFamily: 'Montserrat-Bold',
-                          fontWeight: FontWeight.w300,
-                          fontSize: 18,
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
+                    title: Text('Settings',
+                        style: Mystyles.listtileTitleStyle
+                            .copyWith(height: 1.5, fontSize: 18.sp)),
                     onTap: () {
                       // Update the state of the app.
                       print('setting');
@@ -251,15 +220,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.logout),
-                    title: Text(
-                      'Logout',
-                      style: TextStyle(
-                          letterSpacing: 2,
-                          fontFamily: 'Montserrat-Bold',
-                          fontWeight: FontWeight.w300,
-                          fontSize: 18,
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
+                    title: Text('Logout',
+                        style: Mystyles.listtileTitleStyle
+                            .copyWith(height: 1.5, fontSize: 18.sp)),
                     onTap: () {
                       // Update the state of the app.
                       // ...

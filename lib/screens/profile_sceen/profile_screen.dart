@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
@@ -6,6 +7,7 @@ import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/app_fonts.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
+import 'package:webinarprime/utils/styles.dart';
 import 'package:webinarprime/widgets/profile_screen_textfields.dart';
 import 'package:webinarprime/widgets/snackbar.dart';
 
@@ -18,13 +20,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   var currentUser = Get.find<AuthController>().currentUser;
-  Map<String, String> profileData = {
-    "Name": "JohnDoe",
-    "Email": "waleedahmed@gamil.com",
-    "birthdate": "1990-01-05",
-    "registration_number": "FA19-BCS-66",
-  };
-  // String? name=profileData["Name"];
   final TextEditingController namecontroller = TextEditingController();
   bool isvalidateUsername(String value) {
     if (value.isEmpty ||
@@ -83,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           setState(() {
                             Navigator.pop(context);
 
-                            profileData[label] = namecontroller.text;
+                            initailvalue = namecontroller.text;
                           });
                         } else {
                           ShowCustomSnackBar('username is not valid',
@@ -165,8 +160,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios,
-              color: Theme.of(context).colorScheme.secondary),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+          ),
           onPressed: () {
             Get.back();
           },
@@ -181,30 +177,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         title: Text(
           'Details',
-          style: AppConstants.paragraphStyle.copyWith(
-              color: Theme.of(context).colorScheme.secondary,
-              fontSize: AppLayout.getHeight(20)),
+          style: Mystyles.bigTitleStyle.copyWith(fontSize: 20.sp),
         ),
       ),
       body: Container(
         margin: EdgeInsets.symmetric(
             vertical: AppLayout.getHeight(20),
             horizontal: AppLayout.getWidth(6)),
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [
-            BoxShadow(
-              offset: const Offset(0, 5),
-              blurRadius: 7,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-            ),
-            BoxShadow(
-              offset: const Offset(0, -5),
-              blurRadius: 7,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-            )
-          ],
-        ),
+        decoration: MyBoxDecorations.listtileDecoration,
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: AppLayout.getHeight(20)),
           children: [
@@ -275,7 +255,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Gap(AppLayout.getHeight(20)),
             ProfileScreenTextFieldWidget(
-            
               onEditIconPressed: () async {
                 // _displayTextInputDialog(context, 'name');
               },

@@ -318,28 +318,6 @@ class AuthController extends GetxController {
     }
   }
 
-  // search user via keywords
-
-  Future<bool> searchUser(String keyword) async {
-    try {
-      Uri url = Uri.parse("${AppConstants.baseURL}/user/search/$keyword");
-      print("keyword is{$keyword}");
-      Map body = {"keyword": keyword.toString()};
-      var response = await http.get(url);
-      var data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        print(data);
-        searchedUsers = data['users'];
-      } else {
-        print(data.toString());
-      }
-    } catch (e) {
-      print(e);
-    }
-    update();
-    return false;
-  }
-
   //serach user via keywords new method
 
   Future<bool> searchUserNew(

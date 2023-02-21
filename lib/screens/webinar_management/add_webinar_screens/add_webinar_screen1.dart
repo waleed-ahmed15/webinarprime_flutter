@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:webinarprime/screens/webinar_management/add_webinar_screens/add_webinar_screen2.dart';
 import 'package:webinarprime/utils/dimension.dart';
+import 'package:webinarprime/utils/styles.dart';
 
 import '../../../utils/colors.dart';
 
@@ -53,27 +55,12 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Container(
             margin: EdgeInsets.symmetric(
                 vertical: AppLayout.getHeight(20),
                 horizontal: AppLayout.getWidth(20)),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              boxShadow: [
-                BoxShadow(
-                  offset: const Offset(0, 5),
-                  blurRadius: 7,
-                  color:
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-                ),
-                BoxShadow(
-                  offset: const Offset(0, -5),
-                  blurRadius: 7,
-                  color:
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-                )
-              ],
-            ),
+            decoration: MyBoxDecorations.listtileDecoration,
             child: Container(
               padding: EdgeInsets.symmetric(
                   horizontal: AppLayout.getWidth(20),
@@ -82,67 +69,35 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                 key: formKey1,
                 child: Column(
                   children: [
-                    const Text("Create New Webinar",
-                        style: TextStyle(
-                            letterSpacing: 2,
-                            fontFamily: 'Montserrat-Regular',
-                            color: AppColors.LTprimaryColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400)),
+                    Text("Create New Webinar",
+                        style: Mystyles.onpageheadingsyle
+                            .copyWith(fontSize: 20.h)),
                     SizedBox(
                       height: AppLayout.getHeight(50),
                     ),
                     Container(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: imagebyte != null
-                            ? Image.memory(
-                                imagebyte!,
-                                // base64Decode(base64img!),
-                                fit: BoxFit.cover,
-                                width: double.maxFinite,
-                                height: AppLayout.getWidth(200),
-                              )
-                            : Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(10)),
-                                height: AppLayout.getHeight(200),
-                                width: double.maxFinite,
-                                child: const Center(child: Text('')),
-                              ),
+                      width: 200.h,
+                      height: 200.h,
+                      decoration: MyBoxDecorations.listtileDecoration.copyWith(
+                        image: imagebyte != null
+                            ? DecorationImage(
+                                image: MemoryImage(imagebyte!),
+                                fit: BoxFit.cover)
+                            : null,
                       ),
+                      child: IconButton(
+                          icon: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.grey,
+                          ),
+                          iconSize: 50.h,
+                          onPressed: () {
+                            _pickBase64Image();
+                            setState(() {});
+                          }),
                     ),
                     SizedBox(
-                      height: AppLayout.getHeight(20),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        _pickBase64Image();
-                        setState(() {});
-                      },
-                      child: Container(
-                        width: double.maxFinite,
-                        margin: EdgeInsets.symmetric(
-                            horizontal: AppLayout.getWidth(20)),
-                        padding: EdgeInsets.symmetric(
-                            vertical: AppLayout.getHeight(10),
-                            horizontal: AppLayout.getWidth(10)),
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.circular(AppLayout.getHeight(5))),
-                        child: Center(
-                          child: Text(
-                            "Add Cover photo",
-                            style: TextStyle(
-                                fontFamily: 'Montserrat-Regular',
-                                fontWeight: FontWeight.w400,
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontSize: AppLayout.getHeight(17)),
-                          ),
-                        ),
-                      ),
+                      height: 20.h,
                     ),
                     Text(
                       _imagefile == null ? 'please select image.' : "",
@@ -152,10 +107,13 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                       height: AppLayout.getHeight(20),
                     ),
                     TextFormField(
+                      style: Mystyles.onpageheadingsyle
+                          .copyWith(color: Mystyles.bigTitleStyle.color),
                       controller: titleController,
                       decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
                         hintText: 'Webinar Title',
+                        suffixIcon: Icon(Icons.title),
                       ),
                       validator: (val) {
                         // print("val$val");
@@ -176,6 +134,8 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                     ),
                     DateTimePicker(
                       // initialValue: DateTime.now().toString(),
+                      style: Mystyles.onpageheadingsyle
+                          .copyWith(color: Mystyles.bigTitleStyle.color),
                       decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
                           suffixIcon: Icon(Icons.calendar_month_outlined),
@@ -200,6 +160,8 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                       height: AppLayout.getHeight(20),
                     ),
                     TextFormField(
+                      style: Mystyles.onpageheadingsyle
+                          .copyWith(color: Mystyles.bigTitleStyle.color),
                       controller:
                           timeinput, //editing controller of this TextField
                       decoration: const InputDecoration(
@@ -242,6 +204,8 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                       height: AppLayout.getHeight(20),
                     ),
                     TextFormField(
+                      style: Mystyles.onpageheadingsyle
+                          .copyWith(color: Mystyles.bigTitleStyle.color),
                       keyboardType: TextInputType.number,
                       controller: durationController,
                       decoration: const InputDecoration(
@@ -262,6 +226,8 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                       height: AppLayout.getHeight(20),
                     ),
                     TextFormField(
+                      style: Mystyles.onpageheadingsyle
+                          .copyWith(color: Mystyles.bigTitleStyle.color),
                       keyboardType: TextInputType.number,
                       controller: priceController,
                       decoration: const InputDecoration(

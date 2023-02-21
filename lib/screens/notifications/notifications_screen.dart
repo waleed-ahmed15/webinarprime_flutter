@@ -61,7 +61,7 @@ class _NotificationScreenState extends State<NotificationScreen>
         children: [
           const Center(child: Text('notifications')),
           GetBuilder<AuthController>(builder: (controller) {
-            print('called');
+            print('tab2');
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(

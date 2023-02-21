@@ -84,6 +84,14 @@ class Mystyles {
     fontWeight: FontWeight.w500,
     color: const Color.fromRGBO(122, 121, 121, 1),
   );
+
+  static TextStyle popupHeadingStyle = TextStyle(
+      fontSize: 13.sp,
+      fontFamily: 'JosefinSans Medium',
+      letterSpacing: 1,
+      fontWeight: FontWeight.w400,
+      color:
+          Get.isDarkMode ? const Color(0xffFDFDF6) : const Color(0xff0A2647));
 //==========================================================================================
   static TextTheme myTexttheme = TextTheme(
     displayLarge: GoogleFonts.josefinSans(
@@ -137,16 +145,15 @@ class MyBoxDecorations {
     color: Get.isDarkMode ? Colors.black54 : Colors.white,
     boxShadow: [
       BoxShadow(
-        color: Colors.grey.withOpacity(0.1),
-        offset: const Offset(2, 2),
-        blurRadius: 6,
-        spreadRadius: 0,
-      ),
+          color: Colors.grey.withOpacity(0.1),
+          offset: const Offset(0, -5),
+          blurRadius: 7,
+          spreadRadius: 3),
       BoxShadow(
-        color: Colors.grey.withOpacity(0.01),
-        offset: const Offset(-2, -2),
-        blurRadius: 7,
-      ),
+          color: Colors.grey.withOpacity(0.1),
+          offset: const Offset(0, 5),
+          blurRadius: 7,
+          spreadRadius: 3),
     ],
   );
 }
