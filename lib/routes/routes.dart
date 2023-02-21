@@ -3,6 +3,7 @@ import 'package:webinarprime/screens/forgot_password_screen.dart';
 import 'package:webinarprime/screens/home_screen/home_screen.dart';
 import 'package:webinarprime/screens/login/login_page.dart';
 import 'package:webinarprime/screens/my_webinars/view_my_webinars_screen.dart';
+import 'package:webinarprime/screens/notifications/notifications_screen.dart';
 import 'package:webinarprime/screens/payment/paymnet_screen.dart';
 import 'package:webinarprime/screens/select_interests/select_interest_screen.dart';
 import 'package:webinarprime/screens/sign_up/signup_page.dart';
@@ -26,6 +27,7 @@ class RoutesHelper {
   static const String addWebinarScreen3route = '/add-webinar-screen3';
   static const String viewMyWebinarsRoute = '/view-my-webinars';
   static const String searchUsersRoute = '/search-users';
+  static const String notificationScreenRoute = '/notifications';
 
   static List<GetPage> routes = [
     GetPage(
@@ -65,6 +67,10 @@ class RoutesHelper {
     GetPage(
       name: viewMyWebinarsRoute,
       page: () => const View_my_Webinar_Screen(),
+    ),
+    GetPage(
+      name: notificationScreenRoute,
+      page: () => const NotificationScreen(),
     ),
   ];
 }

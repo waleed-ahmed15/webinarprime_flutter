@@ -10,6 +10,9 @@ import 'package:webinarprime/screens/profile_sceen/profile_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/app_fonts.dart';
 import 'package:webinarprime/utils/colors.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:webinarprime/utils/dimension.dart';
+import 'package:webinarprime/utils/styles.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +22,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final IO.Socket _socket = IO.io(AppConstants.baseURL,
+      IO.OptionBuilder().setTransports(['websocket']).build());
+
+  connecteSocket() async {
+    _socket.onConnect((data) => print(' connected'));
+
+    _socket.onConnectError((data) => print('$data'));
+    _socket.emit('join', Get.find<AuthController>().currentUser);
+    _socket.emit('notification',
+        {'user_id': '60e8f1b3b8b5e8a0c8e1b1d1', 'message': 'hello'});
+    _socket.on('notification', (data) => print('$data'));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    connecteSocket();
+    super.initState();
+    print("height: ${AppLayout.getScreenHeight()}");
+    print('width :${AppLayout.getScreenWidth()}');
+  }
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
   bool isOrganizer = false;
@@ -48,10 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
         ),
         Text(
-          'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-          style: AppConstants.paragraphStyle,
-          textAlign: TextAlign.justify,
-        ),
+          'how to be more Productive',
+          style: Mystyles.bigTitleStyle,
+        )
       ],
     ),
     // decoration: const BoxDecoration(
@@ -154,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onTap: () {
                       // Update the state of the app.
-                      // ...
+                      Get.toNamed(RoutesHelper.notificationScreenRoute);
                     },
                   ),
                   ListTile(
@@ -260,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
           // backgroundColor: AppColors.LTprimaryColor.withOpacity(0.8),
           leading: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.menu_sharp,
               size: 30,
               color: AppColors.LTprimaryColor,

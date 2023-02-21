@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/screens/user_search/user_search_screen.dart';
@@ -7,11 +9,157 @@ import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/app_fonts.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
+import 'package:webinarprime/utils/styles.dart';
+import 'package:webinarprime/widgets/snackbar.dart';
 
 import '../webinar_management/view_webinar_screen/webinar_details_screen.dart';
 
-class View_my_Webinar_Screen extends StatelessWidget {
+class View_my_Webinar_Screen extends StatefulWidget {
   const View_my_Webinar_Screen({super.key});
+
+  @override
+  State<View_my_Webinar_Screen> createState() => _View_my_Webinar_ScreenState();
+}
+
+class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
+  final formKey2 = GlobalKey<FormState>(); //key for form
+  var titleController = TextEditingController();
+  var descriptionController = TextEditingController();
+  void showDialogBoxForPostNotification(String webinarId) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(60.r),
+            ), //this right here
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              height: 430.h,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Form(
+                    key: formKey2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Text("Post Notification",
+                              style: Mystyles.categoriesHeadingStyle.copyWith(
+                                  color: Get.isDarkMode
+                                      ? Colors.white70
+                                      : Colors.black38)),
+                        ),
+                        TextFormField(
+                          controller: titleController,
+                          style: Mystyles.onelineStyle,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            labelText: "Title",
+                            hintText: "Enter Title",
+                          ),
+                          validator: (val) {
+                            // print("val$val");
+                            if (val == '') {
+                              return 'please enter Title';
+                            }
+                            return null;
+                          },
+                        ),
+                        // Gap(10.h),
+                        TextFormField(
+                          style: Mystyles.myParagraphStyle,
+                          maxLines: 7,
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.r)),
+                            ),
+                            hintText: 'Webinar desceiption.....',
+                          ),
+                          validator: (val) {
+                            // print("val$val");
+                            if (val == '') {
+                              return 'please enter description';
+                            } else if (val!.length < 50) {
+                              return 'add description of atleast 50 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        Gap(10.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  animationDuration: const Duration(seconds: 3),
+                                  backgroundColor: Colors.red,
+                                ),
+                                child: Text(
+                                  'cancel',
+                                  style: TextStyle(
+                                      fontSize: AppLayout.getHeight(13),
+                                      fontFamily: 'JosefinSans Bold',
+                                      letterSpacing: 1),
+                                )),
+
+                            // this is where update  is handled
+                            SizedBox(width: 20.w),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                              ),
+                              child: Text(
+                                'Post',
+                                style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontFamily: 'JosefinSans Bold',
+                                    letterSpacing: 1),
+                              ),
+                              onPressed: () async {
+                                // Do something with the edited text
+                                if (formKey2.currentState!.validate()) {
+                                  // print(
+                                  // "titleController.text${titleController.text}");
+                                  // print(
+                                  // "descriptionController.text${descriptionController.text}");
+                                  // print(
+                                  // "WebinarManagementController.currentWebinar['_id']${WebinarManagementController.currentWebinar['_id']}");
+
+                                  await WebinarManagementController()
+                                      .postNotification(
+                                          webinarId,
+                                          titleController.text,
+                                          descriptionController.text);
+                                  Navigator.of(context).pop();
+                                  ShowCustomSnackBar(
+                                      title: "",
+                                      "Notification posted successfully",
+                                      isError: false);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +174,7 @@ class View_my_Webinar_Screen extends StatelessWidget {
                 Get.back();
               },
             ),
-            actions: const [
-              // TextButton(
-              //     onPressed: () {},
-              //     child: Text('Save', style: AppConstants.secondaryHeadingStyle)),
-            ],
+            actions: const [],
             elevation: 0,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             centerTitle: true,
@@ -112,14 +256,19 @@ class View_my_Webinar_Screen extends StatelessWidget {
                                       style: AppConstants.popmenuitemStyle),
                                 ),
                                 PopupMenuItem(
-                                  onTap: () {
-                                    print("Post Notification");
+                                  onTap: () async {
+                                    await Future.delayed(
+                                        const Duration(seconds: 1));
+                                    showDialogBoxForPostNotification(
+                                        WebinarManagementController
+                                            .webinarsList[index]['_id']);
+                                    print("Post Notification tapped");
                                   },
                                   child: Text("Post Notification",
                                       style: AppConstants.popmenuitemStyle),
                                 ),
                                 PopupMenuItem(
-                                  onTap: () {
+                                  onTap: () async {
                                     print("add webinar event schedule");
                                   },
                                   child: Text("Event Schedule",

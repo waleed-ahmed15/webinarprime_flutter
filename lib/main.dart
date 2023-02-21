@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/routes/routes.dart';
@@ -20,19 +21,23 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      key: const Key('main'),
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      // initialRoute: RoutesHelper.signInRoute,
-      initialRoute: RoutesHelper.signInRoute,
-      // initialRoute: RoutesHelper.addWebinarScreen1route,
-      getPages: RoutesHelper.routes,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      // themeMode: ThemeMode.system,
-      themeMode: ThemeMode.light,
-      // themeMode: ThemeMode.dark,
-    );
+    return ScreenUtilInit(
+        builder: (context, child) {
+          return GetMaterialApp(
+            key: const Key('main'),
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            // initialRoute: RoutesHelper.signInRoute,
+            initialRoute: RoutesHelper.signInRoute,
+            // initialRoute: RoutesHelper.addWebinarScreen1route,
+            getPages: RoutesHelper.routes,
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            // themeMode: ThemeMode.system,
+            // themeMode: ThemeMode.light,
+            themeMode: ThemeMode.dark,
+          );
+        },
+        designSize: const Size(392.7, 803));
   }
 }

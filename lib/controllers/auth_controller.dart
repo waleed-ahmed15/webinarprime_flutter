@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -21,6 +22,7 @@ class AuthController extends GetxController {
   String? current_email;
   String? token;
   List<dynamic> searchedUsers = [];
+  List<dynamic> currentUserInvitations = [];
 
   @override
   void onInit() async {
@@ -30,6 +32,10 @@ class AuthController extends GetxController {
     // print('on init');
     // print(currentUser);
     await initialRoute();
+    print('innit called');
+    // Timer.periodic(const Duration(seconds: 4), (timer) {
+    // getInvitations(currentUser['id'] ?? '');
+    // });
     super.onInit();
   }
 
@@ -94,6 +100,7 @@ class AuthController extends GetxController {
   Future<void> authenticateUser(bool rememberMe) async {
     try {
       print('authenticate user called');
+
       final sharedPreferences = Get.find<SharedPreferences>();
       print(sharedPreferences.getString('token'));
       final response = await http.get(headers: {
@@ -111,11 +118,6 @@ class AuthController extends GetxController {
         if (!rememberMe) {
           sharedPreferences.remove('token');
         }
-
-        // print(currentUser);
-
-        // print(currentUser['email']);
-        // print(currentUser['registration_number']);
       } else {
         print('invalid token');
         // Get.offAllNamed(RoutesHelper.signInRoute);
@@ -214,6 +216,7 @@ class AuthController extends GetxController {
         print(currentUser['registration_number']);
         if (currentUser.containsKey('birthdate')) {
           Get.offAll(() => const HomeScreen());
+          getInvitations(currentUser['id']);
         } else {
           Get.toNamed(RoutesHelper.uploadProfileRoute);
         }
@@ -236,15 +239,18 @@ class AuthController extends GetxController {
       await authenticateUser(true);
       print(2);
       print(currentUser.isEmpty);
+
       if (currentUser.isEmpty) {
         Get.toNamed(RoutesHelper.signInRoute);
       } else if (currentUser.containsKey('birthdate')) {
+        getInvitations(currentUser['id']);
         Get.toNamed(RoutesHelper.homeScreenRoute);
       } else {
         Get.toNamed(RoutesHelper.uploadProfileRoute);
       }
     } else {
       // Get.toNamed(RoutesHelper.signInRoute);
+      print('token is null');
     }
   }
 
@@ -360,8 +366,45 @@ class AuthController extends GetxController {
     update();
     return false;
   }
-  // Future<void> updateAuthController() async {
-  // print('update auth controller called');
-  // update();
-  // }
+
+  // get invitations for user
+  Future<void> getInvitations(String userid) async {
+    print('get invitations called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/$userid/invitations");
+      var response = await http.get(url);
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        print(data);
+        currentUserInvitations = data['invitations'];
+      } else {
+        print(data.toString());
+      }
+    } catch (e) {
+      print(e);
+    }
+    update();
+  }
+
+  //accept invitation for the webinar
+  Future<void> acceptInvitation(String invitationId) async {
+    print('accept invitation called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/accept-invitation");
+      var response = await http.put(
+        url,
+        body: {"invitationId": invitationId},
+      );
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        print(data);
+        ShowCustomSnackBar(title: "Invitation accepted", isError: false, "");
+        getInvitations(currentUser['id']);
+      } else {
+        print(data.toString());
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }

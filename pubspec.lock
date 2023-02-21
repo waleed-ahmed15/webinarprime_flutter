@@ -206,6 +206,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
+  flutter_screenutil:
+    dependency: "direct main"
+    description:
+      name: flutter_screenutil
+      sha256: "8e049ecdc1a62c90e6bf0e9c8398ace8dde81b92889c70cfe06281d79d59113a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.6.1"
   flutter_stripe:
     dependency: "direct main"
     description:
@@ -637,6 +645,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  socket_io_client:
+    dependency: "direct main"
+    description:
+      name: socket_io_client
+      sha256: a9c589d3fe2658506be38ddb36f23348daab73a00ff1645533669d07a5111cfc
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
+  socket_io_common:
+    dependency: transitive
+    description:
+      name: socket_io_common
+      sha256: "5a218a784df4d1927ae713e17af619caa736cb2ebac287c59e4e24228b22da29"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   source_span:
     dependency: transitive
     description:

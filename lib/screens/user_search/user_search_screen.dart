@@ -64,7 +64,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search_sharp),
-                  color: mycolors.iconColor,
+                  color: Mycolors.iconColor,
                   iconSize: AppLayout.getHeight(30),
                   onPressed: () {
                     if (serachcontroller.text.trim().isEmpty) {

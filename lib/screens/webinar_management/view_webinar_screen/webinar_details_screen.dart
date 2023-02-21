@@ -494,6 +494,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       ),
                     ],
                   ),
+                  
                   child: ListTile(
                     leading: CircleAvatar(
                       radius: AppLayout.getHeight(30),

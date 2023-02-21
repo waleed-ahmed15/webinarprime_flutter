@@ -60,20 +60,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
     } else {
       print('No image selected.');
     }
-
-    print('=================================================');
-    // coverImagePath = image!.path;
-    // print(coverImagePath);
-    print('=================================================');
-
-    // _imagefile = File(image.path);
-    // print('No image selected.');
-    // imagebyte = await image.readAsBytes();
-
     setState(() {});
     return;
-
-    setState(() {});
   }
 
   //==================================================================================================
@@ -405,9 +393,6 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      color: Colors.red,
-                    ),
                     Center(
                       child: Text(
                         title,

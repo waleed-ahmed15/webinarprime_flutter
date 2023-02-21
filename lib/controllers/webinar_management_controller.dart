@@ -268,6 +268,13 @@ class WebinarManagementController extends GetxController {
       print(data['organizers']);
       // print('=======================organizers====================');
       currentwebinarPendingMembers = data['organizers'];
+      currentwebinarPendingMembers
+          .removeWhere((element) => element['status'] != 'pending');
+
+      print('=======================organizers====================');
+      print(currentwebinarPendingMembers);
+      print('=======================organizers====================');
+
       update();
     } catch (e) {
       print(e);
@@ -537,6 +544,27 @@ class WebinarManagementController extends GetxController {
     } catch (e) {
       print(e);
       return 'error';
+    }
+  }
+
+  // post notification of webinar=========================================================================
+  Future<void> postNotification(String id, String title, String body) async {
+    print('post notification called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/notification");
+      final response = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "title": title,
+            "description": body,
+          }));
+      var data = jsonDecode(response.body);
+      print(data);
+     await getAllwebinars();
+     await getwebinarById(id);
+      update();
+    } catch (e) {
+      print(e);
     }
   }
 }
