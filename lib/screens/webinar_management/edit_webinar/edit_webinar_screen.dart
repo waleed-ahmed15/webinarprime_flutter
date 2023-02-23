@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
+import 'package:webinarprime/screens/webinar_management/edit_webinar/edit_categories.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
@@ -1249,12 +1250,12 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         padding:
                             EdgeInsets.only(bottom: AppLayout.getHeight(6)),
                         onPressed: () {
-                          // _onEditIconPressed('categories');
-                          // Get.to(() => SelectInterstScreen(
-                          //       edit_intersts: true,
-                          //       currentIntersts:
-                          //           widget.webinarDetails['categories'],
-                          //     ));
+                          print('object');
+                          Get.to(() => EditCategories(
+                                webinarId: widget.webinarDetails['_id'],
+                                webinarCategories:
+                                    widget.webinarDetails['categories'],
+                              ));
                         },
                         icon: Icon(
                             color: Get.isDarkMode
@@ -1268,56 +1269,64 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Wrap(
-                        children: List.generate(
-                            widget.webinarDetails['categories'].length,
-                            (index) {
-                      return Container(
-                        width: AppLayout.getWidth(120),
-                        height: AppLayout.getHeight(60),
-                        margin: const EdgeInsets.only(right: 30, bottom: 30),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: AppLayout.getWidth(10),
-                            vertical: AppLayout.getHeight(5)),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              offset: const Offset(0, 2),
-                              blurRadius: 4,
-                              spreadRadius: 0,
-                            ),
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              offset: const Offset(0, -2),
-                              blurRadius: 4,
-                            ),
-                          ],
-                          color: Get.isDarkMode
-                              ? const Color.fromRGBO(38, 38, 38, 1)
-                              : const Color.fromRGBO(243, 243, 244, 1),
-                          border: Border.all(
-                            color: Get.isDarkMode
-                                ? Colors.white.withOpacity(0.1)
-                                : Colors.black.withOpacity(0.1),
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: AutoSizeText(
-                            widget.webinarDetails['categories'][index]['name'],
-                            style: TextStyle(
-                                fontFamily: 'JosefinSans Bold',
-                                fontWeight: FontWeight.w500,
+                    child: GetBuilder<WebinarManagementController>(
+                      builder: (controller) {
+                        return Wrap(
+                            children: List.generate(
+                                WebinarManagementController
+                                    .currentWebinar['categories']
+                                    .length, (index) {
+                          return Container(
+                            width: AppLayout.getWidth(120),
+                            height: AppLayout.getHeight(60),
+                            margin:
+                                const EdgeInsets.only(right: 30, bottom: 30),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: AppLayout.getWidth(10),
+                                vertical: AppLayout.getHeight(5)),
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  offset: const Offset(0, 2),
+                                  blurRadius: 4,
+                                  spreadRadius: 0,
+                                ),
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  offset: const Offset(0, -2),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                              color: Get.isDarkMode
+                                  ? const Color.fromRGBO(38, 38, 38, 1)
+                                  : const Color.fromRGBO(243, 243, 244, 1),
+                              border: Border.all(
                                 color: Get.isDarkMode
-                                    ? const Color.fromRGBO(212, 212, 216, 1)
-                                    : const Color(0xff475569),
-                                fontSize: AppLayout.getHeight(17)),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      );
-                    })),
+                                    ? Colors.white.withOpacity(0.1)
+                                    : Colors.black.withOpacity(0.1),
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: AutoSizeText(
+                                WebinarManagementController
+                                        .currentWebinar['categories'][index]
+                                    ['name'],
+                                style: TextStyle(
+                                    fontFamily: 'JosefinSans Bold',
+                                    fontWeight: FontWeight.w500,
+                                    color: Get.isDarkMode
+                                        ? const Color.fromRGBO(212, 212, 216, 1)
+                                        : const Color(0xff475569),
+                                    fontSize: AppLayout.getHeight(17)),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        }));
+                      },
+                    ),
                   ),
                 ),
                 Gap(AppLayout.getHeight(28)),

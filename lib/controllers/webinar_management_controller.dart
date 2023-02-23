@@ -431,6 +431,32 @@ class WebinarManagementController extends GetxController {
       print(e);
     }
   }
+  // edit categories for the webinar
+
+  Future<bool> editWebinarCategories(String id, List<String> categories) async {
+    print('edit webinar categories called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/categories");
+      final response = await http.put(url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "categories": categories,
+          }));
+      var data = jsonDecode(response.body);
+      print(data);
+      if (response.statusCode == 200) {
+        await getwebinarById(id);
+        update();
+        return true;
+      } else {
+        return false;
+      }
+      // getwebinarById(id);
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 
   // edit tagline=============
   Future<void> editWebinarTagline(String id, String tagline) async {

@@ -1,11 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:webinarprime/screens/webinar_management/view_webinar_screen/review_widget.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
+import 'package:webinarprime/utils/styles.dart';
 
 class WebinarDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> webinarDetails;
@@ -21,6 +24,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
   late TabController _tabController;
   late ScrollController _scrollController;
   bool _showTitle = false;
+  var reviewController = TextEditingController();
 
   @override
   void initState() {
@@ -494,7 +498,6 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       ),
                     ],
                   ),
-                  
                   child: ListTile(
                     leading: CircleAvatar(
                       radius: AppLayout.getHeight(30),
@@ -827,10 +830,49 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
               ),
             ),
 
-            // The content for the fourth tab goes here
-            const Center(
-              child: Text("Content for Tab 4"),
-            ),
+            // The content for the ReviewsTab goes here
+            ListView(
+              physics: const ClampingScrollPhysics(),
+              padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 20.h),
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      style: Mystyles.onelineStyle,
+                      onChanged: (value) {
+                        setState(() {});
+                      },
+                      controller: reviewController,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        hintText: 'Write a review. . .',
+                        hintStyle: Mystyles.onelineStyle,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    Gap(10.h),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size(double.maxFinite, 10.h),
+                        ),
+                        onPressed: reviewController.text.toString() == ""
+                            ? null
+                            : () {},
+                        child: const Text('Submit')),
+                  ],
+                ),
+                Gap(20.h),
+                Divider(
+                  color: Mystyles.onelineStyle.color,
+                  thickness: 1,
+                ),
+                Gap(10.h),
+                MyReviewWidget(),
+              ],
+            )
           ],
         ),
       ),

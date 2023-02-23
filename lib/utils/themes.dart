@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:webinarprime/utils/colors.dart';
-import 'package:webinarprime/utils/styles.dart';
 
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
@@ -56,7 +55,7 @@ ThemeData darkTheme = ThemeData(
   inputDecorationTheme: const InputDecorationTheme(
     border: InputBorder.none,
   ),
-  primaryColor: Mystyles.bigTitleStyle.color,
+  primaryColor: AppColors.LTsecondaryColor,
   secondaryHeaderColor: AppColors.LTsecondaryColor,
   scaffoldBackgroundColor: AppColors.DTbackGroundColor,
   textTheme: const TextTheme(
