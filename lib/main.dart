@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,8 @@ import 'package:webinarprime/utils/themes.dart';
 import 'dependencies/dependencies.dart' as dep;
 
 void main() async {
+  // await RoutesHelper.startForegroundService();
+  FlutterBackgroundService();
   WidgetsFlutterBinding.ensureInitialized();
   await dep.innit();
   Stripe.publishableKey =
@@ -29,13 +32,15 @@ class MyApp extends StatelessWidget {
             title: 'Flutter Demo',
             // initialRoute: RoutesHelper.signInRoute,
             initialRoute: RoutesHelper.signInRoute,
+            // initialRoute: Get.to(()=>ConnectPage()),
+            // initialRoute: RoutesHelper.liveKitConnectPage,
             // initialRoute: RoutesHelper.addWebinarScreen1route,
             getPages: RoutesHelper.routes,
             theme: lightTheme,
             darkTheme: darkTheme,
             // themeMode: ThemeMode.system,
-            themeMode: ThemeMode.light,
-            // themeMode: ThemeMode.dark,
+            // themeMode: ThemeMode.light,
+            themeMode: ThemeMode.dark,
           );
         },
         designSize: const Size(392.7, 803));

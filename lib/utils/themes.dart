@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webinarprime/utils/colors.dart';
+import 'package:webinarprime/utils/styles.dart';
 
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
@@ -7,41 +8,41 @@ ThemeData lightTheme = ThemeData(
   secondaryHeaderColor: AppColors.LTsecondaryColor,
   scaffoldBackgroundColor: AppColors.LTBackgroundColor,
   textTheme: const TextTheme(
-      headline1: TextStyle(
+      displayLarge: TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-      headline2: TextStyle(
+      displayMedium: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-      headline3: TextStyle(
+      displaySmall: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-      headline4: TextStyle(
+      headlineMedium: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-      headline5: TextStyle(
+      headlineSmall: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-      headline6: TextStyle(
+      titleLarge: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-      bodyText1: TextStyle(
+      bodyLarge: TextStyle(
         fontSize: 16,
         color: Colors.black,
       ),
-      bodyText2: TextStyle(
+      bodyMedium: TextStyle(
         fontSize: 14,
         color: Colors.black,
       )),
@@ -49,56 +50,55 @@ ThemeData lightTheme = ThemeData(
       ColorScheme.fromSwatch().copyWith(secondary: AppColors.LTforgroundColor),
 );
 
-
 ThemeData darkTheme = ThemeData(
-  brightness: Brightness.dark,  
+  brightness: Brightness.dark,
   fontFamily: 'Montserrat',
   inputDecorationTheme: const InputDecorationTheme(
     border: InputBorder.none,
   ),
-  primaryColor: AppColors.LTsecondaryColor,
+  primaryColor: Mystyles.bigTitleStyle.color,
   secondaryHeaderColor: AppColors.LTsecondaryColor,
   scaffoldBackgroundColor: AppColors.DTbackGroundColor,
   textTheme: const TextTheme(
-    headline1: TextStyle(
+    displayLarge: TextStyle(
       fontFamily: 'JosefinSans Bold',
       fontSize: 32,
       fontWeight: FontWeight.bold,
       color: Colors.white,
     ),
-    headline2: TextStyle(
+    displayMedium: TextStyle(
       fontFamily: 'JosefinSans Bold',
       fontSize: 24,
       fontWeight: FontWeight.bold,
       color: Colors.white,
     ),
-    headline3: TextStyle(
+    displaySmall: TextStyle(
       fontFamily: 'JosefinSans Bold',
       fontSize: 20,
       fontWeight: FontWeight.bold,
       color: Colors.white,
     ),
-    headline4: TextStyle(
+    headlineMedium: TextStyle(
       fontFamily: 'JosefinSans',
       fontSize: 16,
       color: Colors.white,
     ),
-    headline5: TextStyle(
+    headlineSmall: TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.bold,
       color: Colors.white,
     ),
-    headline6: TextStyle(
+    titleLarge: TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.bold,
       color: Colors.white,
     ),
-    bodyText1: TextStyle(
+    bodyLarge: TextStyle(
       fontFamily: 'JosefinSans Medium',
       fontSize: 16,
       color: Colors.white,
     ),
-    bodyText2: TextStyle(
+    bodyMedium: TextStyle(
       fontFamily: 'JosefinSans Medium',
       fontSize: 14,
       color: Colors.white,

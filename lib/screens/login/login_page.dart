@@ -2,10 +2,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/routes/routes.dart';
 import 'package:webinarprime/screens/sign_up/signup_page.dart';
 import 'package:webinarprime/utils/dimension.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPage createState() => _LoginPage();
 }
@@ -204,6 +207,13 @@ class _LoginPage extends State<LoginPage> {
                           )
                         ],
                       ),
+                    ),
+                    SizedBox(
+                      height: AppLayout.getHeight(20),
+                    ),
+                    GestureDetector(
+                      onTap: () => Get.toNamed(RoutesHelper.liveKitConnectPage),
+                      child: const Text('livekit'),
                     )
                   ],
                 ),

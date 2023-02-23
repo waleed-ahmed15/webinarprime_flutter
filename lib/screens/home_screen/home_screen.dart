@@ -145,9 +145,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.notifications),
+                    leading: const Icon(Icons.insert_invitation),
                     title: Text(
-                      'Notifications',
+                      'Invitations',
                       style: Mystyles.listtileTitleStyle
                           .copyWith(height: 1.5, fontSize: 18.sp),
                     ),
@@ -273,15 +273,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: AppColors.LTprimaryColor.withOpacity(1),
-            // boxShadow: [
-            //   BoxShadow(
-            //     blurRadius: 20,
-            //     color: Colors.black.withOpacity(.1),
-            //   )
-            // ],
-          ),
+          decoration: BoxDecoration(color: Mycolors.myappbarcolor
+              // boxShadow: [
+              //   BoxShadow(
+              //     blurRadius: 20,
+              //     color: Colors.black.withOpacity(.1),
+              //   )
+              // ],
+              ),
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
@@ -295,21 +294,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 // duration: const Duration(milliseconds: 400),
                 tabBackgroundColor: Colors.grey[100]!,
                 // color: Colors.black,
-                tabs: const [
+                tabs: [
                   GButton(
                     icon: Icons.home,
+                    iconSize: 30.h,
                     text: 'Home',
                   ),
                   GButton(
                     icon: Icons.favorite,
+                    iconSize: 30.h,
                     text: 'Likes',
                   ),
                   GButton(
                     icon: Icons.search,
+                    iconSize: 30.h,
                     text: 'Search',
                   ),
                   GButton(
-                    icon: Icons.chat_outlined,
+                    icon: Icons.chat_bubble,
+                    iconSize: 30.h,
                     text: 'Chat',
                   ),
                 ],

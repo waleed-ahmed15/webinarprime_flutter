@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:webinarprime/livekit/pages/connect.dart';
 import 'package:webinarprime/screens/forgot_password_screen.dart';
 import 'package:webinarprime/screens/home_screen/home_screen.dart';
 import 'package:webinarprime/screens/login/login_page.dart';
@@ -9,7 +10,7 @@ import 'package:webinarprime/screens/select_interests/select_interest_screen.dar
 import 'package:webinarprime/screens/sign_up/signup_page.dart';
 import 'package:webinarprime/screens/upload_profile_screen.dart';
 import 'package:webinarprime/screens/webinar_management/add_webinar_screens/add_webinar_screen1.dart';
-
+import 'package:flutter_background/flutter_background.dart';
 import '../screens/webinar_management/add_webinar_screens/add_webinar_screen2.dart';
 import '../screens/webinar_management/add_webinar_screens/add_webinar_screen3.dart';
 
@@ -28,8 +29,10 @@ class RoutesHelper {
   static const String viewMyWebinarsRoute = '/view-my-webinars';
   static const String searchUsersRoute = '/search-users';
   static const String notificationScreenRoute = '/notifications';
+  static const String liveKitConnectPage = '/livekit-connect';
 
   static List<GetPage> routes = [
+    GetPage(name: liveKitConnectPage, page: () => const ConnectPage()),
     GetPage(
       name: addWebinarScreen1route,
       page: () => const AddWebinarScreen1(),
@@ -50,7 +53,7 @@ class RoutesHelper {
     ),
     GetPage(
       name: signInRoute,
-      page: () => LoginPage(),
+      page: () => const LoginPage(),
     ),
     GetPage(
       name: homeScreenRoute,
@@ -73,4 +76,17 @@ class RoutesHelper {
       page: () => const NotificationScreen(),
     ),
   ];
+
+  static Future<bool> startForegroundService() async {
+    final androidConfig = const FlutterBackgroundAndroidConfig(
+      notificationTitle: 'Title of the notification',
+      notificationText: 'Text of the notification',
+      notificationImportance: AndroidNotificationImportance.Default,
+      notificationIcon: AndroidResource(
+          name: 'background_icon',
+          defType: 'drawable'), // Default is ic_launcher from folder mipmap
+    );
+    await FlutterBackground.initialize(androidConfig: androidConfig);
+    return FlutterBackground.enableBackgroundExecution();
+  }
 }

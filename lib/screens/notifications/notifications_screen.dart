@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/controllers/webinar_management_controller.dart';
+import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
 import 'package:webinarprime/utils/styles.dart';
 
@@ -23,115 +25,130 @@ class _NotificationScreenState extends State<NotificationScreen>
 
   @override
   Widget build(BuildContext context) {
-    print('awdawdawdad');
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print('pressed');
-          Get.find<AuthController>().getInvitations('63ea2153bb071d3c3298002d');
-        },
-      ),
-      appBar: AppBar(
-        bottom: TabBar(
-            controller: _tabController,
-            // labelStyle: Mystyles.tabTextstyle,
-            tabs: [
-              Tab(
-                child: Text(
-                  'Notifications',
-                  style: Mystyles.tabTextstyle,
+    return SafeArea(
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Get.find<AuthController>()
+                .getInvitations('63ea2153bb071d3c3298002d');
+          },
+        ),
+        appBar: AppBar(
+          toolbarHeight: 0,
+          elevation: 0,
+          backgroundColor: Mycolors.myappbarcolor,
+          bottom: TabBar(
+              indicatorColor: AppColors.LTprimaryColor,
+              controller: _tabController,
+              // labelStyle: Mystyles.tabTextstyle,
+              tabs: [
+                Tab(
+                  child: Text(
+                    'Notifications',
+                    style: Mystyles.tabTextstyle,
+                  ),
                 ),
-              ),
-              Tab(
-                child: Text(
-                  'Invitations',
-                  style: Mystyles.tabTextstyle,
+                Tab(
+                  child: Text(
+                    'Invitations',
+                    style: Mystyles.tabTextstyle,
+                  ),
                 ),
-              ),
-              Tab(
-                child: Text(
-                  '3rd tab',
-                  style: Mystyles.tabTextstyle,
+                Tab(
+                  child: Text(
+                    '3rd tab',
+                    style: Mystyles.tabTextstyle,
+                  ),
                 ),
-              ),
-            ]),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          const Center(child: Text('notifications')),
-          GetBuilder<AuthController>(builder: (controller) {
-            print('tab2');
-            return SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: controller.currentUserInvitations
-                    .map((e) => Container(
-                          margin: const EdgeInsets.all(10),
-                          decoration: MyBoxDecorations.listtileDecoration,
-                          child: Column(
-                            children: [
-                              ListTile(
-                                title: Text(
-                                  e['webinar']['name'] + '',
-                                  style: Mystyles.listtileSubtitleStyle,
-                                ),
-                                subtitle: Text(
-                                  "Role: " + e['role'],
-                                  style: Mystyles.listtileSubtitleStyle,
-                                ),
-                                trailing: Text(
-                                  e['status'],
-                                  style: Mystyles.listtileSubtitleStyle,
-                                ),
-                              ),
-                              Gap(AppLayout.getHeight(10)),
-                              Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Gap(AppLayout.getWidth(10)),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      print('accept pressed');
-                                      controller.acceptInvitation(e['_id']);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green,
-                                    ),
-                                    child: Text(
-                                      'Accept',
-                                      style: TextStyle(
-                                          fontSize: AppLayout.getHeight(13),
-                                          fontFamily: 'JosefinSans Bold',
-                                          letterSpacing: 1),
-                                    ),
+              ]),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            const Center(child: Text('notifications')),
+            GetBuilder<AuthController>(builder: (controller) {
+              print('tab2');
+              return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: controller.currentUserInvitations
+                      .map((e) => Container(
+                            margin: const EdgeInsets.all(10),
+                            decoration: MyBoxDecorations.listtileDecoration,
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    e['webinar']['name'] + '',
+                                    style: Mystyles.listtileSubtitleStyle,
                                   ),
-                                  Gap(AppLayout.getWidth(10)),
-                                  ElevatedButton(
-                                      onPressed: () {},
+                                  subtitle: Text(
+                                    "Role: " + e['role'],
+                                    style: Mystyles.listtileSubtitleStyle,
+                                  ),
+                                  trailing: Text(
+                                    e['status'],
+                                    style: Mystyles.listtileSubtitleStyle,
+                                  ),
+                                ),
+                                Gap(AppLayout.getHeight(10)),
+                                Row(
+                                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Gap(AppLayout.getWidth(10)),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        print('accept pressed');
+                                        controller.acceptInvitation(e['_id']);
+                                      },
                                       style: ElevatedButton.styleFrom(
-                                        animationDuration:
-                                            const Duration(seconds: 3),
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: Colors.green,
                                       ),
                                       child: Text(
-                                        'Decline',
+                                        'Accept',
                                         style: TextStyle(
                                             fontSize: AppLayout.getHeight(13),
                                             fontFamily: 'JosefinSans Bold',
                                             letterSpacing: 1),
-                                      )),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ))
-                    .toList(),
-              ),
-            );
-          }),
-          const Center(child: Text('3rd tab')),
-        ],
+                                      ),
+                                    ),
+                                    Gap(AppLayout.getWidth(10)),
+                                    ElevatedButton(
+                                        onPressed: () async {
+                                          print('decline pressed');
+                                          bool removed = await Get.find<
+                                                  WebinarManagementController>()
+                                              .removeWebinarMember(
+                                                  memeberId: e['_id']);
+                                          if (removed) {
+                                            controller.currentUserInvitations
+                                                .remove(e);
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          animationDuration:
+                                              const Duration(seconds: 3),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                        child: Text(
+                                          'Decline',
+                                          style: TextStyle(
+                                              fontSize: AppLayout.getHeight(13),
+                                              fontFamily: 'JosefinSans Bold',
+                                              letterSpacing: 1),
+                                        )),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ))
+                      .toList(),
+                ),
+              );
+            }),
+            const Center(child: Text('3rd tab')),
+          ],
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
@@ -54,8 +55,8 @@ class _UserSearchScreenState extends State<UserSearchScreen>
           child: const Icon(Icons.close),
         ),
         appBar: AppBar(
-          backgroundColor:
-              Get.isDarkMode ? Colors.black38 : Colors.white.withOpacity(0.9),
+          backgroundColor: Mycolors.myappbarcolor,
+          elevation: 0,
           automaticallyImplyLeading: false,
           title: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -112,8 +113,10 @@ class _UserSearchScreenState extends State<UserSearchScreen>
         ),
         body: SafeArea(
           child: TabBarView(
+            physics: const BouncingScrollPhysics(),
             controller: _tabController,
             children: [
+              //Results Tab
               GetBuilder<AuthController>(builder: ((controller) {
                 if (controller.searchedUsers.isEmpty) {
                   return Center(
@@ -123,84 +126,140 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                   return ListView.builder(
                     itemCount: controller.searchedUsers.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(AppConstants.baseURL +
-                              controller.searchedUsers[index]['profile_image']),
-                        ),
-                        title: Text(
-                          controller.searchedUsers[index]['name'],
-                          style: TextStyle(
-                              fontFamily: 'JosefinSans SemiBold',
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 1,
-                              fontSize: AppLayout.getHeight(19)),
-                        ),
-                        subtitle:
-                            Text(controller.searchedUsers[index]['email']),
-                        trailing: GetBuilder<WebinarManagementController>(
-                            builder: (controller2) {
-                          if (widget.usersType == 2) {
-                            if (WebinarManagementController
-                                .currentWebinar['guests']
-                                .any((map) =>
-                                    map['_id'] ==
-                                    controller.searchedUsers[index]['_id'])) {
-                              return IconButton(
-                                icon: const Icon(Icons.remove_circle_outline,
-                                    color: Colors.red, size: 30),
-                                onPressed: () {
-                                  // controller2.removeGuestFromWebinarById(
-                                  // widget.webinarId,
-                                  // controller.searchedUsers[index]['_id']);
-                                },
-                              );
+                      return Container(
+                        margin:
+                            EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
+                        decoration: MyBoxDecorations.listtileDecoration,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(AppConstants.baseURL +
+                                controller.searchedUsers[index]
+                                    ['profile_image']),
+                          ),
+                          title: Text(
+                            controller.searchedUsers[index]['name'],
+                            style: TextStyle(
+                                fontFamily: 'JosefinSans SemiBold',
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 1,
+                                fontSize: AppLayout.getHeight(19)),
+                          ),
+                          subtitle:
+                              Text(controller.searchedUsers[index]['email']),
+                          trailing: GetBuilder<WebinarManagementController>(
+                              builder: (controller2) {
+                            if (widget.usersType == 2) {
+                              if (WebinarManagementController
+                                  .currentWebinar['guests']
+                                  .any((map) =>
+                                      map['_id'] ==
+                                      controller.searchedUsers[index]['_id'])) {
+                                return IconButton(
+                                  icon: const Icon(Icons.remove_circle_outline,
+                                      color: Colors.red, size: 30),
+                                  onPressed: () {
+                                    // controller2.removeGuestFromWebinarById(
+                                    // widget.webinarId,
+                                    // controller.searchedUsers[index]['_id']);
+                                  },
+                                );
+                              } else {
+                                return IconButton(
+                                  icon: const Icon(Icons.add_circle_outline,
+                                      color: Colors.green, size: 30),
+                                  onPressed: () async {
+                                    // print(controller.searchedUsers[index]['_id']);
+                                    // print(
+                                    // controller.searchedUsers[index]['name']);
+                                    await controller2.addmemberTowebinar(
+                                        widget.webinarId,
+                                        controller.searchedUsers[index]['_id'],
+                                        'guest');
+
+                                    print(controller.searchedUsers[index]);
+                                    controller.searchedUsers.removeWhere(
+                                        (element) =>
+                                            element['_id'] ==
+                                            controller.searchedUsers[index]
+                                                ['_id']);
+
+                                    await WebinarManagementController()
+                                        .getGuestsForWebinar(widget.webinarId);
+
+                                    setState(() {});
+                                  },
+                                );
+                              }
+                            } else if (widget.usersType == 1) {
+                              if (WebinarManagementController
+                                  .currentWebinar['organizers']
+                                  .any((map) =>
+                                      map['_id'] ==
+                                      controller.searchedUsers[index]['_id'])) {
+                                return IconButton(
+                                  icon: const Icon(
+                                    Icons.remove_circle_outline,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                                  onPressed: () {
+                                    // controller2.removeOrganizerFromWebinarById(
+                                    // widget.webinarId,
+                                    // controller.searchedUsers[index]['_id']);
+                                  },
+                                );
+                              } else {
+                                return IconButton(
+                                  icon: const Icon(
+                                    Icons.add_circle_outline,
+                                    color: Colors.green,
+                                    size: 30,
+                                  ),
+                                  onPressed: () async {
+                                    await controller2.addmemberTowebinar(
+                                        widget.webinarId,
+                                        controller.searchedUsers[index]['_id'],
+                                        'organizer');
+
+                                    print(controller.searchedUsers[index]);
+                                    controller.searchedUsers.removeWhere(
+                                        (element) =>
+                                            element['_id'] ==
+                                            controller.searchedUsers[index]
+                                                ['_id']);
+                                    await controller2.getOrganizersForWebinar(
+                                        widget.webinarId);
+                                    // print(
+                                    // "WebinarManagementController.currentwebinarOrganizers======");
+                                    // print(WebinarManagementController
+                                    // .currentwebinarPendingMembers);
+                                    // print(
+                                    // "==========WebinarManagementController.currentwebinarOrganizers");
+
+                                    setState(() {});
+                                  },
+                                );
+                              }
                             } else {
-                              return IconButton(
-                                icon: const Icon(Icons.add_circle_outline,
-                                    color: Colors.green, size: 30),
-                                onPressed: () async {
-                                  // print(controller.searchedUsers[index]['_id']);
-                                  // print(
-                                  // controller.searchedUsers[index]['name']);
-                                  await controller2.addmemberTowebinar(
-                                      widget.webinarId,
-                                      controller.searchedUsers[index]['_id'],
-                                      'guest');
-
-                                  print(controller.searchedUsers[index]);
-                                  controller.searchedUsers.removeWhere(
-                                      (element) =>
-                                          element['_id'] ==
-                                          controller.searchedUsers[index]
-                                              ['_id']);
-
-                                  await WebinarManagementController()
-                                      .getGuestsForWebinar(widget.webinarId);
-
-                                  setState(() {});
-                                },
-                              );
-                            }
-                          } else if (widget.usersType == 1) {
-                            if (WebinarManagementController
-                                .currentWebinar['organizers']
-                                .any((map) =>
-                                    map['_id'] ==
-                                    controller.searchedUsers[index]['_id'])) {
-                              return IconButton(
-                                icon: const Icon(
-                                  Icons.remove_circle_outline,
-                                  color: Colors.red,
-                                  size: 30,
-                                ),
-                                onPressed: () {
-                                  // controller2.removeOrganizerFromWebinarById(
-                                  // widget.webinarId,
-                                  // controller.searchedUsers[index]['_id']);
-                                },
-                              );
-                            } else {
+                              // if (WebinarManagementController
+                              //     .currentWebinar['attendees']
+                              //     .any((map) =>
+                              //         map['_id'] ==
+                              //         controller.searchedUsers[index]['_id'])) {
+                              //   return IconButton(
+                              //     icon: const Icon(
+                              //       Icons.remove_circle_outline,
+                              //       color: Colors.red,
+                              //       size: 30,
+                              //     ),
+                              //     onPressed: () {
+                              //       // controller2.removeAttendeeFromWebinarById(
+                              //       // widget.webinarId,
+                              //       // controller.searchedUsers[index]['_id']);
+                              //     },
+                              //   );
+                              // } else
+                              // {
                               return IconButton(
                                 icon: const Icon(
                                   Icons.add_circle_outline,
@@ -211,7 +270,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                                   await controller2.addmemberTowebinar(
                                       widget.webinarId,
                                       controller.searchedUsers[index]['_id'],
-                                      'organizer');
+                                      'attendee');
 
                                   print(controller.searchedUsers[index]);
                                   controller.searchedUsers.removeWhere(
@@ -219,65 +278,16 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                                           element['_id'] ==
                                           controller.searchedUsers[index]
                                               ['_id']);
-                                  await controller2.getOrganizersForWebinar(
-                                      widget.webinarId);
-                                  // print(
-                                  // "WebinarManagementController.currentwebinarOrganizers======");
-                                  // print(WebinarManagementController
-                                  // .currentwebinarPendingMembers);
-                                  // print(
-                                  // "==========WebinarManagementController.currentwebinarOrganizers");
+                                  await WebinarManagementController()
+                                      .getAttendeesForWebinar(widget.webinarId);
 
                                   setState(() {});
                                 },
                               );
+                              // }
                             }
-                          } else {
-                            // if (WebinarManagementController
-                            //     .currentWebinar['attendees']
-                            //     .any((map) =>
-                            //         map['_id'] ==
-                            //         controller.searchedUsers[index]['_id'])) {
-                            //   return IconButton(
-                            //     icon: const Icon(
-                            //       Icons.remove_circle_outline,
-                            //       color: Colors.red,
-                            //       size: 30,
-                            //     ),
-                            //     onPressed: () {
-                            //       // controller2.removeAttendeeFromWebinarById(
-                            //       // widget.webinarId,
-                            //       // controller.searchedUsers[index]['_id']);
-                            //     },
-                            //   );
-                            // } else
-                            // {
-                            return IconButton(
-                              icon: const Icon(
-                                Icons.add_circle_outline,
-                                color: Colors.green,
-                                size: 30,
-                              ),
-                              onPressed: () async {
-                                await controller2.addmemberTowebinar(
-                                    widget.webinarId,
-                                    controller.searchedUsers[index]['_id'],
-                                    'attendee');
-
-                                print(controller.searchedUsers[index]);
-                                controller.searchedUsers.removeWhere(
-                                    (element) =>
-                                        element['_id'] ==
-                                        controller.searchedUsers[index]['_id']);
-                                await WebinarManagementController()
-                                    .getAttendeesForWebinar(widget.webinarId);
-
-                                setState(() {});
-                              },
-                            );
-                            // }
-                          }
-                        }),
+                          }),
+                        ),
                       );
                     },
                   );
@@ -306,45 +316,56 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                     itemCount: WebinarManagementController
                         .currentwebinarPendingMembers.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(AppConstants.baseURL +
-                              WebinarManagementController
-                                      .currentwebinarPendingMembers[index]
-                                  ['user']['profile_image']),
-                        ),
-                        title: Text(
-                          WebinarManagementController
-                                  .currentwebinarPendingMembers[index]['user']
-                              ['name'],
-                          style: TextStyle(
-                              fontFamily: 'JosefinSans SemiBold',
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 1,
-                              fontSize: AppLayout.getHeight(19)),
-                        ),
-                        subtitle: Text(WebinarManagementController
-                                .currentwebinarPendingMembers[index]['user']
-                            ['email']),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.remove_circle_outline,
-                            color: Colors.red,
-                            size: 30,
+                      return Container(
+                        margin:
+                            EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
+                        decoration: MyBoxDecorations.listtileDecoration,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(AppConstants.baseURL +
+                                WebinarManagementController
+                                        .currentwebinarPendingMembers[index]
+                                    ['user']['profile_image']),
                           ),
-                          onPressed: () {
-                            // controller.removeOrganizerFromWebinarById(
-                            // widget.webinarId,
-                            // WebinarManagementController
-                            // .currentWebinarOrganizers[index]['_id']);
-                            print('cancel pressed ');
-                          },
+                          title: Text(
+                            WebinarManagementController
+                                    .currentwebinarPendingMembers[index]['user']
+                                ['name'],
+                            style: TextStyle(
+                                fontFamily: 'JosefinSans SemiBold',
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 1,
+                                fontSize: 19.sp),
+                          ),
+                          subtitle: Text(WebinarManagementController
+                                  .currentwebinarPendingMembers[index]['user']
+                              ['email']),
+                          // trailing: TextButton(
+                          //   child: Text(
+                          //     'cancel',
+                          //     style: TextStyle(
+                          //         fontFamily: 'JosefinSans SemiBold',
+                          //         fontWeight: FontWeight.w500,
+                          //         letterSpacing: 1,
+                          //         color: Colors.red,
+                          //         fontSize: AppLayout.getHeight(19)),
+                          //   ),
+                          // onPressed: () {
+                          //   // controller.removeOrganizerFromWebinarById(
+                          //   // widget.webinarId,
+                          //   // WebinarManagementController
+                          //   // .currentWebinarOrganizers[index]['_id']);
+                          //   print('cancel pressed ');
+                          // },
+                          // ),
                         ),
                       );
                     },
                   );
                 }
               }),
+
+              //-------------------------------this is for joined tab view---------------------------------
               GetBuilder<WebinarManagementController>(builder: (controller) {
                 String membersType = 'organizers';
                 if (widget.usersType == 1) {
@@ -354,78 +375,85 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                 } else {
                   membersType = 'attendees';
                 }
-                print(WebinarManagementController.currentWebinar[membersType]);
-                print(WebinarManagementController.currentWebinar[membersType]);
                 if (WebinarManagementController
                     .currentWebinar[membersType].isEmpty) {
                   if (widget.usersType == 1) {
                     return Center(
-                        child: Text("No  Organizers Joined yet",
+                        child: Text("No Organizers Joined yet",
                             style: Mystyles.myhintTextstyle));
                   } else if (widget.usersType == 2) {
                     return Center(
-                        child: Text("No   Guests Joined yet",
+                        child: Text("No Guests Joined yet",
                             style: Mystyles.myhintTextstyle));
                   } else {
                     return Center(
-                        child: Text("No  Attendees Joined yet",
+                        child: Text("No Attendees Joined yet",
                             style: Mystyles.myhintTextstyle));
                   }
                 } else {
                   return ListView.builder(
                     itemCount: WebinarManagementController
-                        .currentWebinar[membersType].length,
+                        .currentwebinarAcceptedMembers.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(AppConstants.baseURL +
-                              WebinarManagementController
-                                      .currentWebinar[membersType][index]
-                                  ['profile_image']),
-                        ),
-                        title: Text(
-                          WebinarManagementController
-                              .currentWebinar[membersType][index]['name'],
-                          style: TextStyle(
-                              fontFamily: 'JosefinSans SemiBold',
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 1,
-                              fontSize: AppLayout.getHeight(19)),
-                        ),
-                        subtitle: Text(WebinarManagementController
-                            .currentWebinar[membersType][index]['email']),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.remove_circle_outline,
-                            color: Colors.red,
-                            size: 30,
+                      return Container(
+                        margin:
+                            EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
+                        decoration: MyBoxDecorations.listtileDecoration,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(AppConstants.baseURL +
+                                WebinarManagementController
+                                        .currentwebinarAcceptedMembers[index]
+                                    ['user']['profile_image']),
                           ),
-                          onPressed: () async {
-                            bool removed = await controller.removeWebinarMember(
-                              memeberId: WebinarManagementController
-                                  .currentWebinar[membersType][index]['_id'],
-                              webinarId: widget.webinarId,
-                            );
-                            print(WebinarManagementController
-                                .currentWebinar[membersType][index]['_id']);
-                            print(WebinarManagementController
-                                .currentWebinar[membersType][index]['email']);
-                            if (removed) {
-                              WebinarManagementController
-                                  .currentWebinar[membersType]
-                                  .removeWhere((element) =>
-                                      element['_id'] ==
-                                      WebinarManagementController
-                                              .currentWebinar[membersType]
-                                          [index]['_id']);
-                              WebinarManagementController().update();
-                            }
-                            Get.showSnackbar(GetBar(
-                              message: 'Member Removed',
-                              duration: const Duration(seconds: 2),
-                            ));
-                            print('remove pressed ');
-                          },
+                          title: Text(
+                            WebinarManagementController
+                                    .currentwebinarAcceptedMembers[index]
+                                ['user']['name'],
+                            style: TextStyle(
+                                fontFamily: 'JosefinSans SemiBold',
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 1,
+                                fontSize: AppLayout.getHeight(19)),
+                          ),
+                          subtitle: Text(WebinarManagementController
+                                  .currentwebinarAcceptedMembers[index]['user']
+                              ['email']),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.remove_circle_outline,
+                              color: Colors.red,
+                              size: 30,
+                            ),
+                            onPressed: () async {
+                              bool removed =
+                                  await controller.removeWebinarMember(
+                                memeberId: WebinarManagementController
+                                        .currentwebinarAcceptedMembers[index]
+                                    ['_id'],
+                              );
+
+                              print(WebinarManagementController
+                                      .currentwebinarAcceptedMembers[index]
+                                  ['user']['email']);
+
+                              if (removed) {
+                                WebinarManagementController
+                                    .currentwebinarAcceptedMembers
+                                    .removeWhere((element) =>
+                                        element['_id'] ==
+                                        WebinarManagementController
+                                                .currentwebinarAcceptedMembers[
+                                            index]['_id']);
+                                WebinarManagementController().update();
+                              }
+                              Get.showSnackbar(GetBar(
+                                message: 'Member Removed',
+                                duration: const Duration(seconds: 2),
+                              ));
+                              print('remove pressed ');
+                            },
+                          ),
                         ),
                       );
                     },

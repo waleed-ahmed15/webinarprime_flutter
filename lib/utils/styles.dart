@@ -20,7 +20,7 @@ class Mystyles {
       letterSpacing: 1,
       color: Get.isDarkMode ? const Color(0xffA1a1aa) : const Color(0xff475569),
       fontSize: 18.sp,
-      fontFamily: 'JosefinSans Regular');
+      fontFamily: 'JosefinSans SemiBold');
   static TextStyle listtileTitleStyle = TextStyle(
     height: 1.5,
     fontSize: 16.sp,
@@ -132,6 +132,9 @@ class Mycolors {
   static Color iconColor = Get.isDarkMode
       ? const Color.fromRGBO(122, 121, 121, 1)
       : const Color.fromRGBO(176, 179, 190, 1);
+
+  static Color myappbarcolor =
+      Get.isDarkMode ? const Color(0xff0A2647) : const Color(0xffFDFDF6);
 }
 
 class MyBoxDecorations {

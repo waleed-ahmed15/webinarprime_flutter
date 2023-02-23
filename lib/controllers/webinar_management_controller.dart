@@ -21,6 +21,7 @@ class WebinarManagementController extends GetxController {
   static final List<dynamic> webinarsList = [];
   static Map<String, dynamic> currentWebinar = {};
   static List<dynamic> currentwebinarPendingMembers = [];
+  static List<dynamic> currentwebinarAcceptedMembers = [];
   Future<void> AddWebinardata(Map<String, dynamic> webinardata) async {
     print('add webinar data called');
     print(webinardata);
@@ -267,13 +268,20 @@ class WebinarManagementController extends GetxController {
       // print('=======================organizers====================');
       print(data['organizers']);
       // print('=======================organizers====================');
-      currentwebinarPendingMembers = data['organizers'];
-      currentwebinarPendingMembers
-          .removeWhere((element) => element['status'] != 'pending');
+      currentwebinarPendingMembers.clear();
+      currentwebinarPendingMembers = data['organizers'].where((element) {
+        return element['status'] == 'pending';
+      }).toList();
+
+      print('======================pending=organizers====================');
+      print(currentwebinarPendingMembers);
+      print('======================pending=organizers====================');
 
       print('======================accepted=organizers====================');
-      print(currentWebinar['organizers']);
-      print('=======================organizers====================');
+      currentwebinarAcceptedMembers = data['organizers'].where((element) {
+        return element['status'] == 'joined';
+      }).toList();
+      print('=======================accepted organizers====================');
 
       update();
     } catch (e) {
@@ -295,9 +303,23 @@ class WebinarManagementController extends GetxController {
       print(data['attendees']);
       // print('=======================attendees====================');
       currentwebinarPendingMembers.clear();
-      currentwebinarPendingMembers = data['attendees'];
-      currentwebinarPendingMembers
-          .removeWhere((element) => element['status'] != 'pending');
+      currentwebinarPendingMembers = data['attendees'].where((element) {
+        return element['status'] == 'pending';
+      }).toList();
+
+      currentwebinarAcceptedMembers.clear();
+      currentwebinarAcceptedMembers = data['attendees'].where((element) {
+        return element['status'] == 'joined';
+      }).toList();
+
+      print('======================pending=attendees====================');
+      print(currentwebinarPendingMembers);
+      print('======================pending=attendees====================');
+
+      print('======================accepted=attendees====================');
+      print(currentwebinarAcceptedMembers);
+      print('=======================accepted attendees====================');
+
       update();
     } catch (e) {
       print(e);
@@ -313,14 +335,25 @@ class WebinarManagementController extends GetxController {
         'Content-Type': 'application/json',
       });
       var data = jsonDecode(response.body);
-      // print(data);
-      // print('=======================guests====================');
-      print(data['guests']);
-      // print('=======================guests====================');
+      print(data);
+
       currentwebinarPendingMembers.clear();
-      currentwebinarPendingMembers = data['guests'];
-      currentwebinarPendingMembers
-          .removeWhere((element) => element['status'] != 'pending');
+      currentwebinarPendingMembers = data['guests'].where((element) {
+        return element['status'] == 'pending';
+      }).toList();
+
+      currentwebinarAcceptedMembers.clear();
+      currentwebinarAcceptedMembers = data['guests'].where((element) {
+        return element['status'] == 'joined';
+      }).toList();
+
+      print('======================pending=guests====================');
+      print(currentwebinarPendingMembers);
+      print('======================pending=guests====================');
+      print('======================accepted=guests====================');
+      print(currentwebinarAcceptedMembers);
+      print('=======================accepted guests====================');
+
       update();
     } catch (e) {
       print(e);
@@ -355,11 +388,9 @@ class WebinarManagementController extends GetxController {
 
   // remove from webinar===============================================================
 
-  Future<bool> removeWebinarMember(
-      {required String memeberId, required String webinarId}) async {
+  Future<bool> removeWebinarMember({required String memeberId}) async {
     try {
-      Uri url = Uri.parse(
-          "${AppConstants.baseURL}/webinar/member/$memeberId/$webinarId");
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/member/$memeberId");
       http.Response response = await http.delete(url, headers: {
         'Content-Type': 'application/json',
       });
