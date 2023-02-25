@@ -7,12 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/routes/routes.dart';
+import 'package:webinarprime/screens/chat/chat_list_screen.dart';
 import 'package:webinarprime/screens/profile_sceen/profile_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/app_fonts.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:webinarprime/utils/dimension.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,8 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
     connecteSocket();
     super.initState();
-    print("height: ${AppLayout.getScreenHeight()}");
-    print('width :${AppLayout.getScreenWidth()}');
+    // print("height: ${AppLayout.getScreenHeight()}");
+    // print('width :${AppLayout.getScreenWidth()}');
   }
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -87,10 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'Search',
       style: optionStyle,
     ),
-    const Text(
-      'Chat',
-      style: optionStyle,
-    ),
+    const ChatListScreen(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -237,50 +234,45 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         // backgroundColor: Colors.white,
 
-        appBar: AppBar(
-          title: Text(
-            "Home",
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-          ),
-          centerTitle: true,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          elevation: 0,
-          // backgroundColor: AppColors.LTprimaryColor.withOpacity(0.8),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.menu_sharp,
-              size: 30,
-              color: AppColors.LTprimaryColor,
-            ),
-            onPressed: () {
-              SharedPreferences sharedPreferences = Get.find();
-              AuthController authController = Get.find();
-              authController.authenticateUser(
-                  sharedPreferences.getString('token') != null);
-              print(authController.currentUser);
-              print('hereauth1111');
-              if (scaffoldKey.currentState!.isDrawerOpen) {
-                scaffoldKey.currentState!.closeDrawer();
-                //close drawer, if drawer is open
-              } else {
-                scaffoldKey.currentState!.openDrawer();
-                //open drawer, if drawer is closed
-              }
-            },
-          ),
-        ),
+        appBar: _selectedIndex == 0
+            ? AppBar(
+                // title: Text(
+                //   "Home",
+                //   style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                // ),
+                // centerTitle: true,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                elevation: 0,
+                // backgroundColor: AppColors.LTprimaryColor.withOpacity(0.8),
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.menu_sharp,
+                    size: 30,
+                    color: AppColors.LTprimaryColor,
+                  ),
+                  onPressed: () {
+                    SharedPreferences sharedPreferences = Get.find();
+                    AuthController authController = Get.find();
+                    authController.authenticateUser(
+                        sharedPreferences.getString('token') != null);
+                    print(authController.currentUser);
+                    print('hereauth1111');
+                    if (scaffoldKey.currentState!.isDrawerOpen) {
+                      scaffoldKey.currentState!.closeDrawer();
+                      //close drawer, if drawer is open
+                    } else {
+                      scaffoldKey.currentState!.openDrawer();
+                      //open drawer, if drawer is closed
+                    }
+                  },
+                ),
+              )
+            : null, 
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(color: Mycolors.myappbarcolor
-              // boxShadow: [
-              //   BoxShadow(
-              //     blurRadius: 20,
-              //     color: Colors.black.withOpacity(.1),
-              //   )
-              // ],
-              ),
+          decoration: BoxDecoration(color: Mycolors.myappbarcolor),
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),

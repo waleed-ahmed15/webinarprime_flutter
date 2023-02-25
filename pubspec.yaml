@@ -54,6 +54,7 @@ dependencies:
   mime_type: ^1.0.0
   mongo_dart: ^0.8.0
   multi_select_flutter: ^4.1.2
+  searchfield: ^0.7.5
   shared_preferences: ^2.0.15
   shimmer: ^2.0.0
   socket_io_client: ^2.0.1

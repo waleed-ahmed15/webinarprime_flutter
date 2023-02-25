@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AppConstants {
-  static String baseURL = 'http://192.168.100.14:5000';
+  // static String baseURL = 'http://192.168.100.14:5000';
+  static const String baseURL = 'http://10.0.2.2:5000';
   static TextStyle popmenuitemStyle = TextStyle(
       fontFamily: 'Montserrats',
       fontWeight: FontWeight.w300,
