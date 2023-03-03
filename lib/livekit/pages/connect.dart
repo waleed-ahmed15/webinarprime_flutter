@@ -76,7 +76,7 @@ class _ConnectPageState extends State<ConnectPage> {
     await prefs.setBool(_storeKeyFastConnect, _fastConnect);
   }
 
-  Future<void> _connect(BuildContext ctx) async {
+  Future<void> connect(BuildContext ctx) async {
     //
     try {
       setState(() {
@@ -84,7 +84,7 @@ class _ConnectPageState extends State<ConnectPage> {
       });
 
       // Save URL and Token for convenience
-      await _writePrefs();
+      // await _writePrefs();
 
       print('Connecting with url: ${_uriCtrl.text}, '
           'token: ${_tokenCtrl.text}...');
@@ -118,7 +118,7 @@ class _ConnectPageState extends State<ConnectPage> {
       );
       await Navigator.push<void>(
         ctx,
-        MaterialPageRoute(builder: (_) => RoomPage(room, listener)),
+        MaterialPageRoute(builder: (_) => RoomPage(room, listener,'')),
       );
     } catch (error) {
       print('Could not connect $error');
@@ -246,7 +246,7 @@ class _ConnectPageState extends State<ConnectPage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: _busy ? null : () => _connect(context),
+                    onPressed: _busy ? null : () => connect(context),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

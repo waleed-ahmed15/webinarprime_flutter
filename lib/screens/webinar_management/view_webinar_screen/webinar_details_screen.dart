@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/screens/webinar_management/view_webinar_screen/review_widget.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
@@ -57,16 +58,27 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
   Widget build(BuildContext context) {
     print('webinarDetails: ${widget.webinarDetails}');
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print('hrreer');
-          print(widget.webinarDetails['datetime']);
-          Get.isDarkMode
-              ? Get.changeThemeMode(ThemeMode.light)
-              : Get.changeThemeMode(ThemeMode.dark);
-        },
-        child: const Icon(Icons.play_arrow),
-      ),
+      floatingActionButton: ElevatedButton(
+          onPressed: () {
+            print('start stream pressed');
+            print('id: ${widget.webinarDetails['_id']}');
+            Get.find<WebinarStreamController>()
+                .startWebinarStream(widget.webinarDetails['_id'], context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.LTprimaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+          ),
+          child: Text(
+            'Start Stream',
+            style: TextStyle(
+                color: Colors.white.withOpacity(.98),
+                fontWeight: FontWeight.w600,
+                fontSize: 15.sp,
+                fontFamily: 'JosefinSans Bold'),
+          )),
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -394,43 +406,52 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         Gap(
                           AppLayout.getHeight(10),
                         ),
-                        Container(
-                          width: AppLayout.getWidth(130),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: AppLayout.getWidth(5),
-                              vertical: AppLayout.getHeight(10)),
-                          decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  offset: const Offset(2, 2),
-                                  blurRadius: 6,
-                                  spreadRadius: 3,
+                        GestureDetector(
+                          onTap: () async {
+                            print('join now pressed');
+                            await Get.find<WebinarStreamController>()
+                                .joinStream(
+                                    widget.webinarDetails['_id'], context);
+                            print('join now pressed');
+                          },
+                          child: Container(
+                            width: AppLayout.getWidth(130),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: AppLayout.getWidth(5),
+                                vertical: AppLayout.getHeight(10)),
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    offset: const Offset(2, 2),
+                                    blurRadius: 6,
+                                    spreadRadius: 3,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    offset: const Offset(-2, -2),
+                                    blurRadius: 10,
+                                    spreadRadius: 3,
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: Get.isDarkMode
+                                      ? Colors.white.withOpacity(0.1)
+                                      : Colors.black.withOpacity(0.1),
                                 ),
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  offset: const Offset(-2, -2),
-                                  blurRadius: 10,
-                                  spreadRadius: 3,
-                                ),
-                              ],
-                              border: Border.all(
-                                color: Get.isDarkMode
-                                    ? Colors.white.withOpacity(0.1)
-                                    : Colors.black.withOpacity(0.1),
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                              color: AppColors.LTprimaryColor),
-                          child: Text(
-                            widget.webinarDetails['price'] == 0
-                                ? 'Free'
-                                : 'join now',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white.withOpacity(.98),
-                                fontWeight: FontWeight.w600,
-                                fontSize: AppLayout.getHeight(20),
-                                fontFamily: 'JosefinSans Bold'),
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppColors.LTprimaryColor),
+                            child: Text(
+                              widget.webinarDetails['price'] == 0
+                                  ? 'Free'
+                                  : 'join now',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(.98),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: AppLayout.getHeight(20),
+                                  fontFamily: 'JosefinSans Bold'),
+                            ),
                           ),
                         ),
                       ],
@@ -440,26 +461,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                 Gap(
                   AppLayout.getHeight(20),
                 ),
-                // Wrap(
-                //     children: List.generate(
-                //         widget.webinarDetails['tags'].length, (index) {
-                //   return Container(
-                //     margin: const EdgeInsets.only(right: 10),
-                //     padding: EdgeInsets.symmetric(
-                //         horizontal: AppLayout.getWidth(10),
-                //         vertical: AppLayout.getHeight(5)),
-                //     decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(5),
-                //         color: Colors.deepOrange.withOpacity(0.88)),
-                //     child: Text(
-                //       widget.webinarDetails['tags'][index],
-                //       style: const TextStyle(
-                //           fontFamily: 'JosefinSans ',
-                //           color: Colors.white,
-                //           fontSize: 12),
-                //     ),
-                //   );
-                // })),
+
                 Gap(AppLayout.getHeight(20)),
                 Text(
                   'Created By',

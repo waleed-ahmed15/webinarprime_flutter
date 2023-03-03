@@ -30,16 +30,16 @@ class _HomeScreenState extends State<HomeScreen> {
     _socket.onConnect((data) => print(' connected'));
 
     _socket.onConnectError((data) => print('$data'));
-    _socket.emit('join', Get.find<AuthController>().currentUser);
-    _socket.emit('notification',
-        {'user_id': '60e8f1b3b8b5e8a0c8e1b1d1', 'message': 'hello'});
-    _socket.on('notification', (data) => print('$data'));
+    // _socket.emit('join', Get.find<AuthController>().currentUser);
+    // _socket.emit('notification',
+    //     {'user_id': '60e8f1b3b8b5e8a0c8e1b1d1', 'message': 'hello'});
+    // _socket.on('notification', (data) => print('$data'));
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    connecteSocket();
+    // connecteSocket();
     super.initState();
     // print("height: ${AppLayout.getScreenHeight()}");
     // print('width :${AppLayout.getScreenWidth()}');
@@ -190,9 +190,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onTap: () {
                       // Update the state of the app.
-                      if (authController.currentUser['accountType'] ==
-                          'organizer') {
-                        // print(Get.find<AuthController>().currentUser['id']);
+                      // if (authController.currentUser['accountType'] ==
+
+                      //     'organizer')
+                      if (true) {
                         Get.put(WebinarManagementController());
                         Get.toNamed('view-my-webinars');
                         print(
@@ -267,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               )
-            : null, 
+            : null,
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),

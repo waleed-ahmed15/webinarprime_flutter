@@ -33,10 +33,13 @@ dependencies:
   dio: ^4.0.6
   eva_icons_flutter: ^3.1.0
   expandable_text: ^2.3.0
+  file_picker: ^5.2.5
+  floating_action_bubble: ^1.1.4
   flutter:
     sdk: flutter
   flutter_background: ^1.2.0
   flutter_background_service: ^2.4.6
+  flutter_chat_ui: ^1.6.6
   flutter_chip_tags: ^2.0.2
   flutter_form_builder: ^7.7.0
   flutter_screenutil: ^5.6.1
@@ -54,11 +57,13 @@ dependencies:
   mime_type: ^1.0.0
   mongo_dart: ^0.8.0
   multi_select_flutter: ^4.1.2
+  open_filex: ^4.3.2
   searchfield: ^0.7.5
   shared_preferences: ^2.0.15
   shimmer: ^2.0.0
   socket_io_client: ^2.0.1
   textfield_tags: ^2.0.2
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_lints: ^2.0.0

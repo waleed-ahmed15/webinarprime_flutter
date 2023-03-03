@@ -20,7 +20,7 @@ class AuthController extends GetxController {
   final SharedPreferences sharedPreferences = Get.find();
   Map<String, dynamic> currentUser = {};
   String? current_email;
-  String? token;
+  String token = '';
   List<dynamic> searchedUsers = [];
   List<dynamic> currentUserInvitations = [];
 
@@ -102,6 +102,9 @@ class AuthController extends GetxController {
       print('authenticate user called');
 
       final sharedPreferences = Get.find<SharedPreferences>();
+      sharedPreferences.setString(
+          'tempToken', '${sharedPreferences.getString('token')}');
+
       print(sharedPreferences.getString('token'));
       final response = await http.get(headers: {
         'content-type': 'application/json; charset=UTF-8',
@@ -203,11 +206,13 @@ class AuthController extends GetxController {
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
+        sharedPreferences.setString('tempToken', data['token'].split(' ')[1]);
         print(data['token']);
         // final SharedPreferences sharedPreferences = Get.find();
 
         sharedPreferences.setString("token", data['token']);
-        token = sharedPreferences.getString('token');
+        token = data['token'];
+        // token = sharedPreferences.getString('token')!;
         await authenticateUser(rememberMe);
         ShowCustomSnackBar('login successful',
             isError: false, title: 'Welcome');
@@ -385,5 +390,4 @@ class AuthController extends GetxController {
       print(e);
     }
   }
-
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:webinarprime/screens/chat/chat_screen.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class ChatListScreen extends StatefulWidget {
@@ -22,12 +24,17 @@ class _ChatListScreenState extends State<ChatListScreen> {
     'kk',
     'sdk',
     'xami',
+    'issam'
   ];
 
   @override
   Widget build(BuildContext context) {
     print('object');
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -55,27 +62,41 @@ class _ChatListScreenState extends State<ChatListScreen> {
         itemBuilder: (BuildContext context, int index) {
           String user = users[index].toLowerCase().toString();
           if (searchController.text.isEmpty) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                leading: const CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(
-                      'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=600'),
+            return ElevatedButton(
+              onPressed: () {
+                print('object');
+                Get.to(() => const ChatScreen());
+                // Get.to(() => const MYChat());
+              },
+              style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  elevation: 0,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor),
+              child: Container(
+                margin: EdgeInsets.only(
+                  top: 10.h,
                 ),
-                title: Text(
-                  users[index],
-                  overflow: TextOverflow.ellipsis,
-                  style: Mystyles.listtileTitleStyle
-                      .copyWith(fontWeight: FontWeight.w500),
+                child: ListTile(
+                  leading: const CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(
+                        'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=600'),
+                  ),
+                  title: Text(
+                    users[index],
+                    overflow: TextOverflow.ellipsis,
+                    style: Mystyles.listtileTitleStyle
+                        .copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  subtitle: Text(
+                    'kdr ha?',
+                    style:
+                        Mystyles.listtileTitleStyle.copyWith(fontSize: 14.sp),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: Text(
+                      "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}"),
                 ),
-                subtitle: Text(
-                  'kdr ha?',
-                  style: Mystyles.listtileTitleStyle.copyWith(fontSize: 14.sp),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: Text(
-                    "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}"),
               ),
             );
           } else if (user

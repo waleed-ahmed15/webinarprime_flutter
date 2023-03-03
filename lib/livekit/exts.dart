@@ -64,6 +64,7 @@ extension LKExampleExt on BuildContext {
               child: const Text('Cancel'),
             ),
             TextButton(
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               onPressed: () => Navigator.pop(ctx, true),
               child: const Text('Disconnect'),
             ),
