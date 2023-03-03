@@ -52,8 +52,13 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
     socket.emit("joinStreamRoom", widget.webinarRoomId);
     socket.on('streamRoomChatMessage', (data) {
       print(data.runtimeType);
-      chatMessages.add(data);
+      print('=---------------------------');
+
       print('message received $data');
+      print('=---------------------------');
+      chatMessages.add(data);
+
+      // print(jsonDecode(data));
     });
     _tabController = TabController(length: 2, vsync: this);
     widget.room.addListener(_onRoomDidUpdate);
@@ -374,8 +379,18 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                 itemCount: chatMessages.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
+                                      leading: CircleAvatar(
+                                        radius: 20.r,
+                                        backgroundImage: NetworkImage(
+                                            AppConstants.baseURL +
+                                                jsonDecode(chatMessages[index]
+                                                        ['from']['metadata'])[
+                                                    'profile_image']),
+                                      ),
                                       title: Text(
-                                        chatMessages[index]['name'],
+                                        // "Name",
+                                        jsonDecode(chatMessages[index]['from']
+                                            ['metadata'])['name'],
                                         style: Mystyles.listtileTitleStyle
                                             .copyWith(fontSize: 20.sp)
                                             .copyWith(color: Colors.white),
@@ -387,7 +402,10 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                       ),
                                       trailing: Text(
                                         DateFormat.jm().format(DateTime.parse(
-                                            chatMessages[index]['time'])),
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                    chatMessages[index]
+                                                        ['timestamp'] as int)
+                                                .toString())),
                                         style: Mystyles.listtileSubtitleStyle
                                             .copyWith(color: Colors.white),
                                       ));
@@ -414,14 +432,28 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                       color: Colors.blue,
                                       onPressed: () async {
                                         print(widget.webinarRoomId);
+                                        // print(jsonDecode(chatMessages[0]['from']
+                                        // ['metadata'])['name']);
                                         if (chatcontroller.text.isNotEmpty) {
                                           // widget.room.localParticipant?.publishMessage(
                                           // chatcontroller.text,
                                           // attributes: {'name': 'Amit'});
+                                          Map<String, dynamic> newmesage = {
+                                            "message":
+                                                chatcontroller.text.trim(),
+                                            "from": {
+                                              "identity": widget.room
+                                                  .localParticipant!.identity,
+                                              "metadata": widget.room
+                                                  .localParticipant!.metadata,
+                                            },
+                                            "timestamp": DateTime.now()
+                                                .millisecondsSinceEpoch,
+                                          };
                                           Map<String, dynamic> message = {
                                             'message':
                                                 chatcontroller.text.trim(),
-                                            'name': jsonDecode(widget
+                                            'from': jsonDecode(widget
                                                 .room
                                                 .localParticipant!
                                                 .metadata!)['name'],
@@ -440,7 +472,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                                   WebinarStreamController>()
                                               .sendMessageToRoomChat(
                                                   widget.webinarRoomId,
-                                                  message);
+                                                  newmesage);
 
                                           chatcontroller.clear();
 
