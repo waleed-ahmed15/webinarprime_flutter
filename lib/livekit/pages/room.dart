@@ -34,7 +34,7 @@ class RoomPage extends StatefulWidget {
   State<StatefulWidget> createState() => _RoomPageState();
 }
 
-class _RoomPageState extends State<RoomPage> {
+class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
   //
   var chatcontroller = TextEditingController();
   List<ParticipantTrack> participantTracks = [];
@@ -44,6 +44,7 @@ class _RoomPageState extends State<RoomPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   RxList<dynamic> chatMessages = [].obs;
   final IO.Socket socket = Get.find();
+  late TabController _tabController;
 
   @override
   void initState() {
@@ -53,12 +54,8 @@ class _RoomPageState extends State<RoomPage> {
       print(data.runtimeType);
       chatMessages.add(data);
       print('message received $data');
-      print('object111');
-      // print(data['message']);
-      // print(jsonDecode(data.toString()));
-      // chatMessages.add(json.decode(data));
-      // chatMessages.add(jsonDecode(data));
     });
+    _tabController = TabController(length: 2, vsync: this);
     widget.room.addListener(_onRoomDidUpdate);
     _setUpListeners();
     _sortParticipants();
@@ -78,6 +75,7 @@ class _RoomPageState extends State<RoomPage> {
       await widget.room.dispose();
     })();
     super.dispose();
+    _tabController.dispose();
   }
 
   void _setUpListeners() => _listener
@@ -333,102 +331,143 @@ class _RoomPageState extends State<RoomPage> {
         endDrawer: Drawer(
           //chat drawer,
           width: 1.sw,
-          child: Container(
-            color: AppColors.DTbackGroundColor,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Obx(
-                    () => ListView.builder(
-                      itemCount: chatMessages.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                            title: Text(
-                              chatMessages[index]['name'],
-                              style: Mystyles.listtileTitleStyle
-                                  .copyWith(fontSize: 20.sp)
-                                  .copyWith(color: Colors.white),
-                            ),
-                            subtitle: Text(
-                              chatMessages[index]['message'],
-                              style: Mystyles.listtileSubtitleStyle
-                                  .copyWith(color: Colors.white),
-                            ),
-                            trailing: Text(
-                              DateFormat.jm().format(
-                                  DateTime.parse(chatMessages[index]['time'])),
-                              style: Mystyles.listtileSubtitleStyle
-                                  .copyWith(color: Colors.white),
-                            ));
-                      },
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        style: Mystyles.listtileTitleStyle.copyWith(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                        ),
-                        controller: chatcontroller,
-                        keyboardAppearance: Brightness.dark,
-                        keyboardType: TextInputType.text,
-                        minLines: 1,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.send),
-                            color: Colors.blue,
-                            onPressed: () async {
-                              print(widget.webinarRoomId);
-                              if (chatcontroller.text.isNotEmpty) {
-                                // widget.room.localParticipant?.publishMessage(
-                                // chatcontroller.text,
-                                // attributes: {'name': 'Amit'});
-                                Map<String, dynamic> message = {
-                                  'message': chatcontroller.text.trim(),
-                                  'name': jsonDecode(widget.room
-                                      .localParticipant!.metadata!)['name'],
-                                  'profile_image': jsonDecode(widget
-                                      .room
-                                      .localParticipant!
-                                      .metadata!)['profile_image'],
-                                  'accountType': jsonDecode(widget
-                                      .room
-                                      .localParticipant!
-                                      .metadata!)['accountType'],
-                                  'time': DateTime.now().toString()
-                                };
+          child: WillPopScope(
+            onWillPop: () async {
+              scaffoldKey.currentState!.closeEndDrawer();
 
-                                await Get.find<WebinarStreamController>()
-                                    .sendMessageToRoomChat(
-                                        widget.webinarRoomId, message);
+              return false;
+            },
+            child: Scaffold(
+                //onback
 
-                                chatcontroller.clear();
-
-                                //close keyboard
-                                // print(chatMessages);
-                                FocusScope.of(context).unfocus();
-                              }
-                            },
-                          ),
-                          fillColor: const Color(0xff262626),
-                          filled: true,
-                          hintText: "Type a message",
-                          hintStyle: TextStyle(
-                            color: Colors.grey[400],
-                            fontSize: 14,
-                          ),
-                        ),
+                appBar: AppBar(
+                  backgroundColor: AppColors.DTbackGroundColor,
+                  elevation: 0,
+                  toolbarHeight: 0,
+                  bottom: TabBar(controller: _tabController, tabs: [
+                    Tab(
+                      child: Text(
+                        'Chat',
+                        style: Mystyles.listtileTitleStyle
+                            .copyWith(fontSize: 20.sp),
                       ),
                     ),
-                  ],
+                    Tab(
+                      child: Text(
+                        'Questions',
+                        style: Mystyles.listtileTitleStyle
+                            .copyWith(fontSize: 20.sp),
+                      ),
+                    ),
+                  ]),
                 ),
-                SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
-              ],
-            ),
+                body: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    Container(
+                      color: AppColors.DTbackGroundColor,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Obx(
+                              () => ListView.builder(
+                                itemCount: chatMessages.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                      title: Text(
+                                        chatMessages[index]['name'],
+                                        style: Mystyles.listtileTitleStyle
+                                            .copyWith(fontSize: 20.sp)
+                                            .copyWith(color: Colors.white),
+                                      ),
+                                      subtitle: Text(
+                                        chatMessages[index]['message'],
+                                        style: Mystyles.listtileSubtitleStyle
+                                            .copyWith(color: Colors.white),
+                                      ),
+                                      trailing: Text(
+                                        DateFormat.jm().format(DateTime.parse(
+                                            chatMessages[index]['time'])),
+                                        style: Mystyles.listtileSubtitleStyle
+                                            .copyWith(color: Colors.white),
+                                      ));
+                                },
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  style: Mystyles.listtileTitleStyle.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                  ),
+                                  controller: chatcontroller,
+                                  keyboardAppearance: Brightness.dark,
+                                  keyboardType: TextInputType.text,
+                                  minLines: 1,
+                                  maxLines: 3,
+                                  decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      icon: const Icon(Icons.send),
+                                      color: Colors.blue,
+                                      onPressed: () async {
+                                        print(widget.webinarRoomId);
+                                        if (chatcontroller.text.isNotEmpty) {
+                                          // widget.room.localParticipant?.publishMessage(
+                                          // chatcontroller.text,
+                                          // attributes: {'name': 'Amit'});
+                                          Map<String, dynamic> message = {
+                                            'message':
+                                                chatcontroller.text.trim(),
+                                            'name': jsonDecode(widget
+                                                .room
+                                                .localParticipant!
+                                                .metadata!)['name'],
+                                            'profile_image': jsonDecode(widget
+                                                .room
+                                                .localParticipant!
+                                                .metadata!)['profile_image'],
+                                            'accountType': jsonDecode(widget
+                                                .room
+                                                .localParticipant!
+                                                .metadata!)['accountType'],
+                                            'time': DateTime.now().toString()
+                                          };
+
+                                          await Get.find<
+                                                  WebinarStreamController>()
+                                              .sendMessageToRoomChat(
+                                                  widget.webinarRoomId,
+                                                  message);
+
+                                          chatcontroller.clear();
+
+                                          //close keyboard
+                                          // print(chatMessages);
+                                          FocusScope.of(context).unfocus();
+                                        }
+                                      },
+                                    ),
+                                    fillColor: const Color(0xff262626),
+                                    filled: true,
+                                    hintText: "Type a message",
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey[400],
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Text("questions")
+                  ],
+                )),
           ),
         ),
         key: scaffoldKey,

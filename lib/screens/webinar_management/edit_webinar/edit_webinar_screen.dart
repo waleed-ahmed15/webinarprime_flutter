@@ -487,7 +487,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                                     widget.editingController.text);
                               } else if (title == 'date') {
                                 String newdatetime =
-                                    "${widget.editingController.text} ${widget.webinarDetails['datetime'].toString().split(' ')[1]}";
+                                    "${widget.editingController.text} ${widget.webinarDetails['datetime'].toString().split('T')[1]}";
                                 widget.webinarDetails['datetime'] = newdatetime;
                                 widget.webinarcontroller.editWebinarDateTime(
                                     widget.webinarDetails['_id'], newdatetime);
@@ -976,7 +976,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         Text(
                           widget.webinarDetails['datetime']
                               .toString()
-                              .split(' ')[0],
+                              .split('T')[0],
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
@@ -1025,7 +1025,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         Text(
                           widget.webinarDetails['datetime']
                               .toString()
-                              .split(' ')[1],
+                              .split('T')[1],
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               fontWeight: FontWeight.w700,

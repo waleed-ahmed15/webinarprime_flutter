@@ -34,7 +34,7 @@ class WebinarManagementController extends GetxController {
             "name": webinardata['title'],
             "tagline": webinardata['tagline'],
             "description": webinardata['description'],
-            "datetime": webinardata['date'] + " " + webinardata['time'],
+            "datetime": webinardata['date'] + "T" + webinardata['time'],
             "duration": webinardata['duration'],
             "price": webinardata['price'],
             "categories": webinardata['categories'],
