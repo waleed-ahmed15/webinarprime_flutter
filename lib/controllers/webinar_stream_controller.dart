@@ -127,6 +127,57 @@ class WebinarStreamController extends GetxController {
     }
   }
 
-  ///
+  //post a question to room chat
+  Future<void> postQuestionToWebinarStream(
+      String roomID, Map<String, dynamic> question) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/stream/question/$roomID");
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode(question),
+      );
+
+      if (response.statusCode == 200) {
+        print('question Sent successfully');
+      } else {
+        print('question Sending Failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  /// post answer to room chat
+  Future<void> postAnswerToQuestion(
+      String roomId, Map<String, dynamic> Asnwer) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/stream/answer/$roomId");
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode(Asnwer),
+      );
+      if (response.statusCode == 200) {
+        print('Answer Sent successfully');
+        update();
+      } else {
+        print('Answer Sending Failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<bool> updateStreamcontroller() async {
+    update();
+    return true;
+  }
 //
 }
