@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/categoryController.dart';
+import 'package:webinarprime/controllers/chat_controlller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:webinarprime/utils/app_constants.dart';
@@ -19,6 +20,7 @@ Future<void> innit() async {
   Get.put(CategoryContorller());
   Get.put(WebinarManagementController());
   Get.put(WebinarStreamController());
+  Get.put(ChatStreamController(), permanent: true);
   // Get.lazyPut(() => AuthController(), fenix: true);
   // Get.lazyPut(() => sharedPreferences);
   // Get.lazyPut(() => AuthController());

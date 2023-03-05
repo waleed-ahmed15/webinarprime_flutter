@@ -5,8 +5,12 @@ import 'package:webinarprime/utils/styles.dart';
 class ChatFieldWidget extends StatefulWidget {
   final Function onSend;
   final VoidCallback oncameraPressed;
+  final VoidCallback onAttachPressed;
   const ChatFieldWidget(
-      {super.key, required this.onSend, required this.oncameraPressed});
+      {super.key,
+      required this.onAttachPressed,
+      required this.onSend,
+      required this.oncameraPressed});
 
   @override
   State<ChatFieldWidget> createState() => _ChatFieldWidgetState();
@@ -56,14 +60,15 @@ class _ChatFieldWidgetState extends State<ChatFieldWidget> {
                       icon: const Icon(Icons.attach_file),
                       color: Colors.blue,
                       onPressed: () {
-                        // widget.onSend();
+                        widget.onAttachPressed();
                       },
                     )
                   : IconButton(
                       icon: const Icon(Icons.send),
                       color: Colors.blue,
                       onPressed: () {
-                        widget.onSend(messageController.text);
+                        widget.onSend(messageController.text.trim());
+                        messageController.clear();
                       },
                     ),
               border: OutlineInputBorder(

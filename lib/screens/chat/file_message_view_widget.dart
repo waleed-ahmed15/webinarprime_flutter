@@ -22,10 +22,10 @@ class MyFileMessage extends StatelessWidget {
         // print('image tapped3434d');
       },
       child: Container(
-        margin: EdgeInsets.only(
-          top: 3.h,
-          bottom: 3.h,
-        ),
+        margin: const EdgeInsets.only(
+            // top: 3.h,
+            // bottom: 3.h,
+            ),
         padding: EdgeInsets.symmetric(horizontal: 10.w),
         constraints: BoxConstraints(
           maxWidth: 0.5.sw,

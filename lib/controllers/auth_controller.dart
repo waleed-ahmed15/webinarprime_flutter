@@ -390,4 +390,31 @@ class AuthController extends GetxController {
       print(e);
     }
   }
+
+  // search all users avaible for creating new conversation
+
+  Future<void> searchUserAll(String keyword) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/search/$keyword");
+      Map body = {"keyword": keyword.toString()};
+      var response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+      );
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        print(data);
+        searchedUsers.clear();
+        searchedUsers = data['users'];
+        update();
+      } else {
+        print(data.toString());
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }

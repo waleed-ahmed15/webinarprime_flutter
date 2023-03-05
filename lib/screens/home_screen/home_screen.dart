@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/controllers/chat_controlller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/routes/routes.dart';
 import 'package:webinarprime/screens/chat/chat_list_screen.dart';
@@ -25,21 +26,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final IO.Socket _socket = IO.io(AppConstants.baseURL,
       IO.OptionBuilder().setTransports(['websocket']).build());
-
-  connecteSocket() async {
-    _socket.onConnect((data) => print(' connected'));
-
-    _socket.onConnectError((data) => print('$data'));
-    // _socket.emit('join', Get.find<AuthController>().currentUser);
-    // _socket.emit('notification',
-    //     {'user_id': '60e8f1b3b8b5e8a0c8e1b1d1', 'message': 'hello'});
-    // _socket.on('notification', (data) => print('$data'));
-  }
+  final IO.Socket socket = Get.find();
 
   @override
   void initState() {
     // TODO: implement initState
     // connecteSocket();
+    Get.find<ChatStreamController>()
+        .getConversations(Get.find<AuthController>().currentUser['id']);
+
+    socket.onConnect((data) => print(' socket stream chat connected'));
+    print('current user is=-------------------------------------------');
+    print(Get.find<AuthController>().currentUser);
+    socket.emit('join', {
+      Get.find<AuthController>().currentUser['id'],
+    });
     super.initState();
     // print("height: ${AppLayout.getScreenHeight()}");
     // print('width :${AppLayout.getScreenWidth()}');

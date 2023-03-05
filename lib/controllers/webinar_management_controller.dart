@@ -566,7 +566,7 @@ class WebinarManagementController extends GetxController {
       String bannerfileName = coverImage.path.split('/').last;
       String coverfileName = coverImage.path.split('/').last;
 
-      // print(bannerfileName);
+      // print(bannerfileName); 
       // print(coverfileName);
       FormData formData = FormData.fromMap(
         {

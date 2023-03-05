@@ -18,8 +18,8 @@ class ImageMessageContainer extends StatelessWidget {
         height: 0.5.sw,
         width: 0.5.sw,
         decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.contain, image: NetworkImage(imageUrl)),
+          image:
+              DecorationImage(fit: BoxFit.fill, image: NetworkImage(imageUrl)),
         ),
       ),
     );

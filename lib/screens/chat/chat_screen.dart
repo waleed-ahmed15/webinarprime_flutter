@@ -1,19 +1,27 @@
-import 'dart:convert';
 import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/controllers/chat_controlller.dart';
 import 'package:webinarprime/screens/chat/chat_field_widget.dart';
 import 'package:webinarprime/screens/chat/file_message_view_widget.dart';
 import 'package:webinarprime/screens/chat/image_Viewer_widget.dart';
+import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final Map<String, dynamic> receiever;
+  final String ConversationId;
+  const ChatScreen(this.ConversationId, this.receiever, {super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -23,6 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   late String? currentDate;
   bool fullScreen = false;
+  final IO.Socket socket = Get.find();
 
   List<Map<String, dynamic>> messages = [
     {
@@ -104,6 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
       "user": "sender"
     },
   ];
+
   bool messageEmpty = true;
   @override
   void initState() {
@@ -114,14 +124,28 @@ class _ChatScreenState extends State<ChatScreen> {
         curve: Curves.easeOut,
       );
     });
+    socket.on('conversationChatMessage', (data) {
+      // this method is called when a new message
+      //is received and scrolls all the way down
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+    });
+
+    // Get.find<ChatStreamController>().GetmessagesForAconversation(
+    // widget.ConversationId, widget.receiever['_id']);
     // TODO: implement initState
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(
-        'objectawdjasd jsakd jsak djsak djsak djsakl djas lkdjas kldjaslk jaslk jdaslk jdaslk jaksl jdlka sjdlksa jalks dalk j');
+    print(widget.receiever);
+    print(widget.ConversationId);
     return SafeArea(
       child: Scaffold(
         backgroundColor:
@@ -129,7 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(
-            "Alex Smith",
+            widget.receiever['name'],
             style: Mystyles.listtileTitleStyle.copyWith(fontSize: 20.sp),
           ),
           centerTitle: false,
@@ -139,63 +163,74 @@ class _ChatScreenState extends State<ChatScreen> {
           elevation: 0,
           leading: Row(
             children: [
-              Gap(5.w),
+              Gap(10.w),
               CircleAvatar(
                 backgroundColor: Colors.transparent,
                 radius: 20.r,
-                backgroundImage: const NetworkImage(
-                    'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=600'),
+                backgroundImage: NetworkImage(
+                    AppConstants.baseURL + widget.receiever['profile_image']),
               ),
             ],
           ),
           actions: [
-            PopupMenuButton(
-              icon: Icon(
-                Icons.more_vert,
-                color: Mystyles.bigTitleStyle.color,
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.delete,
+                color: Colors.red,
               ),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: Text(
-                    "Report",
-                    style: Mystyles.popupHeadingStyle,
-                  ),
-                ),
-                PopupMenuItem(
-                  child: Text(
-                    "Block",
-                    style: Mystyles.popupHeadingStyle,
-                  ),
-                ),
-              ],
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.block,
+                color: Get.isDarkMode ? Colors.white : Colors.black,
+              ),
             ),
           ],
         ),
         body: Column(
           children: [
             Gap(10.h),
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(
-                  bottom: 50.h,
-                ),
+            Expanded(child:
+                GetBuilder<ChatStreamController>(builder: (controllerChat) {
+              String mycurrentDate = '';
+              return ListView.builder(
                 controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  bool insertDate = false;
-                  print(index);
-                  if (index == 0) {
-                    insertDate = true;
-                  } else if (currentDate != messages[index]['time']) {
-                    insertDate = true;
+                itemCount: ChatStreamController
+                    .userChatmessages[widget.ConversationId].length,
+                itemBuilder: (BuildContext context, int index) {
+                  // all logic for formmating goes Here
+
+                  bool addDate = false;
+                  DateTime date = DateTime.parse(ChatStreamController
+                          .userChatmessages[widget.ConversationId][index]
+                      ['createdAt']);
+                  String formmattedDateTime =
+                      DateFormat('dd/MM/yy, hh:mm').format(date);
+                  print(ChatStreamController
+                          .userChatmessages[widget.ConversationId][index]
+                      ['from']['_id']);
+                  print(Get.find<AuthController>().currentUser['id']);
+                  bool issender = false;
+                  if (ChatStreamController
+                              .userChatmessages[widget.ConversationId][index]
+                          ['from']['_id'] ==
+                      Get.find<AuthController>().currentUser['id']) {
+                    issender = true;
+                    print('sender');
                   }
-                  index = index + messages.length - 10;
+                  if (index == 0) {
+                    addDate = true;
+                  } else if (mycurrentDate != formmattedDateTime) {
+                    addDate = true;
+                  }
+                  mycurrentDate = formmattedDateTime;
 
-                  bool sender = messages[index]['user'] == 'sender';
+                  print(formmattedDateTime);
 
-                  currentDate = messages[index]['time'];
-
+                  print(date);
                   return Container(
                     margin: EdgeInsets.only(
                       top: 1.h,
@@ -205,55 +240,91 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        insertDate
+                        addDate
                             ? Padding(
                                 padding: EdgeInsets.only(
                                   bottom: 5.h,
                                 ),
                                 child: Center(
-                                    child: Text(messages[index]['time']!,
+                                    child: Text(formmattedDateTime,
                                         style: Mystyles.popupHeadingStyle)),
                               )
                             : const SizedBox(),
                         Row(
-                          mainAxisAlignment: sender
+                          mainAxisAlignment: issender
                               ? MainAxisAlignment.end
                               : MainAxisAlignment.start,
                           children: [
-                            messages[index].containsKey('message')
-                                ? Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10.w, vertical: 5.h),
-                                    decoration: BoxDecoration(
-                                      color: sender
-                                          ? const Color(0xff4c51d9)
-                                          : receiverChatBubbleColor,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10.w),
-                                        topRight: Radius.circular(10.w),
-                                        bottomLeft: Radius.circular(10.w),
-                                        bottomRight: Radius.circular(10.w),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
+                            // Text(ChatStreamController
+                            //     .userChatmessages[widget.ConversationId][index]
+                            //         ['text']
+                            //     .toString()),
+
+                            Container(
+                              margin: EdgeInsets.only(top: 2.h, bottom: 2.h),
+                              // padding: EdgeInsets.symmetric(
+                              //     horizontal: 7.w, vertical: 3.h),
+                              decoration: BoxDecoration(
+                                color: issender
+                                    ? const Color(0xff4c51d9)
+                                    : receiverChatBubbleColor,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10.w),
+                                  topRight: Radius.circular(10.w),
+                                  bottomLeft: Radius.circular(10.w),
+                                  bottomRight: Radius.circular(10.w),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  ChatStreamController.userChatmessages[widget
+                                              .ConversationId][index]['file'] !=
+                                          null
+                                      ? ChatStreamController.userChatmessages[
+                                                  widget.ConversationId][index]
+                                                  ['file']['mimetype']
+                                              .contains('image')
+                                          ? ImageMessageContainer(
+                                              imageUrl: AppConstants.baseURL +
+                                                  ChatStreamController
+                                                              .userChatmessages[
+                                                          widget.ConversationId]
+                                                      [index]['file']['path'],
+                                            )
+                                          : MyFileMessage(
+                                              sender: true,
+                                              fileName: ChatStreamController
+                                                          .userChatmessages[
+                                                      widget.ConversationId]
+                                                  [index]['file']['filename'],
+                                              fileUrl: AppConstants.baseURL +
+                                                  ChatStreamController
+                                                              .userChatmessages[
+                                                          widget.ConversationId]
+                                                      [index]['file']['path'],
+                                            )
+                                      : Container(
                                           margin: EdgeInsets.zero,
-                                          padding: EdgeInsets.zero,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 7.w, vertical: 3.h),
                                           constraints: BoxConstraints(
                                             maxWidth: 0.5.sw,
                                           ),
                                           child: ExpandableText(
                                             maxLines: 6,
                                             linkColor: Colors.blue,
-                                            expandText: 'more',
+                                            expandText: '',
                                             expandOnTextTap: true,
                                             collapseOnTextTap: true,
-                                            collapseText: 'less',
-                                            messages[index]['message']!,
+                                            collapseText: '',
+                                            ChatStreamController
+                                                .userChatmessages[
+                                                    widget.ConversationId]
+                                                    [index]['text']
+                                                .toString(),
                                             style: Mystyles.listtileTitleStyle
                                                 .copyWith(
-                                              color: sender
+                                              color: issender //sender
                                                   ? Colors.white
                                                   : Mystyles
                                                       .bigTitleStyle.color,
@@ -262,33 +333,134 @@ class _ChatScreenState extends State<ChatScreen> {
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: 5.h,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : messages[index].containsKey('file')
-                                    ? MyFileMessage(
-                                        sender: sender,
-                                        fileName: messages[index]['name'],
-                                        fileUrl: messages[index]['file'],
-                                      )
-                                    : ImageMessageContainer(
-                                        imageUrl: messages[index]['image'],
-                                      ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
-                        Gap(2.w),
                       ],
                     ),
                   );
                 },
-              ),
-            ),
+              );
+            })),
+            // child: ListView.builder(
+            //   padding: EdgeInsets.only(
+            //     bottom: 50.h,
+            //   ),
+            //   // controller: _scrollController,
+            //   // physics: const BouncingScrollPhysics(),
+
+            //   itemCount: ChatStreamController
+            //       .userChatmessages[widget.ConversationId],
+            //   itemBuilder: (context, index) {
+            //     bool insertDate = false;
+            //     print(index);
+            //     if (index == 0) {
+            //       insertDate = true;
+            //     } else if (currentDate != messages[index]['time']) {
+            //       insertDate = true;
+            //     }
+            //     index = index + messages.length - 10;
+
+            //     bool sender = messages[index]['user'] == 'sender';
+
+            //     currentDate = messages[index]['time'];
+
+            //     return Container(
+            //       margin: EdgeInsets.only(
+            //         top: 1.h,
+            //         left: 10.w,
+            //         right: 10.w,
+            //       ),
+            //       child: Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           insertDate
+            //               ? Padding(
+            //                   padding: EdgeInsets.only(
+            //                     bottom: 5.h,
+            //                   ),
+            //                   child: Center(
+            //                       child: Text(messages[index]['time']!,
+            //                           style: Mystyles.popupHeadingStyle)),
+            //                 )
+            //               : const SizedBox(),
+            //           Row(
+            //             mainAxisAlignment: sender
+            //                 ? MainAxisAlignment.end
+            //                 : MainAxisAlignment.start,
+            //             children: [
+            //               messages[index].containsKey('message')
+            //                   ? Container(
+            //                       padding: EdgeInsets.symmetric(
+            //                           horizontal: 10.w, vertical: 5.h),
+            //                       decoration: BoxDecoration(
+            //                         color: sender
+            //                             ? const Color(0xff4c51d9)
+            //                             : receiverChatBubbleColor,
+            //                         borderRadius: BorderRadius.only(
+            //                           topLeft: Radius.circular(10.w),
+            //                           topRight: Radius.circular(10.w),
+            //                           bottomLeft: Radius.circular(10.w),
+            //                           bottomRight: Radius.circular(10.w),
+            //                         ),
+            //                       ),
+            //                       child: Column(
+            //                         children: [
+            //                           Container(
+            //                             margin: EdgeInsets.zero,
+            //                             padding: EdgeInsets.zero,
+            //                             constraints: BoxConstraints(
+            //                               maxWidth: 0.5.sw,
+            //                             ),
+            //                             child: ExpandableText(
+            //                               maxLines: 6,
+            //                               linkColor: Colors.blue,
+            //                               expandText: 'more',
+            //                               expandOnTextTap: true,
+            //                               collapseOnTextTap: true,
+            //                               collapseText: 'less',
+            //                               messages[index]['message']!,
+            //                               style: Mystyles.listtileTitleStyle
+            //                                   .copyWith(
+            //                                 color: sender
+            //                                     ? Colors.white
+            //                                     : Mystyles
+            //                                         .bigTitleStyle.color,
+            //                                 fontSize: 16.sp,
+            //                               ),
+            //                               textAlign: TextAlign.start,
+            //                             ),
+            //                           ),
+            //                           SizedBox(
+            //                             height: 5.h,
+            //                           ),
+            //                         ],
+            //                       ),
+            //                     )
+            //                   : messages[index].containsKey('file')
+            //                       ? MyFileMessage(
+            //                           sender: sender,
+            //                           fileName: messages[index]['name'],
+            //                           fileUrl: messages[index]['file'],
+            //                         )
+            //                       : ImageMessageContainer(
+            //                           imageUrl: messages[index]['image'],
+            //                         ),
+            //             ],
+            //           ),
+            //           Gap(2.w),
+            //         ],
+            //       ),
+            //     );
+            //   },
+            // ),
+
             ChatFieldWidget(
               onSend: sendPressed,
               oncameraPressed: _handleImageSelection,
+              onAttachPressed: handlefileAttachment,
             )
           ],
         ),
@@ -296,32 +468,21 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void sendPressed(String message) {
-    print('message $message');
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.easeOut,
-    );
-    messages.add({
-      'image':
-          'https://media.istockphoto.com/photos/abstract-wavy-object-picture-id1198271727?b=1&k=20&m=1198271727&s=612x612&w=0&h=TmG2MD0VRU-6rtToiYnXKhzgeYuTr4lCFuZ_SRmkZFQ=',
-      "time": '12:05',
-      "user": "sender"
-    });
-    setState(() {});
-    // messages.add({
-    //   "message": 'i am good nad you?',
-    //   "user": "sender",
-    //   "time": '12:04',
-    // });
-    print('send pressed');
-  }
+  void sendPressed(String message) async {
+    if (message.isNotEmpty) {
+      print(message);
+      print(Get.find<AuthController>().currentUser['id']);
+      Map<String, dynamic> messageMap = {
+        "message": {
+          "from": Get.find<AuthController>().currentUser['id'],
+          "text": message,
+        }
+      };
+      await Get.find<ChatStreamController>()
+          .sendMessage(widget.ConversationId, messageMap);
+    }
 
-  bool isBase64(String str) {
-    RegExp base64 =
-        RegExp(r'^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$');
-    return base64.hasMatch(str);
+    print('send pressed');
   }
 
   void _handleImageSelection() async {
@@ -330,21 +491,34 @@ class _ChatScreenState extends State<ChatScreen> {
       maxWidth: 1440,
       source: ImageSource.gallery,
     );
+
     if (result != null) {
       print(result.path);
-      final bytes = await result.readAsBytes();
-      final image = await decodeImageFromList(bytes);
-      print(bytes);
+      // final bytes = await result.readAsBytes();
+      // final image = await decodeImageFromList(bytes);
+      // print(bytes);
       File imageFile = File(result.path);
-      List<int> imageBytes = await imageFile.readAsBytes();
-      String base64Image = base64Encode(imageBytes);
-      print(base64Image);
-      messages.add({
-        "message": base64Image,
-        "user": "sender",
-        "time": '12:04',
-      });
-      setState(() {});
+      // print(imageFile.path);
+      await ChatStreamController().sendFileMessage(widget.ConversationId,
+          File(result.path), Get.find<AuthController>().currentUser['id'], '');
+      // List<int> imageBytes = await imageFile.readAsBytes();
+      // String base64Image = base64Encode(imageBytes);
+      // print(base64Image);
     }
+  }
+
+  void handlefileAttachment() async {
+    FilePickerResult? result2 = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowMultiple: false,
+      allowedExtensions: ['jpg', 'pdf', 'doc'],
+    );
+    print(result2!.files.single.path);
+    File file = File(result2.files.single.path!);
+    await ChatStreamController().sendFileMessage(
+        widget.ConversationId,
+        file,
+        Get.find<AuthController>().currentUser['id'],
+        result2.files.single.name);
   }
 }
