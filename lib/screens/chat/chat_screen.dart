@@ -115,6 +115,69 @@ class _ChatScreenState extends State<ChatScreen> {
   ];
 
   bool messageEmpty = true;
+
+  Future<void> _showSimpleDialogForDeleteConversation() async {
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.h),
+              width: 0.6.sw,
+              height: 140.h,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Are you sure you want to delete this conversation?',
+                    style: Mystyles.listtileTitleStyle,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      SimpleDialogOption(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          await Get.find<ChatStreamController>()
+                              .deleteConversation(widget.ConversationId);
+                          Get.back();
+                          ChatStreamController.userchats.removeWhere(
+                              (element) =>
+                                  element['_id'] == widget.ConversationId);
+                          ChatStreamController.userChatmessages
+                              .remove(widget.ConversationId);
+
+                          Get.find<ChatStreamController>().update();
+
+                          Get.find<ChatStreamController>().getConversations(
+                              Get.find<AuthController>().currentUser['id']);
+                        },
+                        child: Text(
+                          'Delete',
+                          style: Mystyles.listtileSubtitleStyle
+                              .copyWith(color: Colors.red),
+                        ),
+                      ),
+                      SimpleDialogOption(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: Text('Cancel',
+                            style: Mystyles.listtileSubtitleStyle),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -174,7 +237,10 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                // print('wanna delete');
+                await _showSimpleDialogForDeleteConversation();
+              },
               icon: const Icon(
                 Icons.delete,
                 color: Colors.red,
@@ -198,8 +264,11 @@ class _ChatScreenState extends State<ChatScreen> {
               return ListView.builder(
                 controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
-                itemCount: ChatStreamController
-                    .userChatmessages[widget.ConversationId].length,
+                itemCount: ChatStreamController.userChatmessages
+                        .containsKey(widget.ConversationId)
+                    ? ChatStreamController
+                        .userChatmessages[widget.ConversationId].length
+                    : 0,
                 itemBuilder: (BuildContext context, int index) {
                   // all logic for formmating goes Here
 

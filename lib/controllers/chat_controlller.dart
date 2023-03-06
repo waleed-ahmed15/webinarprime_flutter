@@ -18,9 +18,13 @@ class ChatStreamController extends GetxController {
     // socket.onConnect((data) => print(' socket stream chat connected'));
     // print('current user is=-------------------------------------------');
     // print(Get.find<AuthController>().currentUser);
+
+    //---------------------------------- join conversation socket---------------------------
     socket.emit('join', {
       Get.find<AuthController>().currentUser['id'],
     });
+
+    //------------------------------- incoming messages -------------------------------------
     print('chat stream controller');
     socket.on('conversationChatMessage', (data) {
       print(data.runtimeType);
@@ -35,6 +39,26 @@ class ChatStreamController extends GetxController {
       Get.find<ChatStreamController>().update();
       Get.find<ChatStreamController>()
           .getConversations(Get.find<AuthController>().currentUser['id']);
+    });
+
+    // -----------------------conversation deleted---------------
+
+    socket.on('conversationUpdate', (data) {
+      if (data['action'] == 'delete') {
+        print('------------------conversation deleted------------------');
+        print(data);
+        print('------------------conversation deleted------------------');
+
+        Get.back();
+        userchats
+            .removeWhere((element) => element['_id'] == data['conversationId']);
+        userChatmessages.remove(data['conversationId']);
+
+        Get.find<ChatStreamController>().update();
+
+        Get.find<ChatStreamController>()
+            .getConversations(Get.find<AuthController>().currentUser['id']);
+      }
     });
 
     super.onInit();
@@ -195,7 +219,7 @@ class ChatStreamController extends GetxController {
   }
 
   //delete a conversation by id
-  Future<bool> deleteConversation(String conversationId) async {
+  Future<void> deleteConversation(String conversationId) async {
     try {
       Uri url = Uri.parse(
         '${AppConstants.baseURL}/chat/delete-conversation/$conversationId',
@@ -209,15 +233,13 @@ class ChatStreamController extends GetxController {
       );
       if (response.statusCode == 200) {
         print('conversation deleted');
-        update();
-        return true;
+        
+        print(response.body);
       } else {
         print('conversation deletion Failed');
-        return false;
       }
     } catch (e) {
       print(e);
-      return false;
     }
   }
 }
