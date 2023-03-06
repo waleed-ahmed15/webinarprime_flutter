@@ -57,7 +57,9 @@ class RoutesHelper {
     ),
     GetPage(
       name: homeScreenRoute,
-      page: () => const HomeScreen(),
+      page: () => HomeScreen(
+        currIndex: 0,
+      ),
     ),
     GetPage(
       name: signUpRoute,
@@ -78,7 +80,7 @@ class RoutesHelper {
   ];
 
   static Future<bool> startForegroundService() async {
-    final androidConfig = const FlutterBackgroundAndroidConfig(
+    const androidConfig = FlutterBackgroundAndroidConfig(
       notificationTitle: 'Title of the notification',
       notificationText: 'Text of the notification',
       notificationImportance: AndroidNotificationImportance.Default,

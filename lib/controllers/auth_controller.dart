@@ -220,7 +220,9 @@ class AuthController extends GetxController {
         print("regno:");
         print(currentUser['registration_number']);
         if (currentUser.containsKey('birthdate')) {
-          Get.offAll(() => const HomeScreen());
+          Get.offAll(() => HomeScreen(
+                currIndex: 0,
+              ));
           getInvitations(currentUser['id']);
         } else {
           Get.toNamed(RoutesHelper.uploadProfileRoute);

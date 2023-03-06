@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/chat_controlller.dart';
+import 'package:webinarprime/screens/chat/chat_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
 
@@ -68,9 +69,18 @@ class _CreateNewChatState extends State<CreateNewChat> {
                     Get.find<AuthController>().searchedUsers[index]['_id'],
                     Get.find<AuthController>().currentUser['id']
                   ]);
-                  Get.find<AuthController>().searchedUsers.clear();
 
-                  Get.back();
+                  // find index of receiver in userchats
+                  int otheruserIndex =
+                      ChatStreamController.userchats.last['users'][0]['_id'] ==
+                              Get.find<AuthController>().currentUser['id']
+                          ? 1
+                          : 0;
+
+                  Get.to(() => ChatScreen(
+                      ChatStreamController.userchats[0]['_id'],
+                      ChatStreamController.userchats[index]['users']
+                          [otheruserIndex]));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,

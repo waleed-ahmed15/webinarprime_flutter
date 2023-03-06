@@ -17,7 +17,8 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:webinarprime/utils/styles.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  int? currIndex;
+  HomeScreen({required this.currIndex, super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  int _selectedIndex = 0;
+  // int _selectedIndex = widget.currIndex!;
   bool isOrganizer = false;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
@@ -236,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         // backgroundColor: Colors.white,
 
-        appBar: _selectedIndex == 0
+        appBar: widget.currIndex == 0
             ? AppBar(
                 // title: Text(
                 //   "Home",
@@ -271,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             : null,
         body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
+          child: _widgetOptions.elementAt(widget.currIndex!),
         ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(color: Mycolors.myappbarcolor),
@@ -310,10 +311,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     text: 'Chat',
                   ),
                 ],
-                selectedIndex: _selectedIndex,
+                selectedIndex: widget.currIndex!,
                 onTabChange: (index) {
                   setState(() {
-                    _selectedIndex = index;
+                    widget.currIndex = index;
                   });
                 },
               ),

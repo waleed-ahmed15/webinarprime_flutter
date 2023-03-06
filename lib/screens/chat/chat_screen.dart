@@ -15,6 +15,7 @@ import 'package:webinarprime/controllers/chat_controlller.dart';
 import 'package:webinarprime/screens/chat/chat_field_widget.dart';
 import 'package:webinarprime/screens/chat/file_message_view_widget.dart';
 import 'package:webinarprime/screens/chat/image_Viewer_widget.dart';
+import 'package:webinarprime/screens/home_screen/home_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
 
@@ -144,7 +145,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           Navigator.of(context).pop();
                           await Get.find<ChatStreamController>()
                               .deleteConversation(widget.ConversationId);
-                          Get.back();
+                          Get.to(() => HomeScreen(
+                                currIndex: 3,
+                              ));
                           ChatStreamController.userchats.removeWhere(
                               (element) =>
                                   element['_id'] == widget.ConversationId);
@@ -209,329 +212,342 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     print(widget.receiever);
     print(widget.ConversationId);
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor:
-            Get.isDarkMode ? Colors.black : const Color(0xffffffff),
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          title: Text(
-            widget.receiever['name'],
-            style: Mystyles.listtileTitleStyle.copyWith(fontSize: 20.sp),
-          ),
-          centerTitle: false,
-          // backgroundColor: Mycolors.myappbarcolor,
+    return WillPopScope(
+      onWillPop: () async {
+        Get.to(() => HomeScreen(
+              currIndex: 3,
+            ));
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
           backgroundColor:
               Get.isDarkMode ? Colors.black : const Color(0xffffffff),
-          elevation: 0,
-          leading: Row(
-            children: [
-              Gap(10.w),
-              CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: 20.r,
-                backgroundImage: NetworkImage(
-                    AppConstants.baseURL + widget.receiever['profile_image']),
+          appBar: AppBar(
+            automaticallyImplyLeading: true,
+            title: Text(
+              widget.receiever['name'],
+              style: Mystyles.listtileTitleStyle.copyWith(fontSize: 20.sp),
+            ),
+            centerTitle: false,
+            // backgroundColor: Mycolors.myappbarcolor,
+            backgroundColor:
+                Get.isDarkMode ? Colors.black : const Color(0xffffffff),
+            elevation: 0,
+            leading: Row(
+              children: [
+                Gap(10.w),
+                CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: 20.r,
+                  backgroundImage: NetworkImage(
+                      AppConstants.baseURL + widget.receiever['profile_image']),
+                ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                onPressed: () async {
+                  // print('wanna delete');
+                  await _showSimpleDialogForDeleteConversation();
+                },
+                icon: const Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  
+                },
+                icon: Icon(
+                  Icons.block,
+                  color: Get.isDarkMode ? Colors.white : Colors.black,
+                ),
               ),
             ],
           ),
-          actions: [
-            IconButton(
-              onPressed: () async {
-                // print('wanna delete');
-                await _showSimpleDialogForDeleteConversation();
-              },
-              icon: const Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.block,
-                color: Get.isDarkMode ? Colors.white : Colors.black,
-              ),
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Gap(10.h),
-            Expanded(child:
-                GetBuilder<ChatStreamController>(builder: (controllerChat) {
-              String mycurrentDate = '';
-              return ListView.builder(
-                controller: _scrollController,
-                physics: const BouncingScrollPhysics(),
-                itemCount: ChatStreamController.userChatmessages
-                        .containsKey(widget.ConversationId)
-                    ? ChatStreamController
-                        .userChatmessages[widget.ConversationId].length
-                    : 0,
-                itemBuilder: (BuildContext context, int index) {
-                  // all logic for formmating goes Here
+          body: Column(
+            children: [
+              Gap(10.h),
+              Expanded(child:
+                  GetBuilder<ChatStreamController>(builder: (controllerChat) {
+                String mycurrentDate = '';
+                return ListView.builder(
+                  controller: _scrollController,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: ChatStreamController.userChatmessages
+                          .containsKey(widget.ConversationId)
+                      ? ChatStreamController
+                          .userChatmessages[widget.ConversationId].length
+                      : 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    // all logic for formmating goes Here
 
-                  bool addDate = false;
-                  DateTime date = DateTime.parse(ChatStreamController
-                          .userChatmessages[widget.ConversationId][index]
-                      ['createdAt']);
-                  String formmattedDateTime =
-                      DateFormat('dd/MM/yy, hh:mm').format(date);
-                  print(ChatStreamController
-                          .userChatmessages[widget.ConversationId][index]
-                      ['from']['_id']);
-                  print(Get.find<AuthController>().currentUser['id']);
-                  bool issender = false;
-                  if (ChatStreamController
-                              .userChatmessages[widget.ConversationId][index]
-                          ['from']['_id'] ==
-                      Get.find<AuthController>().currentUser['id']) {
-                    issender = true;
-                    print('sender');
-                  }
-                  if (index == 0) {
-                    addDate = true;
-                  } else if (mycurrentDate != formmattedDateTime) {
-                    addDate = true;
-                  }
-                  mycurrentDate = formmattedDateTime;
+                    bool addDate = false;
+                    DateTime date = DateTime.parse(ChatStreamController
+                            .userChatmessages[widget.ConversationId][index]
+                        ['createdAt']);
+                    String formmattedDateTime =
+                        DateFormat('dd/MM/yy, hh:mm').format(date);
+                    print(ChatStreamController
+                            .userChatmessages[widget.ConversationId][index]
+                        ['from']['_id']);
+                    print(Get.find<AuthController>().currentUser['id']);
+                    bool issender = false;
+                    if (ChatStreamController
+                                .userChatmessages[widget.ConversationId][index]
+                            ['from']['_id'] ==
+                        Get.find<AuthController>().currentUser['id']) {
+                      issender = true;
+                      print('sender');
+                    }
+                    if (index == 0) {
+                      addDate = true;
+                    } else if (mycurrentDate != formmattedDateTime) {
+                      addDate = true;
+                    }
+                    mycurrentDate = formmattedDateTime;
 
-                  print(formmattedDateTime);
+                    print(formmattedDateTime);
 
-                  print(date);
-                  return Container(
-                    margin: EdgeInsets.only(
-                      top: 1.h,
-                      left: 10.w,
-                      right: 10.w,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        addDate
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: 5.h,
+                    print(date);
+                    return Container(
+                      margin: EdgeInsets.only(
+                        top: 1.h,
+                        left: 10.w,
+                        right: 10.w,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          addDate
+                              ? Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: 5.h,
+                                  ),
+                                  child: Center(
+                                      child: Text(formmattedDateTime,
+                                          style: Mystyles.popupHeadingStyle)),
+                                )
+                              : const SizedBox(),
+                          Row(
+                            mainAxisAlignment: issender
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
+                            children: [
+                              // Text(ChatStreamController
+                              //     .userChatmessages[widget.ConversationId][index]
+                              //         ['text']
+                              //     .toString()),
+
+                              Container(
+                                margin: EdgeInsets.only(top: 2.h, bottom: 2.h),
+                                // padding: EdgeInsets.symmetric(
+                                //     horizontal: 7.w, vertical: 3.h),
+                                decoration: BoxDecoration(
+                                  color: issender
+                                      ? const Color(0xff4c51d9)
+                                      : receiverChatBubbleColor,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.w),
+                                    topRight: Radius.circular(10.w),
+                                    bottomLeft: Radius.circular(10.w),
+                                    bottomRight: Radius.circular(10.w),
+                                  ),
                                 ),
-                                child: Center(
-                                    child: Text(formmattedDateTime,
-                                        style: Mystyles.popupHeadingStyle)),
-                              )
-                            : const SizedBox(),
-                        Row(
-                          mainAxisAlignment: issender
-                              ? MainAxisAlignment.end
-                              : MainAxisAlignment.start,
-                          children: [
-                            // Text(ChatStreamController
-                            //     .userChatmessages[widget.ConversationId][index]
-                            //         ['text']
-                            //     .toString()),
-
-                            Container(
-                              margin: EdgeInsets.only(top: 2.h, bottom: 2.h),
-                              // padding: EdgeInsets.symmetric(
-                              //     horizontal: 7.w, vertical: 3.h),
-                              decoration: BoxDecoration(
-                                color: issender
-                                    ? const Color(0xff4c51d9)
-                                    : receiverChatBubbleColor,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.w),
-                                  topRight: Radius.circular(10.w),
-                                  bottomLeft: Radius.circular(10.w),
-                                  bottomRight: Radius.circular(10.w),
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  ChatStreamController.userChatmessages[widget
-                                              .ConversationId][index]['file'] !=
-                                          null
-                                      ? ChatStreamController.userChatmessages[
-                                                  widget.ConversationId][index]
-                                                  ['file']['mimetype']
-                                              .contains('image')
-                                          ? ImageMessageContainer(
-                                              imageUrl: AppConstants.baseURL +
-                                                  ChatStreamController
-                                                              .userChatmessages[
-                                                          widget.ConversationId]
-                                                      [index]['file']['path'],
-                                            )
-                                          : MyFileMessage(
-                                              sender: true,
-                                              fileName: ChatStreamController
-                                                          .userChatmessages[
-                                                      widget.ConversationId]
-                                                  [index]['file']['filename'],
-                                              fileUrl: AppConstants.baseURL +
-                                                  ChatStreamController
-                                                              .userChatmessages[
-                                                          widget.ConversationId]
-                                                      [index]['file']['path'],
-                                            )
-                                      : Container(
-                                          margin: EdgeInsets.zero,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 7.w, vertical: 3.h),
-                                          constraints: BoxConstraints(
-                                            maxWidth: 0.5.sw,
-                                          ),
-                                          child: ExpandableText(
-                                            maxLines: 6,
-                                            linkColor: Colors.blue,
-                                            expandText: '',
-                                            expandOnTextTap: true,
-                                            collapseOnTextTap: true,
-                                            collapseText: '',
-                                            ChatStreamController
-                                                .userChatmessages[
+                                child: Column(
+                                  children: [
+                                    ChatStreamController.userChatmessages[
                                                     widget.ConversationId]
-                                                    [index]['text']
-                                                .toString(),
-                                            style: Mystyles.listtileTitleStyle
-                                                .copyWith(
-                                              color: issender //sender
-                                                  ? Colors.white
-                                                  : Mystyles
-                                                      .bigTitleStyle.color,
-                                              fontSize: 16.sp,
+                                                [index]['file'] !=
+                                            null
+                                        ? ChatStreamController.userChatmessages[
+                                                    widget.ConversationId]
+                                                    [index]['file']['mimetype']
+                                                .contains('image')
+                                            ? ImageMessageContainer(
+                                                imageUrl: AppConstants.baseURL +
+                                                    ChatStreamController
+                                                                .userChatmessages[
+                                                            widget
+                                                                .ConversationId]
+                                                        [index]['file']['path'],
+                                              )
+                                            : MyFileMessage(
+                                                sender: true,
+                                                fileName: ChatStreamController
+                                                            .userChatmessages[
+                                                        widget.ConversationId]
+                                                    [index]['file']['filename'],
+                                                fileUrl: AppConstants.baseURL +
+                                                    ChatStreamController
+                                                                .userChatmessages[
+                                                            widget
+                                                                .ConversationId]
+                                                        [index]['file']['path'],
+                                              )
+                                        : Container(
+                                            margin: EdgeInsets.zero,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 7.w, vertical: 3.h),
+                                            constraints: BoxConstraints(
+                                              maxWidth: 0.5.sw,
                                             ),
-                                            textAlign: TextAlign.start,
+                                            child: ExpandableText(
+                                              maxLines: 6,
+                                              linkColor: Colors.blue,
+                                              expandText: '',
+                                              expandOnTextTap: true,
+                                              collapseOnTextTap: true,
+                                              collapseText: '',
+                                              ChatStreamController
+                                                  .userChatmessages[
+                                                      widget.ConversationId]
+                                                      [index]['text']
+                                                  .toString(),
+                                              style: Mystyles.listtileTitleStyle
+                                                  .copyWith(
+                                                color: issender //sender
+                                                    ? Colors.white
+                                                    : Mystyles
+                                                        .bigTitleStyle.color,
+                                                fontSize: 16.sp,
+                                              ),
+                                              textAlign: TextAlign.start,
+                                            ),
                                           ),
-                                        ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            })),
-            // child: ListView.builder(
-            //   padding: EdgeInsets.only(
-            //     bottom: 50.h,
-            //   ),
-            //   // controller: _scrollController,
-            //   // physics: const BouncingScrollPhysics(),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              })),
+              // child: ListView.builder(
+              //   padding: EdgeInsets.only(
+              //     bottom: 50.h,
+              //   ),
+              //   // controller: _scrollController,
+              //   // physics: const BouncingScrollPhysics(),
 
-            //   itemCount: ChatStreamController
-            //       .userChatmessages[widget.ConversationId],
-            //   itemBuilder: (context, index) {
-            //     bool insertDate = false;
-            //     print(index);
-            //     if (index == 0) {
-            //       insertDate = true;
-            //     } else if (currentDate != messages[index]['time']) {
-            //       insertDate = true;
-            //     }
-            //     index = index + messages.length - 10;
+              //   itemCount: ChatStreamController
+              //       .userChatmessages[widget.ConversationId],
+              //   itemBuilder: (context, index) {
+              //     bool insertDate = false;
+              //     print(index);
+              //     if (index == 0) {
+              //       insertDate = true;
+              //     } else if (currentDate != messages[index]['time']) {
+              //       insertDate = true;
+              //     }
+              //     index = index + messages.length - 10;
 
-            //     bool sender = messages[index]['user'] == 'sender';
+              //     bool sender = messages[index]['user'] == 'sender';
 
-            //     currentDate = messages[index]['time'];
+              //     currentDate = messages[index]['time'];
 
-            //     return Container(
-            //       margin: EdgeInsets.only(
-            //         top: 1.h,
-            //         left: 10.w,
-            //         right: 10.w,
-            //       ),
-            //       child: Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           insertDate
-            //               ? Padding(
-            //                   padding: EdgeInsets.only(
-            //                     bottom: 5.h,
-            //                   ),
-            //                   child: Center(
-            //                       child: Text(messages[index]['time']!,
-            //                           style: Mystyles.popupHeadingStyle)),
-            //                 )
-            //               : const SizedBox(),
-            //           Row(
-            //             mainAxisAlignment: sender
-            //                 ? MainAxisAlignment.end
-            //                 : MainAxisAlignment.start,
-            //             children: [
-            //               messages[index].containsKey('message')
-            //                   ? Container(
-            //                       padding: EdgeInsets.symmetric(
-            //                           horizontal: 10.w, vertical: 5.h),
-            //                       decoration: BoxDecoration(
-            //                         color: sender
-            //                             ? const Color(0xff4c51d9)
-            //                             : receiverChatBubbleColor,
-            //                         borderRadius: BorderRadius.only(
-            //                           topLeft: Radius.circular(10.w),
-            //                           topRight: Radius.circular(10.w),
-            //                           bottomLeft: Radius.circular(10.w),
-            //                           bottomRight: Radius.circular(10.w),
-            //                         ),
-            //                       ),
-            //                       child: Column(
-            //                         children: [
-            //                           Container(
-            //                             margin: EdgeInsets.zero,
-            //                             padding: EdgeInsets.zero,
-            //                             constraints: BoxConstraints(
-            //                               maxWidth: 0.5.sw,
-            //                             ),
-            //                             child: ExpandableText(
-            //                               maxLines: 6,
-            //                               linkColor: Colors.blue,
-            //                               expandText: 'more',
-            //                               expandOnTextTap: true,
-            //                               collapseOnTextTap: true,
-            //                               collapseText: 'less',
-            //                               messages[index]['message']!,
-            //                               style: Mystyles.listtileTitleStyle
-            //                                   .copyWith(
-            //                                 color: sender
-            //                                     ? Colors.white
-            //                                     : Mystyles
-            //                                         .bigTitleStyle.color,
-            //                                 fontSize: 16.sp,
-            //                               ),
-            //                               textAlign: TextAlign.start,
-            //                             ),
-            //                           ),
-            //                           SizedBox(
-            //                             height: 5.h,
-            //                           ),
-            //                         ],
-            //                       ),
-            //                     )
-            //                   : messages[index].containsKey('file')
-            //                       ? MyFileMessage(
-            //                           sender: sender,
-            //                           fileName: messages[index]['name'],
-            //                           fileUrl: messages[index]['file'],
-            //                         )
-            //                       : ImageMessageContainer(
-            //                           imageUrl: messages[index]['image'],
-            //                         ),
-            //             ],
-            //           ),
-            //           Gap(2.w),
-            //         ],
-            //       ),
-            //     );
-            //   },
-            // ),
+              //     return Container(
+              //       margin: EdgeInsets.only(
+              //         top: 1.h,
+              //         left: 10.w,
+              //         right: 10.w,
+              //       ),
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           insertDate
+              //               ? Padding(
+              //                   padding: EdgeInsets.only(
+              //                     bottom: 5.h,
+              //                   ),
+              //                   child: Center(
+              //                       child: Text(messages[index]['time']!,
+              //                           style: Mystyles.popupHeadingStyle)),
+              //                 )
+              //               : const SizedBox(),
+              //           Row(
+              //             mainAxisAlignment: sender
+              //                 ? MainAxisAlignment.end
+              //                 : MainAxisAlignment.start,
+              //             children: [
+              //               messages[index].containsKey('message')
+              //                   ? Container(
+              //                       padding: EdgeInsets.symmetric(
+              //                           horizontal: 10.w, vertical: 5.h),
+              //                       decoration: BoxDecoration(
+              //                         color: sender
+              //                             ? const Color(0xff4c51d9)
+              //                             : receiverChatBubbleColor,
+              //                         borderRadius: BorderRadius.only(
+              //                           topLeft: Radius.circular(10.w),
+              //                           topRight: Radius.circular(10.w),
+              //                           bottomLeft: Radius.circular(10.w),
+              //                           bottomRight: Radius.circular(10.w),
+              //                         ),
+              //                       ),
+              //                       child: Column(
+              //                         children: [
+              //                           Container(
+              //                             margin: EdgeInsets.zero,
+              //                             padding: EdgeInsets.zero,
+              //                             constraints: BoxConstraints(
+              //                               maxWidth: 0.5.sw,
+              //                             ),
+              //                             child: ExpandableText(
+              //                               maxLines: 6,
+              //                               linkColor: Colors.blue,
+              //                               expandText: 'more',
+              //                               expandOnTextTap: true,
+              //                               collapseOnTextTap: true,
+              //                               collapseText: 'less',
+              //                               messages[index]['message']!,
+              //                               style: Mystyles.listtileTitleStyle
+              //                                   .copyWith(
+              //                                 color: sender
+              //                                     ? Colors.white
+              //                                     : Mystyles
+              //                                         .bigTitleStyle.color,
+              //                                 fontSize: 16.sp,
+              //                               ),
+              //                               textAlign: TextAlign.start,
+              //                             ),
+              //                           ),
+              //                           SizedBox(
+              //                             height: 5.h,
+              //                           ),
+              //                         ],
+              //                       ),
+              //                     )
+              //                   : messages[index].containsKey('file')
+              //                       ? MyFileMessage(
+              //                           sender: sender,
+              //                           fileName: messages[index]['name'],
+              //                           fileUrl: messages[index]['file'],
+              //                         )
+              //                       : ImageMessageContainer(
+              //                           imageUrl: messages[index]['image'],
+              //                         ),
+              //             ],
+              //           ),
+              //           Gap(2.w),
+              //         ],
+              //       ),
+              //     );
+              //   },
+              // ),
 
-            ChatFieldWidget(
-              onSend: sendPressed,
-              oncameraPressed: _handleImageSelection,
-              onAttachPressed: handlefileAttachment,
-            )
-          ],
+              ChatFieldWidget(
+                onSend: sendPressed,
+                oncameraPressed: _handleImageSelection,
+                onAttachPressed: handlefileAttachment,
+              )
+            ],
+          ),
         ),
       ),
     );
