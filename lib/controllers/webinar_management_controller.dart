@@ -165,6 +165,7 @@ class WebinarManagementController extends GetxController {
       var data = jsonDecode(response.body);
       // print('removing guest from webinar---------------------------------');
       // print(data);
+
       getwebinarById(id);
       // update();
     } catch (e) {
@@ -397,7 +398,8 @@ class WebinarManagementController extends GetxController {
       print(response.statusCode);
       if (response.statusCode == 200) {
         print(jsonDecode(response.body));
-        update();
+        getwebinarById(currentWebinar['_id']);
+        // update();
         print('member removed from webinar');
         return true;
       } else {
@@ -566,7 +568,7 @@ class WebinarManagementController extends GetxController {
       String bannerfileName = coverImage.path.split('/').last;
       String coverfileName = coverImage.path.split('/').last;
 
-      // print(bannerfileName); 
+      // print(bannerfileName);
       // print(coverfileName);
       FormData formData = FormData.fromMap(
         {

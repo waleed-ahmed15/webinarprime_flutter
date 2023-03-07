@@ -66,20 +66,24 @@ class _CreateNewChatState extends State<CreateNewChat> {
               child: ElevatedButton(
                 onPressed: () async {
                   await Get.find<ChatStreamController>().createNewConversation([
-                    Get.find<AuthController>().searchedUsers[index]['_id'],
-                    Get.find<AuthController>().currentUser['id']
+                    await Get.find<AuthController>().searchedUsers[index]
+                        ['_id'],
+                    await Get.find<AuthController>().currentUser['id']
                   ]);
-
+                  await Get.find<ChatStreamController>()
+                      .GetmessagesForAconversation(
+                          ChatStreamController.userchats[0]['_id']);
                   // find index of receiver in userchats
-                  int otheruserIndex =
-                      ChatStreamController.userchats.last['users'][0]['_id'] ==
-                              Get.find<AuthController>().currentUser['id']
-                          ? 1
-                          : 0;
+                  int otheruserIndex = await ChatStreamController.userchats[0]
+                              ['users'][0]['_id'] ==
+                          await Get.find<AuthController>().currentUser['id']
+                      ? 1
+                      : 0;
+                  Get.find<AuthController>().searchedUsers.clear();
 
                   Get.to(() => ChatScreen(
                       ChatStreamController.userchats[0]['_id'],
-                      ChatStreamController.userchats[index]['users']
+                      ChatStreamController.userchats[0]['users']
                           [otheruserIndex]));
                 },
                 style: ElevatedButton.styleFrom(

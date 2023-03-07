@@ -24,7 +24,7 @@ class ChatStreamController extends GetxController {
       Get.find<AuthController>().currentUser['id'],
     });
 
-    //------------------------------- incoming messages -------------------------------------
+    //------------------------------- incoming messages-------------------------------------
     print('chat stream controller');
     socket.on('conversationChatMessage', (data) {
       print(data.runtimeType);
@@ -41,7 +41,7 @@ class ChatStreamController extends GetxController {
           .getConversations(Get.find<AuthController>().currentUser['id']);
     });
 
-    // -----------------------conversation deleted---------------
+    // -----------------------conversation deleted---------------------------
 
     socket.on('conversationUpdate', (data) {
       if (data['action'] == 'delete') {
@@ -233,10 +233,69 @@ class ChatStreamController extends GetxController {
       );
       if (response.statusCode == 200) {
         print('conversation deleted');
-        
+
         print(response.body);
       } else {
         print('conversation deletion Failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  // ban a user from conversation
+
+  Future<void> banUser(String bannedUserId) async {
+    try {
+      Uri url = Uri.parse('${AppConstants.baseURL}/chat/ban-user');
+      var response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({
+            'bannedUserId': bannedUserId,
+            'userId': Get.find<AuthController>().currentUser['id'],
+          }));
+      if (response.statusCode == 200) {
+        print('user banned successfully');
+        print(response.body);
+        await Get.find<AuthController>()
+            .currentUser['bannedChats']
+            .add(bannedUserId);
+        print(Get.find<AuthController>().currentUser['bannedChats']);
+        update();
+      } else {
+        print('user banning Failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> unbanUser(String bannedUserId) async {
+    try {
+      Uri url = Uri.parse('${AppConstants.baseURL}/chat/unban-user');
+      var response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({
+            'bannedUserId': bannedUserId,
+            'userId': Get.find<AuthController>().currentUser['id'],
+          }));
+      if (response.statusCode == 200) {
+        print('user unbanned successfully');
+        print(response.body);
+        await Get.find<AuthController>()
+            .currentUser['bannedChats']
+            .remove(bannedUserId);
+        print(Get.find<AuthController>().currentUser['bannedChats']);
+        update();
+      } else {
+        print('user banning Failed');
       }
     } catch (e) {
       print(e);

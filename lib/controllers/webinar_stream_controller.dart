@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 
 class WebinarStreamController extends GetxController {
   static RxMap roomChatmessages = {}.obs;
+  static String webinarStreamStaus = '';
   Future<void> startWebinarStream(
       String webianrId, BuildContext context) async {
     try {
@@ -66,6 +67,30 @@ class WebinarStreamController extends GetxController {
       }
     } catch (e) {
       print(e);
+    }
+  }
+  // webinar stream status
+
+  Future<Map<String, dynamic>> webianrStreamStatus(String webinarId) async {
+    try {
+      Uri url = Uri.parse(
+        "${AppConstants.baseURL}/stream/status/$webinarId",
+      );
+      var response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+      });
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        print('Webinar-Stream Status Success');
+        return jsonDecode(response.body);
+      } else {
+        print('Webinar-Stream Status Failed');
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      print(e);
+      return {};
     }
   }
 

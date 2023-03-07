@@ -4,12 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
+import 'package:webinarprime/screens/user_search/user_search_screen.dart';
+import 'package:webinarprime/screens/webinar_management/edit_webinar/edit_webinar_screen.dart';
 import 'package:webinarprime/screens/webinar_management/view_webinar_screen/review_widget.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/dimension.dart';
 import 'package:webinarprime/utils/styles.dart';
+import 'package:floating_action_bubble/floating_action_bubble.dart';
+import 'package:webinarprime/widgets/snackbar.dart';
 
 class WebinarDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> webinarDetails;
@@ -21,18 +27,38 @@ class WebinarDetailsScreen extends StatefulWidget {
 }
 
 class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late TabController _tabController;
   late ScrollController _scrollController;
   bool _showTitle = false;
   var reviewController = TextEditingController();
+  Animation<double>? _animation;
+  AnimationController? _animationController;
+  RxString webinarStreamStatus = ''.obs;
+  bool canStream = false;
+  // this is for posting notifications
+  final formKey2 = GlobalKey<FormState>(); //key for form
+  var titleController = TextEditingController();
+  var descriptionController = TextEditingController();
+
+  String showFloatingButtonFor = '';
+  bool showfloatingButton = false;
 
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _tabController = TabController(length: 4, vsync: this);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 260),
+    );
+    final curvedAnimation =
+        CurvedAnimation(curve: Curves.easeInOut, parent: _animationController!);
+    _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
 
+    floatingActionbuttonDecider();
+    CanuserStream();
     super.initState();
   }
 
@@ -51,34 +77,503 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
   @override
   void dispose() {
     _scrollController.dispose();
+    _animationController!.dispose();
     super.dispose();
+  }
+
+  /// this is for post notification-------------------
+  void showDialogBoxForPostNotification(String webinarId) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(60.r),
+            ), //this right here
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              height: 430.h,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Form(
+                    key: formKey2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Text("Post Notification",
+                              style: Mystyles.categoriesHeadingStyle.copyWith(
+                                  color: Get.isDarkMode
+                                      ? Colors.white70
+                                      : Colors.black38)),
+                        ),
+                        TextFormField(
+                          controller: titleController,
+                          style: Mystyles.onelineStyle,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            labelText: "Title",
+                            hintText: "Enter Title",
+                          ),
+                          validator: (val) {
+                            // print("val$val");
+                            if (val == '') {
+                              return 'please enter Title';
+                            }
+                            return null;
+                          },
+                        ),
+                        // Gap(10.h),
+                        TextFormField(
+                          style: Mystyles.myParagraphStyle,
+                          maxLines: 7,
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.r)),
+                            ),
+                            hintText: 'Webinar desceiption.....',
+                          ),
+                          validator: (val) {
+                            // print("val$val");
+                            if (val == '') {
+                              return 'please enter description';
+                            }
+                            return null;
+                          },
+                        ),
+                        Gap(10.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  animationDuration: const Duration(seconds: 3),
+                                  backgroundColor: Colors.red,
+                                ),
+                                child: Text(
+                                  'cancel',
+                                  style: TextStyle(
+                                      fontSize: AppLayout.getHeight(13),
+                                      fontFamily: 'JosefinSans Bold',
+                                      letterSpacing: 1),
+                                )),
+
+                            // this is where update  is handled
+                            SizedBox(width: 20.w),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                              ),
+                              child: Text(
+                                'Post',
+                                style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontFamily: 'JosefinSans Bold',
+                                    letterSpacing: 1),
+                              ),
+                              onPressed: () async {
+                                // Do something with the edited text
+                                if (formKey2.currentState!.validate()) {
+                                  // print(
+                                  // "titleController.text${titleController.text}");
+                                  // print(
+                                  // "descriptionController.text${descriptionController.text}");
+                                  // print(
+                                  // "WebinarManagementController.currentWebinar['_id']${WebinarManagementController.currentWebinar['_id']}");
+
+                                  await WebinarManagementController()
+                                      .postNotification(
+                                          webinarId,
+                                          titleController.text,
+                                          descriptionController.text);
+                                  Navigator.of(context).pop();
+                                  ShowCustomSnackBar(
+                                      title: "",
+                                      "Notification posted successfully",
+                                      isError: false);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+          );
+        });
+  }
+
+  /// this is for post notification-------------------^^^^^------
+  void CanuserStream() async {
+    bool found = false;
+    WebinarManagementController.currentWebinar['organizers'].forEach((element) {
+      print(element);
+      if (element['_id'] == Get.find<AuthController>().currentUser['id']) {
+        canStream = true;
+        found = true;
+        return;
+      }
+    });
+    if (!found) {
+      WebinarManagementController.currentWebinar['guests'].forEach((element) {
+        print(element);
+        if (element['_id'] == Get.find<AuthController>().currentUser['id']) {
+          canStream = true;
+          found = true;
+          return;
+        }
+      });
+    }
+
+    if (!found) {
+      WebinarManagementController.currentWebinar['attendees']
+          .forEach((element) {
+        print(element);
+        if (element['_id'] == Get.find<AuthController>().currentUser['id']) {
+          canStream = true;
+          found = true;
+          return;
+        }
+      });
+    }
+
+    if (WebinarManagementController.currentWebinar['createdBy']['_id'] ==
+        Get.find<AuthController>().currentUser['id']) {
+      canStream = true;
+    }
+    Map<String, dynamic> res = await Get.find<WebinarStreamController>()
+        .webianrStreamStatus(WebinarManagementController.currentWebinar['_id']);
+    print(res);
+    print('object===============================');
+    webinarStreamStatus.value = res['status'];
+    setState(() {});
+    print(webinarStreamStatus.value);
+  }
+
+  void floatingActionbuttonDecider() {
+    if (WebinarManagementController.currentWebinar['createdBy']['_id'] ==
+        Get.find<AuthController>().currentUser['id']) {
+      showFloatingButtonFor = 'creator';
+      showfloatingButton = true;
+      return;
+    }
+    WebinarManagementController.currentWebinar['organizers'].forEach((element) {
+      print(element);
+      if (element['_id'] == Get.find<AuthController>().currentUser['id']) {
+        showFloatingButtonFor = 'organizer';
+        showfloatingButton = true;
+        return;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('webinarDetails: ${widget.webinarDetails}');
+    print(WebinarManagementController.currentWebinar['createdBy']['_id']);
+    print(WebinarManagementController.currentWebinar);
+    bool showFloatingButton = Get.find<AuthController>().currentUser['id'] ==
+        WebinarManagementController.currentWebinar['createdBy']['_id'];
+
     return Scaffold(
-      floatingActionButton: ElevatedButton(
-          onPressed: () {
-            print('start stream pressed');
-            print('id: ${widget.webinarDetails['_id']}');
-            Get.find<WebinarStreamController>()
-                .startWebinarStream(widget.webinarDetails['_id'], context);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.LTprimaryColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-          ),
-          child: Text(
-            'Start Stream',
-            style: TextStyle(
-                color: Colors.white.withOpacity(.98),
-                fontWeight: FontWeight.w600,
-                fontSize: 15.sp,
-                fontFamily: 'JosefinSans Bold'),
-          )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: showfloatingButton
+          ? showFloatingButtonFor == 'creator'
+              ? FloatingActionBubble(
+                  items: [
+                    // Floating action menu item
+                    Bubble(
+                      title: webinarStreamStatus.value == 'live'
+                          ? 'Join'
+                          : "Start Stream",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.stream_outlined,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () async {
+                        webinarStreamStatus.value == 'live'
+                            ? Get.find<WebinarStreamController>().joinStream(
+                                WebinarManagementController
+                                    .currentWebinar['_id'],
+                                context)
+                            : Get.find<WebinarStreamController>()
+                                .startWebinarStream(
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
+                                    context);
+                        _animationController!.reverse();
+                      },
+                    ),
+                    Bubble(
+                      title: "End Stream",
+                      iconColor: Colors.white,
+                      bubbleColor: webinarStreamStatus.value == 'live'
+                          ? Colors.blue
+                          : Colors.grey,
+                      icon: Icons.stop,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: webinarStreamStatus.value == 'live'
+                          ? () async {
+                              _animationController!.reverse();
+                            }
+                          : () {
+                              print('end stream grey');
+                            },
+                    ),
+                    // Floating action menu item
+
+                    Bubble(
+                      title: "Post Notification",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.notification_add,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () {
+                        _animationController!.reverse();
+                        showDialogBoxForPostNotification(
+                            WebinarManagementController.currentWebinar['_id']);
+                      },
+                    ),
+                    Bubble(
+                      title: "Edit",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.edit,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () {
+                        _animationController!.reverse();
+                        Get.to(() => EditWebinarScreen(
+                              webinarDetails:
+                                  WebinarManagementController.currentWebinar,
+                            ));
+                      },
+                    ),
+                    //Floating action menu item
+                    Bubble(
+                      title: "Organizers",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.group,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () async {
+                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                        _animationController!.reverse();
+                        await WebinarManagementController()
+                            .getOrganizersForWebinar(WebinarManagementController
+                                .currentWebinar['_id']);
+
+                        Get.to(() => UserSearchScreen(
+                            usersType: 1,
+                            webinarId: WebinarManagementController
+                                .currentWebinar['_id']));
+                      },
+                    ),
+                    Bubble(
+                      title: "Guests",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.group,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () async {
+                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                        _animationController!.reverse();
+                        await WebinarManagementController().getGuestsForWebinar(
+                            WebinarManagementController.currentWebinar['_id']);
+                        Get.to(() => UserSearchScreen(
+                            usersType: 2,
+                            webinarId: WebinarManagementController
+                                .currentWebinar['_id']));
+                      },
+                    ),
+                    Bubble(
+                      title: "Attendees",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.group,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () async {
+                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                        _animationController!.reverse();
+
+                        await WebinarManagementController()
+                            .getAttendeesForWebinar(WebinarManagementController
+                                .currentWebinar['_id']);
+                        Get.to(() => UserSearchScreen(
+                              usersType: 3,
+                              webinarId: WebinarManagementController
+                                  .currentWebinar['_id'],
+                            ));
+                      },
+                    ),
+                  ],
+
+                  // animation controller
+                  animation: _animation!,
+
+                  // On pressed change animation state
+                  onPress: () {
+                    setState(() {});
+                    _animationController!.isCompleted
+                        ? _animationController!.reverse()
+                        : _animationController!.forward();
+                  },
+
+                  // Floating Action button Icon color
+                  iconColor: Colors.white,
+
+                  // Flaoting Action button Icon
+                  iconData: Icons.menu,
+                  backGroundColor: AppColors.LTprimaryColor,
+                )
+              // this is to show for organizer
+              : FloatingActionBubble(
+                  items: [
+                    Bubble(
+                      title: "Post Notification",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.notification_add,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () {
+                        _animationController!.reverse();
+                        showDialogBoxForPostNotification(
+                            WebinarManagementController.currentWebinar['_id']);
+                      },
+                    ),
+                    Bubble(
+                      title: "Edit",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.edit,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () {
+                        _animationController!.reverse();
+                        Get.to(() => EditWebinarScreen(
+                              webinarDetails:
+                                  WebinarManagementController.currentWebinar,
+                            ));
+                      },
+                    ),
+                    //Floating action menu item
+                    Bubble(
+                      title: "Organizers",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.group,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () async {
+                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                        _animationController!.reverse();
+                        await WebinarManagementController()
+                            .getOrganizersForWebinar(WebinarManagementController
+                                .currentWebinar['_id']);
+
+                        Get.to(() => UserSearchScreen(
+                            usersType: 1,
+                            webinarId: WebinarManagementController
+                                .currentWebinar['_id']));
+                      },
+                    ),
+                    Bubble(
+                      title: "Guests",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.group,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () async {
+                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                        _animationController!.reverse();
+                        await WebinarManagementController().getGuestsForWebinar(
+                            WebinarManagementController.currentWebinar['_id']);
+                        Get.to(() => UserSearchScreen(
+                            usersType: 2,
+                            webinarId: WebinarManagementController
+                                .currentWebinar['_id']));
+                      },
+                    ),
+                    Bubble(
+                      title: "Attendees",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.group,
+                      titleStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () async {
+                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                        _animationController!.reverse();
+
+                        await WebinarManagementController()
+                            .getAttendeesForWebinar(WebinarManagementController
+                                .currentWebinar['_id']);
+                        Get.to(() => UserSearchScreen(
+                              usersType: 3,
+                              webinarId: WebinarManagementController
+                                  .currentWebinar['_id'],
+                            ));
+                      },
+                    ),
+                  ],
+
+                  // animation controller
+                  animation: _animation!,
+
+                  // On pressed change animation state
+                  onPress: () => _animationController!.isCompleted
+                      ? _animationController!.reverse()
+                      : _animationController!.forward(),
+
+                  // Floating Action button Icon color
+                  iconColor: Colors.white,
+
+                  // Flaoting Action button Icon
+                  iconData: Icons.menu,
+                  backGroundColor: AppColors.LTprimaryColor,
+                )
+          : null,
+      // floatingActionButton: ElevatedButton(
+      //     onPressed: () {
+      //       print('start stream pressed');
+      //       print('id: ${WebinarManagementController.currentWebinar['_id']}');
+      // Get.find<WebinarStreamController>()
+      //     .startWebinarStream(WebinarManagementController.currentWebinar['_id'], context);
+      //     },
+      //     style: ElevatedButton.styleFrom(
+      //       backgroundColor: AppColors.LTprimaryColor,
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(10.r),
+      //       ),
+      //     ),
+      //     child: Text(
+      //       'Start Stream',
+      //       style: TextStyle(
+      //           color: Colors.white.withOpacity(.98),
+      //           fontWeight: FontWeight.w600,
+      //           fontSize: 15.sp,
+      //           fontFamily: 'JosefinSans Bold'),
+      //     )),
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -107,7 +602,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         padding:
                             EdgeInsets.only(bottom: AppLayout.getHeight(40)),
                         child: Text(
-                          '${widget.webinarDetails['name']}',
+                          '${WebinarManagementController.currentWebinar['name']}',
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -133,7 +628,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           image: DecorationImage(
                             image: NetworkImage(
                               AppConstants.baseURL +
-                                  widget.webinarDetails['bannerImage'],
+                                  WebinarManagementController
+                                      .currentWebinar['bannerImage'],
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -159,7 +655,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         ),
                         // child: Image.network(
                         //   AppConstants.baseURL +
-                        //       widget.webinarDetails['bannerImage'],
+                        //       WebinarManagementController.currentWebinar['bannerImage'],
                         //   fit: BoxFit.cover,
                         //   height: AppLayout.getHeight(250),
                         //   width: double.infinity,
@@ -196,7 +692,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           image: DecorationImage(
                             image: NetworkImage(
                               AppConstants.baseURL +
-                                  widget.webinarDetails['coverImage'],
+                                  WebinarManagementController
+                                      .currentWebinar['coverImage'],
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -214,7 +711,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                '${widget.webinarDetails['datetime']} - ${widget.webinarDetails['duration']} Mins',
+                                '${WebinarManagementController.currentWebinar['datetime']} - ${WebinarManagementController.currentWebinar['duration']} Mins',
                                 style: TextStyle(
                                   fontSize: AppLayout.getHeight(20),
                                   fontFamily: 'JosefinSans Bold',
@@ -235,7 +732,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           height: AppLayout.getHeight(100),
                           width: AppLayout.getWidth(400),
                           child: AutoSizeText(
-                            '${widget.webinarDetails['name']}',
+                            '${WebinarManagementController.currentWebinar['name']}',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: AppLayout.getHeight(40),
@@ -254,17 +751,20 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         width: AppLayout.getScreenWidth(),
                         // color: Colors.yellow,
                         child: Center(
-                          child: Text(
-                            '${widget.webinarDetails['attendees'].length} people attending',
-                            style: TextStyle(
-                              fontSize: AppLayout.getHeight(16),
-                              fontFamily: 'JosefinSans Bold',
-                              fontWeight: FontWeight.w500,
-                              color: Get.isDarkMode
-                                  ? const Color.fromRGBO(74, 229, 239, 1)
-                                  : const Color.fromRGBO(248, 79, 57, 1),
-                            ),
-                          ),
+                          child: GetBuilder<WebinarManagementController>(
+                              builder: (context) {
+                            return Text(
+                              '${WebinarManagementController.currentWebinar['attendees'].length} people attending',
+                              style: TextStyle(
+                                fontSize: AppLayout.getHeight(16),
+                                fontFamily: 'JosefinSans Bold',
+                                fontWeight: FontWeight.w500,
+                                color: Get.isDarkMode
+                                    ? const Color.fromRGBO(74, 229, 239, 1)
+                                    : const Color.fromRGBO(248, 79, 57, 1),
+                              ),
+                            );
+                          }),
                         ),
                       ),
                     )
@@ -355,528 +855,612 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
             ),
           ];
         },
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            // The content for the first tab goes here
-            ListView(
-              padding: EdgeInsets.symmetric(horizontal: AppLayout.getWidth(20)),
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                Gap(
-                  AppLayout.getHeight(20),
-                ),
-                Text(
-                  widget.webinarDetails['tagline'],
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      height: 1.5,
-                      color: Get.isDarkMode
-                          ? const Color(0xffA1a1aa)
-                          : const Color(0xff475569),
-                      fontSize: AppLayout.getHeight(20),
-                      fontFamily: 'JosefinSans Regular'),
-                ),
-                Gap(
-                  AppLayout.getHeight(20),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: AppLayout.getWidth(130),
-                          height: AppLayout.getHeight(25),
-                          child: AutoSizeText(
-                            "\$ ${widget.webinarDetails['price']}",
-                            maxLines: 1,
-                            style: TextStyle(
-                                fontFamily: 'JosefinSans Bold',
-                                letterSpacing: 1,
-                                fontWeight: FontWeight.w500,
-                                color: Get.isDarkMode
-                                    ? const Color.fromRGBO(212, 212, 216, 1)
-                                    : const Color(0xff475569),
-                                fontSize: AppLayout.getHeight(20)),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Gap(
-                          AppLayout.getHeight(10),
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            print('join now pressed');
-                            await Get.find<WebinarStreamController>()
-                                .joinStream(
-                                    widget.webinarDetails['_id'], context);
-                            print('join now pressed');
-                          },
-                          child: Container(
+        body: GetBuilder<WebinarManagementController>(builder: (controller) {
+          return TabBarView(
+            controller: _tabController,
+            children: [
+              // The content for the first tab goes here
+              ListView(
+                padding:
+                    EdgeInsets.symmetric(horizontal: AppLayout.getWidth(20)),
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  Gap(
+                    AppLayout.getHeight(20),
+                  ),
+                  Text(
+                    WebinarManagementController.currentWebinar['tagline'],
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        height: 1.5,
+                        color: Get.isDarkMode
+                            ? const Color(0xffA1a1aa)
+                            : const Color(0xff475569),
+                        fontSize: AppLayout.getHeight(20),
+                        fontFamily: 'JosefinSans Regular'),
+                  ),
+                  Gap(
+                    AppLayout.getHeight(20),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
                             width: AppLayout.getWidth(130),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: AppLayout.getWidth(5),
-                                vertical: AppLayout.getHeight(10)),
-                            decoration: BoxDecoration(
+                            height: AppLayout.getHeight(25),
+                            child: AutoSizeText(
+                              "\$ ${WebinarManagementController.currentWebinar['price']}",
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontFamily: 'JosefinSans Bold',
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w500,
+                                  color: Get.isDarkMode
+                                      ? const Color.fromRGBO(212, 212, 216, 1)
+                                      : const Color(0xff475569),
+                                  fontSize: AppLayout.getHeight(20)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Gap(
+                            AppLayout.getHeight(10),
+                          ),
+                          GetBuilder<WebinarManagementController>(
+                              builder: (controller) {
+                            print('canStream: $canStream');
+
+                            if (webinarStreamStatus.value == 'ended') {
+                              return const Text('Ended');
+                            } else if (canStream &&
+                                webinarStreamStatus.value == 'live') {
+                              return GestureDetector(
+                                onTap: () async {
+                                  print('join now pressed');
+                                  await Get.find<WebinarStreamController>()
+                                      .joinStream(
+                                          WebinarManagementController
+                                              .currentWebinar['_id'],
+                                          context);
+                                  print('join now pressed');
+                                },
+                                child: Container(
+                                  width: AppLayout.getWidth(130),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: AppLayout.getWidth(5),
+                                      vertical: AppLayout.getHeight(10)),
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          offset: const Offset(2, 2),
+                                          blurRadius: 6,
+                                          spreadRadius: 3,
+                                        ),
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          offset: const Offset(-2, -2),
+                                          blurRadius: 10,
+                                          spreadRadius: 3,
+                                        ),
+                                      ],
+                                      border: Border.all(
+                                        color: Get.isDarkMode
+                                            ? Colors.white.withOpacity(0.1)
+                                            : Colors.black.withOpacity(0.1),
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: AppColors.LTprimaryColor),
+                                  child: Text(
+                                    'Join Now',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(.98),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: AppLayout.getHeight(20),
+                                        fontFamily: 'JosefinSans Bold'),
+                                  ),
+                                ),
+                              );
+                            } else if (!canStream) {
+                              return GestureDetector(
+                                onTap: () async {
+                                  // print('join now pressed');
+                                  // await Get.find<WebinarStreamController>()
+                                  //     .joinStream(
+                                  //         WebinarManagementController.currentWebinar['_id'], context);
+                                  // print('join now pressed');
+                                },
+                                child: Container(
+                                  width: AppLayout.getWidth(130),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: AppLayout.getWidth(5),
+                                      vertical: AppLayout.getHeight(10)),
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          offset: const Offset(2, 2),
+                                          blurRadius: 6,
+                                          spreadRadius: 3,
+                                        ),
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          offset: const Offset(-2, -2),
+                                          blurRadius: 10,
+                                          spreadRadius: 3,
+                                        ),
+                                      ],
+                                      border: Border.all(
+                                        color: Get.isDarkMode
+                                            ? Colors.white.withOpacity(0.1)
+                                            : Colors.black.withOpacity(0.1),
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: AppColors.LTprimaryColor),
+                                  child: Text(
+                                    'Register',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(.98),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: AppLayout.getHeight(20),
+                                        fontFamily: 'JosefinSans Bold'),
+                                  ),
+                                ),
+                              );
+                            }
+                            return Text(webinarStreamStatus.value);
+                          }),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Gap(
+                    AppLayout.getHeight(20),
+                  ),
+
+                  Gap(AppLayout.getHeight(20)),
+                  Text(
+                    'Created By',
+                    style: TextStyle(
+                      letterSpacing: 1,
+                      fontSize: AppLayout.getHeight(14),
+                      color: Get.isDarkMode
+                          ? const Color.fromRGBO(122, 121, 121, 1)
+                          : const Color.fromRGBO(176, 179, 190, 1),
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'JosefinSans Bold',
+                    ),
+                  ),
+                  Gap(AppLayout.getHeight(10)),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.circular(AppLayout.getHeight(10)),
+                      border: Border.all(
+                        color: Get.isDarkMode
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.black.withOpacity(0.1),
+                      ),
+                      color: Get.isDarkMode ? Colors.black54 : Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          offset: const Offset(2, 2),
+                          blurRadius: 6,
+                          spreadRadius: 0,
+                        ),
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.01),
+                          offset: const Offset(-2, -2),
+                          blurRadius: 7,
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        radius: AppLayout.getHeight(30),
+                        backgroundImage: NetworkImage(AppConstants.baseURL +
+                            WebinarManagementController
+                                .currentWebinar['createdBy']['profile_image']),
+                      ),
+                      title: Text(
+                        WebinarManagementController.currentWebinar['createdBy']
+                            ['name'],
+                        style: TextStyle(
+                          height: 1.5,
+                          fontSize: AppLayout.getHeight(16),
+                          color: Get.isDarkMode
+                              ? Colors.white.withOpacity(0.9)
+                              : Colors.black.withOpacity(0.9),
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                          fontFamily: 'JosefinSans Regular',
+                        ),
+                      ),
+                      subtitle: Text(
+                        WebinarManagementController.currentWebinar['createdBy']
+                            ['email'],
+                        style: TextStyle(
+                          letterSpacing: 1,
+                          fontSize: AppLayout.getHeight(14),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'JosefinSans Medium',
+                        ),
+                      ),
+                    ),
+                  ),
+                  Gap(AppLayout.getHeight(28)),
+                  Text(
+                    'Catergories',
+                    style: TextStyle(
+                      letterSpacing: 1,
+                      fontSize: AppLayout.getHeight(14),
+                      color: Get.isDarkMode
+                          ? const Color.fromRGBO(122, 121, 121, 1)
+                          : const Color.fromRGBO(176, 179, 190, 1),
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'JosefinSans Bold',
+                    ),
+                  ),
+                  Gap(AppLayout.getHeight(10)),
+                  // this is where the categories are handled and displayed
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Wrap(
+                          children: List.generate(
+                              WebinarManagementController
+                                  .currentWebinar['categories']
+                                  .length, (index) {
+                        return Container(
+                          width: 120,
+                          height: 60,
+                          margin: const EdgeInsets.only(right: 30, bottom: 30),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: AppLayout.getWidth(10),
+                              vertical: AppLayout.getHeight(5)),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                offset: const Offset(0, 2),
+                                blurRadius: 4,
+                                spreadRadius: 0,
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                offset: const Offset(0, -2),
+                                blurRadius: 4,
+                              ),
+                            ],
+                            color: Get.isDarkMode
+                                ? const Color.fromRGBO(38, 38, 38, 1)
+                                : const Color.fromRGBO(243, 243, 244, 1),
+                            border: Border.all(
+                              color: Get.isDarkMode
+                                  ? Colors.white.withOpacity(0.1)
+                                  : Colors.black.withOpacity(0.1),
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: AutoSizeText(
+                              WebinarManagementController
+                                  .currentWebinar['categories'][index]['name'],
+                              style: TextStyle(
+                                  fontFamily: 'JosefinSans Bold',
+                                  fontWeight: FontWeight.w500,
+                                  color: Get.isDarkMode
+                                      ? const Color.fromRGBO(212, 212, 216, 1)
+                                      : const Color(0xff475569),
+                                  fontSize: AppLayout.getHeight(17)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      })),
+                    ),
+                  ),
+                  Gap(AppLayout.getHeight(28)),
+                  Text(
+                    'Description',
+                    style: TextStyle(
+                      letterSpacing: 1,
+                      fontSize: AppLayout.getHeight(14),
+                      color: Get.isDarkMode
+                          ? const Color.fromRGBO(122, 121, 121, 1)
+                          : const Color.fromRGBO(176, 179, 190, 1),
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'JosefinSans Bold',
+                    ),
+                  ),
+                  Gap(AppLayout.getHeight(16)),
+                  ExpandableText(
+                    WebinarManagementController.currentWebinar['description'],
+                    expandText: 'Show more',
+                    collapseText: 'Show less',
+                    maxLines: 5,
+                    linkColor: Colors.blue,
+                    style: TextStyle(
+                        height: 1.5,
+                        fontFamily: 'JosefinSans Regular',
+                        fontWeight: FontWeight.w500,
+                        color: Get.isDarkMode
+                            ? const Color(0xffa1a1aa)
+                            : const Color(0xff475569),
+                        fontSize: AppLayout.getHeight(17)),
+                  ),
+
+                  Gap(AppLayout.getHeight(28)),
+                  Text(
+                    'Tags',
+                    style: TextStyle(
+                      letterSpacing: 1,
+                      fontSize: AppLayout.getHeight(14),
+                      color: Get.isDarkMode
+                          ? const Color.fromRGBO(122, 121, 121, 1)
+                          : const Color.fromRGBO(176, 179, 190, 1),
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'JosefinSans Bold',
+                    ),
+                  ),
+
+                  Gap(AppLayout.getHeight(28)),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Wrap(
+                          spacing: 10,
+                          runSpacing: 15,
+                          children: List.generate(
+                              WebinarManagementController
+                                  .currentWebinar['tags'].length, (index) {
+                            return Container(
+                              width: 90,
+                              height: 50,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: AppLayout.getWidth(10),
+                                  vertical: AppLayout.getHeight(5)),
+                              decoration: BoxDecoration(
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.1),
-                                    offset: const Offset(2, 2),
-                                    blurRadius: 6,
-                                    spreadRadius: 3,
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 4,
+                                    spreadRadius: 0,
                                   ),
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.1),
-                                    offset: const Offset(-2, -2),
-                                    blurRadius: 10,
-                                    spreadRadius: 3,
+                                    offset: const Offset(0, -2),
+                                    blurRadius: 4,
                                   ),
                                 ],
+                                color: Get.isDarkMode
+                                    ? const Color.fromRGBO(38, 38, 38, 1)
+                                    : const Color.fromRGBO(243, 243, 244, 1),
                                 border: Border.all(
                                   color: Get.isDarkMode
                                       ? Colors.white.withOpacity(0.1)
                                       : Colors.black.withOpacity(0.1),
                                 ),
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColors.LTprimaryColor),
-                            child: Text(
-                              widget.webinarDetails['price'] == 0
-                                  ? 'Free'
-                                  : 'join now',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(.98),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: AppLayout.getHeight(20),
-                                  fontFamily: 'JosefinSans Bold'),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Gap(
-                  AppLayout.getHeight(20),
-                ),
-
-                Gap(AppLayout.getHeight(20)),
-                Text(
-                  'Created By',
-                  style: TextStyle(
-                    letterSpacing: 1,
-                    fontSize: AppLayout.getHeight(14),
-                    color: Get.isDarkMode
-                        ? const Color.fromRGBO(122, 121, 121, 1)
-                        : const Color.fromRGBO(176, 179, 190, 1),
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'JosefinSans Bold',
-                  ),
-                ),
-                Gap(AppLayout.getHeight(10)),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(AppLayout.getHeight(10)),
-                    border: Border.all(
-                      color: Get.isDarkMode
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.1),
-                    ),
-                    color: Get.isDarkMode ? Colors.black54 : Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        offset: const Offset(2, 2),
-                        blurRadius: 6,
-                        spreadRadius: 0,
-                      ),
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.01),
-                        offset: const Offset(-2, -2),
-                        blurRadius: 7,
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: AppLayout.getHeight(30),
-                      backgroundImage: NetworkImage(AppConstants.baseURL +
-                          widget.webinarDetails['createdBy']['profile_image']),
-                    ),
-                    title: Text(
-                      widget.webinarDetails['createdBy']['name'],
-                      style: TextStyle(
-                        height: 1.5,
-                        fontSize: AppLayout.getHeight(16),
-                        color: Get.isDarkMode
-                            ? Colors.white.withOpacity(0.9)
-                            : Colors.black.withOpacity(0.9),
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'JosefinSans Regular',
-                      ),
-                    ),
-                    subtitle: Text(
-                      widget.webinarDetails['createdBy']['email'],
-                      style: TextStyle(
-                        letterSpacing: 1,
-                        fontSize: AppLayout.getHeight(14),
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'JosefinSans Medium',
-                      ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: AutoSizeText(
+                                  WebinarManagementController
+                                      .currentWebinar['tags'][index],
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      fontFamily: 'JosefinSans Bold',
+                                      fontWeight: FontWeight.w500,
+                                      color: Get.isDarkMode
+                                          ? const Color.fromRGBO(
+                                              212, 212, 216, 1)
+                                          : const Color(0xff475569),
+                                      fontSize: AppLayout.getHeight(17)),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            );
+                          })),
                     ),
                   ),
-                ),
-                Gap(AppLayout.getHeight(28)),
-                Text(
-                  'Catergories',
-                  style: TextStyle(
-                    letterSpacing: 1,
-                    fontSize: AppLayout.getHeight(14),
-                    color: Get.isDarkMode
-                        ? const Color.fromRGBO(122, 121, 121, 1)
-                        : const Color.fromRGBO(176, 179, 190, 1),
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'JosefinSans Bold',
-                  ),
-                ),
-                Gap(AppLayout.getHeight(10)),
-                // this is where the categories are handled and displayed
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Wrap(
-                        children: List.generate(
-                            widget.webinarDetails['categories'].length,
-                            (index) {
-                      return Container(
-                        width: 120,
-                        height: 60,
-                        margin: const EdgeInsets.only(right: 30, bottom: 30),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: AppLayout.getWidth(10),
-                            vertical: AppLayout.getHeight(5)),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              offset: const Offset(0, 2),
-                              blurRadius: 4,
-                              spreadRadius: 0,
-                            ),
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              offset: const Offset(0, -2),
-                              blurRadius: 4,
-                            ),
-                          ],
+                ],
+              ),
+              // The content for the second tab goes here==========================================
+              GetBuilder<WebinarManagementController>(builder: (context) {
+                print('organizers Build');
+                return ListView(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: AppLayout.getWidth(20)),
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: List.generate(
+                    WebinarManagementController
+                        .currentWebinar['organizers'].length,
+                    (index) => Container(
+                      margin: EdgeInsets.symmetric(
+                          vertical: AppLayout.getHeight(20)),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(AppLayout.getHeight(10)),
+                        border: Border.all(
                           color: Get.isDarkMode
-                              ? const Color.fromRGBO(38, 38, 38, 1)
-                              : const Color.fromRGBO(243, 243, 244, 1),
-                          border: Border.all(
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.black.withOpacity(0.1),
+                        ),
+                        color: Get.isDarkMode ? Colors.black54 : Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            offset: const Offset(2, 2),
+                            blurRadius: 6,
+                            spreadRadius: 0,
+                          ),
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.01),
+                            offset: const Offset(-2, -2),
+                            blurRadius: 7,
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          radius: AppLayout.getHeight(30),
+                          backgroundImage: NetworkImage(AppConstants.baseURL +
+                              WebinarManagementController
+                                      .currentWebinar['organizers'][index]
+                                  ['profile_image']),
+                        ),
+                        title: Text(
+                          WebinarManagementController
+                              .currentWebinar['organizers'][index]['name'],
+                          style: TextStyle(
+                            fontSize: AppLayout.getHeight(16),
                             color: Get.isDarkMode
-                                ? Colors.white.withOpacity(0.1)
-                                : Colors.black.withOpacity(0.1),
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: AutoSizeText(
-                            widget.webinarDetails['categories'][index]['name'],
-                            style: TextStyle(
-                                fontFamily: 'JosefinSans Bold',
-                                fontWeight: FontWeight.w500,
-                                color: Get.isDarkMode
-                                    ? const Color.fromRGBO(212, 212, 216, 1)
-                                    : const Color(0xff475569),
-                                fontSize: AppLayout.getHeight(17)),
-                            textAlign: TextAlign.center,
+                                ? Colors.white.withOpacity(0.9)
+                                : Colors.black.withOpacity(0.9),
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1,
+                            fontFamily: 'JosefinSans Regular',
                           ),
                         ),
-                      );
-                    })),
-                  ),
-                ),
-                Gap(AppLayout.getHeight(28)),
-                Text(
-                  'Description',
-                  style: TextStyle(
-                    letterSpacing: 1,
-                    fontSize: AppLayout.getHeight(14),
-                    color: Get.isDarkMode
-                        ? const Color.fromRGBO(122, 121, 121, 1)
-                        : const Color.fromRGBO(176, 179, 190, 1),
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'JosefinSans Bold',
-                  ),
-                ),
-                Gap(AppLayout.getHeight(16)),
-                ExpandableText(
-                  widget.webinarDetails['description'],
-                  expandText: 'Show more',
-                  collapseText: 'Show less',
-                  maxLines: 5,
-                  linkColor: Colors.blue,
-                  style: TextStyle(
-                      height: 1.5,
-                      fontFamily: 'JosefinSans Regular',
-                      fontWeight: FontWeight.w500,
-                      color: Get.isDarkMode
-                          ? const Color(0xffa1a1aa)
-                          : const Color(0xff475569),
-                      fontSize: AppLayout.getHeight(17)),
-                ),
-
-                Gap(AppLayout.getHeight(28)),
-                Text(
-                  'Tags',
-                  style: TextStyle(
-                    letterSpacing: 1,
-                    fontSize: AppLayout.getHeight(14),
-                    color: Get.isDarkMode
-                        ? const Color.fromRGBO(122, 121, 121, 1)
-                        : const Color.fromRGBO(176, 179, 190, 1),
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'JosefinSans Bold',
-                  ),
-                ),
-
-                Gap(AppLayout.getHeight(28)),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Wrap(
-                        spacing: 10,
-                        runSpacing: 15,
-                        children: List.generate(
-                            widget.webinarDetails['tags'].length, (index) {
-                          return Container(
-                            width: 90,
-                            height: 50,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: AppLayout.getWidth(10),
-                                vertical: AppLayout.getHeight(5)),
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  offset: const Offset(0, 2),
-                                  blurRadius: 4,
-                                  spreadRadius: 0,
-                                ),
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  offset: const Offset(0, -2),
-                                  blurRadius: 4,
-                                ),
-                              ],
-                              color: Get.isDarkMode
-                                  ? const Color.fromRGBO(38, 38, 38, 1)
-                                  : const Color.fromRGBO(243, 243, 244, 1),
-                              border: Border.all(
-                                color: Get.isDarkMode
-                                    ? Colors.white.withOpacity(0.1)
-                                    : Colors.black.withOpacity(0.1),
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: AutoSizeText(
-                                widget.webinarDetails['tags'][index],
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontFamily: 'JosefinSans Bold',
-                                    fontWeight: FontWeight.w500,
-                                    color: Get.isDarkMode
-                                        ? const Color.fromRGBO(212, 212, 216, 1)
-                                        : const Color(0xff475569),
-                                    fontSize: AppLayout.getHeight(17)),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          );
-                        })),
-                  ),
-                ),
-              ],
-            ),
-            // The content for the second tab goes here==========================================
-            ListView(
-              padding: EdgeInsets.symmetric(horizontal: AppLayout.getWidth(20)),
-              physics: const NeverScrollableScrollPhysics(),
-              children: List.generate(
-                widget.webinarDetails['organizers'].length,
-                (index) => Container(
-                  margin:
-                      EdgeInsets.symmetric(vertical: AppLayout.getHeight(20)),
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(AppLayout.getHeight(10)),
-                    border: Border.all(
-                      color: Get.isDarkMode
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.1),
-                    ),
-                    color: Get.isDarkMode ? Colors.black54 : Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        offset: const Offset(2, 2),
-                        blurRadius: 6,
-                        spreadRadius: 0,
-                      ),
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.01),
-                        offset: const Offset(-2, -2),
-                        blurRadius: 7,
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: AppLayout.getHeight(30),
-                      backgroundImage: NetworkImage(AppConstants.baseURL +
-                          widget.webinarDetails['organizers'][index]
-                              ['profile_image']),
-                    ),
-                    title: Text(
-                      widget.webinarDetails['organizers'][index]['name'],
-                      style: TextStyle(
-                        fontSize: AppLayout.getHeight(16),
-                        color: Get.isDarkMode
-                            ? Colors.white.withOpacity(0.9)
-                            : Colors.black.withOpacity(0.9),
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'JosefinSans Regular',
-                      ),
-                    ),
-                    subtitle: Text(
-                      widget.webinarDetails['organizers'][index]['email'],
-                      style: TextStyle(
-                        letterSpacing: 1,
-                        fontSize: AppLayout.getHeight(14),
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'JosefinSans Regular',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // The content for the third tab goes here================================
-            ListView(
-              padding: EdgeInsets.symmetric(horizontal: AppLayout.getWidth(20)),
-              physics: const NeverScrollableScrollPhysics(),
-              children: List.generate(
-                widget.webinarDetails['guests'].length,
-                (index) => Container(
-                  margin:
-                      EdgeInsets.symmetric(vertical: AppLayout.getHeight(20)),
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(AppLayout.getHeight(10)),
-                    border: Border.all(
-                      color: Get.isDarkMode
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.1),
-                    ),
-                    color: Get.isDarkMode ? Colors.black54 : Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        offset: const Offset(2, 2),
-                        blurRadius: 6,
-                        spreadRadius: 0,
-                      ),
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.01),
-                        offset: const Offset(-2, -2),
-                        blurRadius: 7,
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: AppLayout.getHeight(30),
-                      backgroundImage: NetworkImage(AppConstants.baseURL +
-                          widget.webinarDetails['guests'][index]
-                              ['profile_image']),
-                    ),
-                    title: Text(
-                      widget.webinarDetails['guests'][index]['name'],
-                      style: TextStyle(
-                        fontSize: AppLayout.getHeight(16),
-                        color: Get.isDarkMode
-                            ? Colors.white.withOpacity(0.9)
-                            : Colors.black.withOpacity(0.9),
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1,
-                        fontFamily: 'JosefinSans Regular',
-                      ),
-                    ),
-                    subtitle: Text(
-                      widget.webinarDetails['guests'][index]['email'],
-                      style: TextStyle(
-                        letterSpacing: 1,
-                        fontSize: AppLayout.getHeight(14),
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'JosefinSans Regular',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // The content for the ReviewsTab goes here
-            ListView(
-              physics: const ClampingScrollPhysics(),
-              padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 20.h),
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TextFormField(
-                      style: Mystyles.onelineStyle,
-                      onChanged: (value) {
-                        setState(() {});
-                      },
-                      controller: reviewController,
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        hintText: 'Write a review. . .',
-                        hintStyle: Mystyles.onelineStyle,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                        subtitle: Text(
+                          WebinarManagementController
+                              .currentWebinar['organizers'][index]['email'],
+                          style: TextStyle(
+                            letterSpacing: 1,
+                            fontSize: AppLayout.getHeight(14),
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'JosefinSans Regular',
+                          ),
                         ),
                       ),
                     ),
-                    Gap(10.h),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size(double.maxFinite, 10.h),
+                  ),
+                );
+              }),
+              // The content for the third tab goes here================================
+              GetBuilder<WebinarManagementController>(builder: (controller) {
+                print('guests updated');
+                return ListView(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: AppLayout.getWidth(20)),
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: List.generate(
+                    WebinarManagementController.currentWebinar['guests'].length,
+                    (index) => Container(
+                      margin: EdgeInsets.symmetric(
+                          vertical: AppLayout.getHeight(20)),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(AppLayout.getHeight(10)),
+                        border: Border.all(
+                          color: Get.isDarkMode
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.black.withOpacity(0.1),
                         ),
-                        onPressed: reviewController.text.toString() == ""
-                            ? null
-                            : () {},
-                        child: const Text('Submit')),
-                  ],
-                ),
-                Gap(20.h),
-                Divider(
-                  color: Mystyles.onelineStyle.color,
-                  thickness: 1,
-                ),
-                Gap(10.h),
-                MyReviewWidget(),
-              ],
-            )
-          ],
-        ),
+                        color: Get.isDarkMode ? Colors.black54 : Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            offset: const Offset(2, 2),
+                            blurRadius: 6,
+                            spreadRadius: 0,
+                          ),
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.01),
+                            offset: const Offset(-2, -2),
+                            blurRadius: 7,
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          radius: AppLayout.getHeight(30),
+                          backgroundImage: NetworkImage(AppConstants.baseURL +
+                              WebinarManagementController
+                                      .currentWebinar['guests'][index]
+                                  ['profile_image']),
+                        ),
+                        title: Text(
+                          WebinarManagementController.currentWebinar['guests']
+                              [index]['name'],
+                          style: TextStyle(
+                            fontSize: AppLayout.getHeight(16),
+                            color: Get.isDarkMode
+                                ? Colors.white.withOpacity(0.9)
+                                : Colors.black.withOpacity(0.9),
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1,
+                            fontFamily: 'JosefinSans Regular',
+                          ),
+                        ),
+                        subtitle: Text(
+                          WebinarManagementController.currentWebinar['guests']
+                              [index]['email'],
+                          style: TextStyle(
+                            letterSpacing: 1,
+                            fontSize: AppLayout.getHeight(14),
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'JosefinSans Regular',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+
+              // The content for the ReviewsTab goes here
+              ListView(
+                physics: const ClampingScrollPhysics(),
+                padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 20.h),
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextFormField(
+                        style: Mystyles.onelineStyle,
+                        onChanged: (value) {
+                          setState(() {});
+                        },
+                        controller: reviewController,
+                        maxLines: 4,
+                        decoration: InputDecoration(
+                          hintText: 'Write a review. . .',
+                          hintStyle: Mystyles.onelineStyle,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      Gap(10.h),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(double.maxFinite, 10.h),
+                          ),
+                          onPressed: reviewController.text.toString() == ""
+                              ? null
+                              : () {},
+                          child: const Text('Submit')),
+                    ],
+                  ),
+                  Gap(20.h),
+                  Divider(
+                    color: Mystyles.onelineStyle.color,
+                    thickness: 1,
+                  ),
+                  Gap(10.h),
+                  MyReviewWidget(),
+                ],
+              )
+            ],
+          );
+        }),
       ),
     );
   }

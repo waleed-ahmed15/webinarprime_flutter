@@ -256,15 +256,39 @@ class _ChatScreenState extends State<ChatScreen> {
                   color: Colors.red,
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  
-                },
-                icon: Icon(
-                  Icons.block,
-                  color: Get.isDarkMode ? Colors.white : Colors.black,
-                ),
-              ),
+              GetBuilder<ChatStreamController>(builder: (controller) {
+                if (Get.find<AuthController>()
+                    .currentUser['bannedChats']
+                    .contains(
+                      widget.receiever['_id'],
+                    )) {
+                  return IconButton(
+                    onPressed: () async {
+                      await Get.find<ChatStreamController>().unbanUser(
+                        widget.receiever['_id'],
+                      );
+                    },
+                    icon: Icon(
+                      Icons.person,
+                      color: Get.isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  );
+                }
+                return IconButton(
+                  onPressed: () async {
+                    print('ban user');
+                    print(widget.receiever['_id']);
+                    print(widget.receiever['name']);
+                    await Get.find<ChatStreamController>().banUser(
+                      widget.receiever['_id'],
+                    );
+                  },
+                  icon: Icon(
+                    Icons.block,
+                    color: Get.isDarkMode ? Colors.white : Colors.black,
+                  ),
+                );
+              }),
             ],
           ),
           body: Column(
@@ -428,124 +452,25 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 );
               })),
-              // child: ListView.builder(
-              //   padding: EdgeInsets.only(
-              //     bottom: 50.h,
-              //   ),
-              //   // controller: _scrollController,
-              //   // physics: const BouncingScrollPhysics(),
-
-              //   itemCount: ChatStreamController
-              //       .userChatmessages[widget.ConversationId],
-              //   itemBuilder: (context, index) {
-              //     bool insertDate = false;
-              //     print(index);
-              //     if (index == 0) {
-              //       insertDate = true;
-              //     } else if (currentDate != messages[index]['time']) {
-              //       insertDate = true;
-              //     }
-              //     index = index + messages.length - 10;
-
-              //     bool sender = messages[index]['user'] == 'sender';
-
-              //     currentDate = messages[index]['time'];
-
-              //     return Container(
-              //       margin: EdgeInsets.only(
-              //         top: 1.h,
-              //         left: 10.w,
-              //         right: 10.w,
-              //       ),
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           insertDate
-              //               ? Padding(
-              //                   padding: EdgeInsets.only(
-              //                     bottom: 5.h,
-              //                   ),
-              //                   child: Center(
-              //                       child: Text(messages[index]['time']!,
-              //                           style: Mystyles.popupHeadingStyle)),
-              //                 )
-              //               : const SizedBox(),
-              //           Row(
-              //             mainAxisAlignment: sender
-              //                 ? MainAxisAlignment.end
-              //                 : MainAxisAlignment.start,
-              //             children: [
-              //               messages[index].containsKey('message')
-              //                   ? Container(
-              //                       padding: EdgeInsets.symmetric(
-              //                           horizontal: 10.w, vertical: 5.h),
-              //                       decoration: BoxDecoration(
-              //                         color: sender
-              //                             ? const Color(0xff4c51d9)
-              //                             : receiverChatBubbleColor,
-              //                         borderRadius: BorderRadius.only(
-              //                           topLeft: Radius.circular(10.w),
-              //                           topRight: Radius.circular(10.w),
-              //                           bottomLeft: Radius.circular(10.w),
-              //                           bottomRight: Radius.circular(10.w),
-              //                         ),
-              //                       ),
-              //                       child: Column(
-              //                         children: [
-              //                           Container(
-              //                             margin: EdgeInsets.zero,
-              //                             padding: EdgeInsets.zero,
-              //                             constraints: BoxConstraints(
-              //                               maxWidth: 0.5.sw,
-              //                             ),
-              //                             child: ExpandableText(
-              //                               maxLines: 6,
-              //                               linkColor: Colors.blue,
-              //                               expandText: 'more',
-              //                               expandOnTextTap: true,
-              //                               collapseOnTextTap: true,
-              //                               collapseText: 'less',
-              //                               messages[index]['message']!,
-              //                               style: Mystyles.listtileTitleStyle
-              //                                   .copyWith(
-              //                                 color: sender
-              //                                     ? Colors.white
-              //                                     : Mystyles
-              //                                         .bigTitleStyle.color,
-              //                                 fontSize: 16.sp,
-              //                               ),
-              //                               textAlign: TextAlign.start,
-              //                             ),
-              //                           ),
-              //                           SizedBox(
-              //                             height: 5.h,
-              //                           ),
-              //                         ],
-              //                       ),
-              //                     )
-              //                   : messages[index].containsKey('file')
-              //                       ? MyFileMessage(
-              //                           sender: sender,
-              //                           fileName: messages[index]['name'],
-              //                           fileUrl: messages[index]['file'],
-              //                         )
-              //                       : ImageMessageContainer(
-              //                           imageUrl: messages[index]['image'],
-              //                         ),
-              //             ],
-              //           ),
-              //           Gap(2.w),
-              //         ],
-              //       ),
-              //     );
-              //   },
-              // ),
-
-              ChatFieldWidget(
-                onSend: sendPressed,
-                oncameraPressed: _handleImageSelection,
-                onAttachPressed: handlefileAttachment,
-              )
+              GetBuilder<ChatStreamController>(builder: (controller) {
+                if (Get.find<AuthController>()
+                    .currentUser['bannedChats']
+                    .contains(
+                      widget.receiever['_id'],
+                    )) {
+                  return const SizedBox(
+                      child: Text('you Have  blocked this user'));
+                }
+                if (widget.receiever['bannedChats']
+                    .contains(Get.find<AuthController>().currentUser['_id'])) {
+                  return const SizedBox(child: Text('you have been blocked'));
+                }
+                return ChatFieldWidget(
+                  onSend: sendPressed,
+                  oncameraPressed: _handleImageSelection,
+                  onAttachPressed: handlefileAttachment,
+                );
+              }),
             ],
           ),
         ),

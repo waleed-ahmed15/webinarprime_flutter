@@ -33,15 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     // connecteSocket();
+
     Get.find<ChatStreamController>()
         .getConversations(Get.find<AuthController>().currentUser['id']);
-
     socket.onConnect((data) => print(' socket stream chat connected'));
     print('current user is=-------------------------------------------');
     print(Get.find<AuthController>().currentUser);
+    // print(Get.find<AuthController>().currentUser['_id']);s
     socket.emit('join', {
       Get.find<AuthController>().currentUser['id'],
     });
+
     super.initState();
     // print("height: ${AppLayout.getScreenHeight()}");
     // print('width :${AppLayout.getScreenWidth()}');
