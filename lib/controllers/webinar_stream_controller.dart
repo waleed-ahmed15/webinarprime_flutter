@@ -204,5 +204,30 @@ class WebinarStreamController extends GetxController {
     update();
     return true;
   }
-//
+
+  // block user for webinar stream
+  Future<bool> kickparticipantFromWebinar(
+      String participantId, String webinarId) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/stream/blockuser");
+      final response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({'userId': participantId, 'webinarId': webinarId}));
+
+      if (response.statusCode == 200) {
+        print('User kicked successfully');
+        return true;
+      } else {
+        print('User kicking  Failed');
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }

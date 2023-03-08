@@ -77,7 +77,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
             duration: const Duration(milliseconds: 300), curve: Curves.ease);
       });
       print(question.runtimeType);
-      if (jsonDecode(widget.room.localParticipant!.metadata!)['accountType'] ==
+      if (jsonDecode(widget.room.localParticipant!.metadata!)['role'] ==
           'organizer') {
         answersControllers.add(TextEditingController());
         print("controlleradded");
@@ -282,7 +282,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                             child: ListTile(
                                 subtitle: Text(
                                   jsonDecode(widget.room.localParticipant!
-                                      .metadata!)['accountType'],
+                                      .metadata!)['role'],
                                   style: Mystyles.listtileSubtitleStyle
                                       .copyWith(color: Colors.white),
                                 ),
@@ -307,17 +307,26 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                               .localParticipant!
                                               .metadata!)['profile_image']),
                                 ),
-                                trailing: IconButton(
-                                  onPressed: () {},
-                                  icon: widget.room.localParticipant!.isMuted
-                                      ? const Icon(
-                                          Icons.mic_off,
-                                          color: Colors.red,
-                                        )
-                                      : const Icon(
-                                          Icons.mic,
-                                          color: Colors.green,
-                                        ),
+                                trailing: SizedBox(
+                                  width: 100.h,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: widget
+                                                .room.localParticipant!.isMuted
+                                            ? const Icon(
+                                                Icons.mic_off,
+                                                color: Colors.red,
+                                              )
+                                            : const Icon(
+                                                Icons.mic,
+                                                color: Colors.green,
+                                              ),
+                                      ),
+                                    ],
+                                  ),
                                 )),
                           )
                         : Padding(
@@ -326,7 +335,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                 subtitle: Text(
                                   jsonDecode(widget.room.participants.values
                                       .elementAt(index)
-                                      .metadata!)['accountType'],
+                                      .metadata!)['role'],
                                   style: Mystyles.listtileSubtitleStyle
                                       .copyWith(color: Colors.white),
                                 ),
@@ -352,25 +361,58 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                           .elementAt(index)
                                           .metadata!)['profile_image']),
                                 ),
-                                trailing: IconButton(
-                                  onPressed: () {
-                                    // mute participant
+                                trailing: SizedBox(
+                                  width: 100.h,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          // mute participant
 
-                                    print(widget.room.participants.values.first
-                                        .isMuted);
-                                    print(widget.room.participants[0]!.isMuted);
-                                  },
-                                  icon: widget.room.participants.values
-                                          .elementAt(index)
-                                          .isMuted
-                                      ? const Icon(
-                                          Icons.mic_off,
-                                          color: Colors.red,
-                                        )
-                                      : const Icon(
-                                          Icons.mic,
-                                          color: Colors.green,
-                                        ),
+                                          print(widget.room.participants.values
+                                              .first.isMuted);
+                                          print(widget
+                                              .room.participants[0]!.isMuted);
+                                        },
+                                        icon: widget.room.participants.values
+                                                .elementAt(index)
+                                                .isMuted
+                                            ? const Icon(
+                                                Icons.mic_off,
+                                                color: Colors.red,
+                                              )
+                                            : const Icon(
+                                                Icons.mic,
+                                                color: Colors.green,
+                                              ),
+                                      ),
+                                      jsonDecode(widget.room.localParticipant!
+                                                  .metadata!)['role'] ==
+                                              'organizer'
+                                          ? IconButton(
+                                              onPressed: () async {
+                                                String kickedparticipantId =
+                                                    jsonDecode(widget.room
+                                                        .participants.values
+                                                        .elementAt(index)
+                                                        .metadata!)['_id'];
+                                                print(
+                                                    'person kicked from roster');
+
+                                                await Get.find<
+                                                        WebinarStreamController>()
+                                                    .kickparticipantFromWebinar(
+                                                        kickedparticipantId,
+                                                        widget.webinarRoomId);
+                                              },
+                                              icon: const Icon(
+                                                  Icons.person_remove),
+                                              color: Colors.red,
+                                            )
+                                          : const SizedBox(),
+                                    ],
+                                  ),
                                 )),
                           );
                   },
@@ -555,7 +597,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                               'accountType': jsonDecode(widget
                                                   .room
                                                   .localParticipant!
-                                                  .metadata!)['accountType'],
+                                                  .metadata!)['role'],
                                               'time': DateTime.now().toString()
                                             };
 
@@ -653,8 +695,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                                       color: Colors.grey)),
                                         ),
                                         jsonDecode(widget.room.localParticipant!
-                                                        .metadata!)[
-                                                    'accountType'] ==
+                                                    .metadata!)['role'] ==
                                                 'organizer'
                                             ? Container(
                                                 margin: EdgeInsets.only(
