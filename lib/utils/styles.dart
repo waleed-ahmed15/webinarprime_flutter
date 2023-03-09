@@ -159,6 +159,17 @@ class MyBoxDecorations {
           spreadRadius: 3),
     ],
   );
+
+  static const webinarInfoTileGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      transform: GradientRotation(0.5),
+      colors: [
+        Colors.black38,
+        Color(0xff2A5470),
+        Color.fromARGB(255, 86, 92, 207),
+        Color(0xff4C4177),
+      ]);
 }
 //[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 

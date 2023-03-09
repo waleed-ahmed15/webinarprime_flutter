@@ -5,7 +5,9 @@ import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 // import 'package:get/get.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import '../utils/app_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
@@ -279,6 +281,7 @@ class WebinarManagementController extends GetxController {
       print('======================pending=organizers====================');
 
       print('======================accepted=organizers====================');
+      currentwebinarAcceptedMembers.clear();
       currentwebinarAcceptedMembers = data['organizers'].where((element) {
         return element['status'] == 'joined';
       }).toList();
@@ -653,6 +656,26 @@ class WebinarManagementController extends GetxController {
       print(data);
       await getAllwebinars();
       await getwebinarById(id);
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //end webinar stream=========================================================================
+  Future<void> endWebinarStream(String id) async {
+    print('end webinar stream called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/end");
+      final response = await http.put(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+      });
+      var data = jsonDecode(response.body);
+      print(data);
+      await getAllwebinars();
+      await getwebinarById(id);
+      await Get.find<WebinarStreamController>().webianrStreamStatus(id);
       update();
     } catch (e) {
       print(e);

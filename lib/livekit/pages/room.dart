@@ -50,6 +50,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
   RxList<answerModel> answerMessages = <answerModel>[].obs;
   final IO.Socket socket = Get.find();
   late TabController _tabController;
+  late TabController _tabController2;
   List<TextEditingController> answersControllers = [];
   var questionsController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -108,6 +109,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
       questionMessages.refresh();
     });
     _tabController = TabController(length: 2, vsync: this);
+    _tabController2 = TabController(length: 2, vsync: this);
     widget.room.addListener(_onRoomDidUpdate);
     _setUpListeners();
     _sortParticipants();
@@ -128,6 +130,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
     })();
     super.dispose();
     _tabController.dispose();
+    _tabController2.dispose();
   }
 
   void _setUpListeners() => _listener
@@ -244,179 +247,254 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        drawer: Drawer(
-          backgroundColor: AppColors.DTbackGroundColor,
-          width: 1.sw,
-          child: ListView(
-            physics: const BouncingScrollPhysics(),
-            children: [
-              SizedBox(
-                height: 70.h,
-                child: DrawerHeader(
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.white,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    'Participants',
-                    style: TextStyle(
-                      fontFamily: 'JosefinSans Regular',
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                    ),
-                  ),
+        drawer: Scaffold(
+          appBar: AppBar(
+            backgroundColor: AppColors.DTbackGroundColor,
+            elevation: 0,
+            toolbarHeight: 0,
+            bottom: TabBar(controller: _tabController2, tabs: [
+              Tab(
+                child: Text(
+                  'participants',
+                  style: Mystyles.listtileTitleStyle.copyWith(fontSize: 20.sp),
                 ),
               ),
-              SizedBox(
-                height: 0.7.sh,
-                child: ListView.builder(
-                  itemCount: widget.room.participants.length + 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    return index == widget.room.participants.length
-                        ? Padding(
-                            padding: EdgeInsets.only(bottom: 2.h),
-                            child: ListTile(
-                                subtitle: Text(
-                                  jsonDecode(widget.room.localParticipant!
-                                      .metadata!)['role'],
-                                  style: Mystyles.listtileSubtitleStyle
-                                      .copyWith(color: Colors.white),
-                                ),
-                                title: Text(
-                                  jsonDecode(widget.room.localParticipant!
-                                      .metadata!)['name'],
-                                  style: TextStyle(
-                                    color:
-                                        widget.room.localParticipant!.isSpeaking
+              Tab(
+                child: Text(
+                  'blocked',
+                  style: Mystyles.listtileTitleStyle.copyWith(fontSize: 20.sp),
+                ),
+              ),
+            ]),
+          ),
+          body: TabBarView(
+            controller: _tabController2,
+            children: [
+              ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  // SizedBox(
+                  //   height: 70.h,
+                  //   child: DrawerHeader(
+                  //     decoration: const BoxDecoration(
+                  //       border: Border(
+                  //         bottom: BorderSide(
+                  //           color: Colors.white,
+                  //           width: 1,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     child: Text(
+                  //       'Participants',
+                  //       style: TextStyle(
+                  //         fontFamily: 'JosefinSans Regular',
+                  //         color: Colors.white,
+                  //         fontSize: 20.sp,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  SizedBox(
+                    height: 0.7.sh,
+                    child: ListView.builder(
+                      itemCount: widget.room.participants.length + 1,
+                      itemBuilder: (BuildContext context, int index) {
+                        return index == widget.room.participants.length
+                            ? Padding(
+                                padding: EdgeInsets.only(bottom: 2.h),
+                                child: ListTile(
+                                    subtitle: Text(
+                                      jsonDecode(widget.room.localParticipant!
+                                          .metadata!)['role'],
+                                      style: Mystyles.listtileSubtitleStyle
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                    title: Text(
+                                      jsonDecode(widget.room.localParticipant!
+                                          .metadata!)['name'],
+                                      style: TextStyle(
+                                        color: widget.room.localParticipant!
+                                                .isSpeaking
                                             ? Colors.green
                                             : Colors.white,
-                                    fontSize: 20,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                leading: CircleAvatar(
-                                  radius: 20.r,
-                                  backgroundImage: NetworkImage(
-                                      AppConstants.baseURL +
-                                          jsonDecode(widget
-                                              .room
-                                              .localParticipant!
-                                              .metadata!)['profile_image']),
-                                ),
-                                trailing: SizedBox(
-                                  width: 100.h,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {},
-                                        icon: widget
-                                                .room.localParticipant!.isMuted
-                                            ? const Icon(
-                                                Icons.mic_off,
-                                                color: Colors.red,
-                                              )
-                                            : const Icon(
-                                                Icons.mic,
-                                                color: Colors.green,
-                                              ),
+                                        fontSize: 20,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ],
-                                  ),
-                                )),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.only(bottom: 2.h),
-                            child: ListTile(
-                                subtitle: Text(
-                                  jsonDecode(widget.room.participants.values
-                                      .elementAt(index)
-                                      .metadata!)['role'],
-                                  style: Mystyles.listtileSubtitleStyle
-                                      .copyWith(color: Colors.white),
-                                ),
-                                title: Text(
-                                  jsonDecode(widget.room.participants.values
-                                      .elementAt(index)
-                                      .metadata!)['name'],
-                                  style: TextStyle(
-                                    color: widget.room.participants.values
-                                            .elementAt(index)
-                                            .isSpeaking
-                                        ? Colors.green
-                                        : Colors.white,
-                                    fontSize: 20,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                leading: CircleAvatar(
-                                  radius: 20.r,
-                                  backgroundImage: NetworkImage(AppConstants
-                                          .baseURL +
+                                    ),
+                                    leading: CircleAvatar(
+                                      radius: 20.r,
+                                      backgroundImage: NetworkImage(
+                                          AppConstants.baseURL +
+                                              jsonDecode(widget
+                                                  .room
+                                                  .localParticipant!
+                                                  .metadata!)['profile_image']),
+                                    ),
+                                    trailing: SizedBox(
+                                      width: 100.h,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: widget.room.localParticipant!
+                                                    .isMuted
+                                                ? const Icon(
+                                                    Icons.mic_off,
+                                                    color: Colors.red,
+                                                  )
+                                                : const Icon(
+                                                    Icons.mic,
+                                                    color: Colors.green,
+                                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(bottom: 2.h),
+                                child: ListTile(
+                                    subtitle: Text(
                                       jsonDecode(widget.room.participants.values
                                           .elementAt(index)
-                                          .metadata!)['profile_image']),
-                                ),
-                                trailing: SizedBox(
-                                  width: 100.h,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          // mute participant
-
-                                          print(widget.room.participants.values
-                                              .first.isMuted);
-                                          print(widget
-                                              .room.participants[0]!.isMuted);
-                                        },
-                                        icon: widget.room.participants.values
+                                          .metadata!)['role'],
+                                      style: Mystyles.listtileSubtitleStyle
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                    title: Text(
+                                      jsonDecode(widget.room.participants.values
+                                          .elementAt(index)
+                                          .metadata!)['name'],
+                                      style: TextStyle(
+                                        color: widget.room.participants.values
                                                 .elementAt(index)
-                                                .isMuted
-                                            ? const Icon(
-                                                Icons.mic_off,
-                                                color: Colors.red,
-                                              )
-                                            : const Icon(
-                                                Icons.mic,
-                                                color: Colors.green,
-                                              ),
+                                                .isSpeaking
+                                            ? Colors.green
+                                            : Colors.white,
+                                        fontSize: 20.sp,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      jsonDecode(widget.room.localParticipant!
-                                                  .metadata!)['role'] ==
-                                              'organizer'
-                                          ? IconButton(
-                                              onPressed: () async {
-                                                String kickedparticipantId =
-                                                    jsonDecode(widget.room
+                                    ),
+                                    leading: CircleAvatar(
+                                      radius: 20.r,
+                                      backgroundImage: NetworkImage(
+                                          AppConstants.baseURL +
+                                              jsonDecode(widget
+                                                  .room.participants.values
+                                                  .elementAt(index)
+                                                  .metadata!)['profile_image']),
+                                    ),
+                                    trailing: SizedBox(
+                                      width: 100.h,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              // mute participant
+
+                                              print(widget.room.participants
+                                                  .values.first.isMuted);
+                                              print(widget.room.participants[0]!
+                                                  .isMuted);
+                                            },
+                                            icon: widget
+                                                    .room.participants.values
+                                                    .elementAt(index)
+                                                    .isMuted
+                                                ? const Icon(
+                                                    Icons.mic_off,
+                                                    color: Colors.red,
+                                                  )
+                                                : const Icon(
+                                                    Icons.mic,
+                                                    color: Colors.green,
+                                                  ),
+                                          ),
+                                          jsonDecode(widget
+                                                      .room
+                                                      .localParticipant!
+                                                      .metadata!)['role'] ==
+                                                  'organizer'
+                                              ? IconButton(
+                                                  onPressed: () async {
+                                                    String kickedparticipantId =
+                                                        jsonDecode(widget.room
+                                                            .participants.values
+                                                            .elementAt(index)
+                                                            .metadata!)['_id'];
+                                                    print(jsonDecode(widget.room
                                                         .participants.values
                                                         .elementAt(index)
-                                                        .metadata!)['_id'];
-                                                print(
-                                                    'person kicked from roster');
+                                                        .metadata!));
+                                                    print(
+                                                        'person kicked from roster');
+                                                    print(kickedparticipantId);
+                                                    print(widget.webinarRoomId);
 
-                                                await Get.find<
-                                                        WebinarStreamController>()
-                                                    .kickparticipantFromWebinar(
-                                                        kickedparticipantId,
-                                                        widget.webinarRoomId);
-                                              },
-                                              icon: const Icon(
-                                                  Icons.person_remove),
-                                              color: Colors.red,
-                                            )
-                                          : const SizedBox(),
-                                    ],
-                                  ),
-                                )),
-                          );
-                  },
-                ),
+                                                    await Get.find<
+                                                            WebinarStreamController>()
+                                                        .kickparticipantFromWebinar(
+                                                            kickedparticipantId,
+                                                            widget
+                                                                .webinarRoomId);
+                                                  },
+                                                  icon: const Icon(
+                                                      Icons.person_remove),
+                                                  color: Colors.red,
+                                                )
+                                              : const SizedBox(),
+                                        ],
+                                      ),
+                                    )),
+                              );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+             GetBuilder<WebinarStreamController>(
+                builder: (controller) {
+                  return ListView.builder(
+                    itemCount: WebinarStreamController
+                        .currentStreamBlockParticipants.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Get.find<WebinarStreamController>()
+                          .getBlockedusersForWebinar(widget.room.name!);
+                      return ListTile(
+                        leading: CircleAvatar(
+                          radius: 20.r,
+                          backgroundImage: NetworkImage(AppConstants.baseURL +
+                              WebinarStreamController
+                                      .currentStreamBlockParticipants[index]
+                                  ['profile_image']),
+                        ),
+                        title: Text(
+                          WebinarStreamController
+                              .currentStreamBlockParticipants[index]['name'],
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.sp,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        trailing: TextButton(
+                            child: const Text('Unblock'),
+                            onPressed: () {
+                              Get.find<WebinarStreamController>()
+                                  .unblockparticipantFromWebinar(
+                                      WebinarStreamController
+                                              .currentStreamBlockParticipants[index]
+                                          ['_id'],
+                                      widget.room.name!);
+                            }),
+                      );
+                    },
+                  );
+                }
               ),
             ],
           ),

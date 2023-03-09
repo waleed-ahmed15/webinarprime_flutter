@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
+import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
 import 'package:webinarprime/screens/user_search/user_search_screen.dart';
 import 'package:webinarprime/screens/webinar_management/edit_webinar/edit_webinar_screen.dart';
 import 'package:webinarprime/screens/webinar_management/view_webinar_screen/review_widget.dart';
@@ -282,11 +283,6 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
-    print(WebinarManagementController.currentWebinar['createdBy']['_id']);
-    print(WebinarManagementController.currentWebinar);
-    bool showFloatingButton = Get.find<AuthController>().currentUser['id'] ==
-        WebinarManagementController.currentWebinar['createdBy']['_id'];
-
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: showfloatingButton
@@ -294,31 +290,44 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
               ? FloatingActionBubble(
                   items: [
                     // Floating action menu item
+                    widget.webinarDetails.containsKey('ended')
+                        ? Bubble(
+                            title: "Webinar Ended",
+                            iconColor: Colors.white,
+                            bubbleColor: Colors.red,
+                            icon: Icons.stop_rounded,
+                            titleStyle: const TextStyle(
+                                fontSize: 16, color: Colors.white),
+                            onPress: () {
+                              _animationController!.reverse();
+                            },
+                          )
+                        : Bubble(
+                            title: webinarStreamStatus.value == 'live'
+                                ? 'Join'
+                                : "Start Stream",
+                            iconColor: Colors.white,
+                            bubbleColor: Colors.blue,
+                            icon: Icons.stream_outlined,
+                            titleStyle: const TextStyle(
+                                fontSize: 16, color: Colors.white),
+                            onPress: () async {
+                              webinarStreamStatus.value == 'live'
+                                  ? Get.find<WebinarStreamController>()
+                                      .joinStream(
+                                          WebinarManagementController
+                                              .currentWebinar['_id'],
+                                          context)
+                                  : Get.find<WebinarStreamController>()
+                                      .startWebinarStream(
+                                          WebinarManagementController
+                                              .currentWebinar['_id'],
+                                          context);
+                              _animationController!.reverse();
+                            },
+                          ),
                     Bubble(
-                      title: webinarStreamStatus.value == 'live'
-                          ? 'Join'
-                          : "Start Stream",
-                      iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
-                      icon: Icons.stream_outlined,
-                      titleStyle:
-                          const TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () async {
-                        webinarStreamStatus.value == 'live'
-                            ? Get.find<WebinarStreamController>().joinStream(
-                                WebinarManagementController
-                                    .currentWebinar['_id'],
-                                context)
-                            : Get.find<WebinarStreamController>()
-                                .startWebinarStream(
-                                    WebinarManagementController
-                                        .currentWebinar['_id'],
-                                    context);
-                        _animationController!.reverse();
-                      },
-                    ),
-                    Bubble(
-                      title: "End Stream",
+                      title: "End Webinar",
                       iconColor: Colors.white,
                       bubbleColor: webinarStreamStatus.value == 'live'
                           ? Colors.blue
@@ -328,6 +337,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           const TextStyle(fontSize: 16, color: Colors.white),
                       onPress: webinarStreamStatus.value == 'live'
                           ? () async {
+                              await Get.find<WebinarManagementController>()
+                                  .endWebinarStream(WebinarManagementController
+                                      .currentWebinar['_id']);
                               _animationController!.reverse();
                             }
                           : () {
@@ -553,27 +565,6 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   backGroundColor: AppColors.LTprimaryColor,
                 )
           : null,
-      // floatingActionButton: ElevatedButton(
-      //     onPressed: () {
-      //       print('start stream pressed');
-      //       print('id: ${WebinarManagementController.currentWebinar['_id']}');
-      // Get.find<WebinarStreamController>()
-      //     .startWebinarStream(WebinarManagementController.currentWebinar['_id'], context);
-      //     },
-      //     style: ElevatedButton.styleFrom(
-      //       backgroundColor: AppColors.LTprimaryColor,
-      //       shape: RoundedRectangleBorder(
-      //         borderRadius: BorderRadius.circular(10.r),
-      //       ),
-      //     ),
-      //     child: Text(
-      //       'Start Stream',
-      //       style: TextStyle(
-      //           color: Colors.white.withOpacity(.98),
-      //           fontWeight: FontWeight.w600,
-      //           fontSize: 15.sp,
-      //           fontFamily: 'JosefinSans Bold'),
-      //     )),
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -911,6 +902,10 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           GetBuilder<WebinarManagementController>(
                               builder: (controller) {
                             print('canStream: $canStream');
+                            if (WebinarManagementController.currentWebinar
+                                .containsKey('ended')) {
+                              return const Text(' Webinar Ended');
+                            }
 
                             if (webinarStreamStatus.value == 'ended') {
                               return const Text('Ended');
@@ -967,7 +962,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             } else if (!canStream) {
                               return GestureDetector(
                                 onTap: () async {
-                                  // print('join now pressed');
+                                  print('Resgister now pressed');
                                   // await Get.find<WebinarStreamController>()
                                   //     .joinStream(
                                   //         WebinarManagementController.currentWebinar['_id'], context);
@@ -1060,35 +1055,48 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         ),
                       ],
                     ),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: AppLayout.getHeight(30),
-                        backgroundImage: NetworkImage(AppConstants.baseURL +
-                            WebinarManagementController
-                                .currentWebinar['createdBy']['profile_image']),
-                      ),
-                      title: Text(
-                        WebinarManagementController.currentWebinar['createdBy']
-                            ['name'],
-                        style: TextStyle(
-                          height: 1.5,
-                          fontSize: AppLayout.getHeight(16),
-                          color: Get.isDarkMode
-                              ? Colors.white.withOpacity(0.9)
-                              : Colors.black.withOpacity(0.9),
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 1,
-                          fontFamily: 'JosefinSans Regular',
+                    child: GestureDetector(
+                      onTap: () async {
+                        AuthController.otherUserProfile.clear();
+
+                        bool fetched = await Get.find<AuthController>()
+                            .otherUserProfileDetails(WebinarManagementController
+                                .currentWebinar['createdBy']['_id']);
+                        if (fetched) {
+                          Get.to(() => const UserProfileView());
+                        }
+                      },
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          radius: AppLayout.getHeight(30),
+                          backgroundImage: NetworkImage(AppConstants.baseURL +
+                              WebinarManagementController
+                                      .currentWebinar['createdBy']
+                                  ['profile_image']),
                         ),
-                      ),
-                      subtitle: Text(
-                        WebinarManagementController.currentWebinar['createdBy']
-                            ['email'],
-                        style: TextStyle(
-                          letterSpacing: 1,
-                          fontSize: AppLayout.getHeight(14),
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'JosefinSans Medium',
+                        title: Text(
+                          WebinarManagementController
+                              .currentWebinar['createdBy']['name'],
+                          style: TextStyle(
+                            height: 1.5,
+                            fontSize: AppLayout.getHeight(16),
+                            color: Get.isDarkMode
+                                ? Colors.white.withOpacity(0.9)
+                                : Colors.black.withOpacity(0.9),
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1,
+                            fontFamily: 'JosefinSans Regular',
+                          ),
+                        ),
+                        subtitle: Text(
+                          WebinarManagementController
+                              .currentWebinar['createdBy']['email'],
+                          style: TextStyle(
+                            letterSpacing: 1,
+                            fontSize: AppLayout.getHeight(14),
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'JosefinSans Medium',
+                          ),
                         ),
                       ),
                     ),
@@ -1281,61 +1289,73 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   children: List.generate(
                     WebinarManagementController
                         .currentWebinar['organizers'].length,
-                    (index) => Container(
-                      margin: EdgeInsets.symmetric(
-                          vertical: AppLayout.getHeight(20)),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(AppLayout.getHeight(10)),
-                        border: Border.all(
-                          color: Get.isDarkMode
-                              ? Colors.white.withOpacity(0.1)
-                              : Colors.black.withOpacity(0.1),
-                        ),
-                        color: Get.isDarkMode ? Colors.black54 : Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
-                            offset: const Offset(2, 2),
-                            blurRadius: 6,
-                            spreadRadius: 0,
-                          ),
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.01),
-                            offset: const Offset(-2, -2),
-                            blurRadius: 7,
-                          ),
-                        ],
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          radius: AppLayout.getHeight(30),
-                          backgroundImage: NetworkImage(AppConstants.baseURL +
-                              WebinarManagementController
-                                      .currentWebinar['organizers'][index]
-                                  ['profile_image']),
-                        ),
-                        title: Text(
-                          WebinarManagementController
-                              .currentWebinar['organizers'][index]['name'],
-                          style: TextStyle(
-                            fontSize: AppLayout.getHeight(16),
+                    (index) => GestureDetector(
+                      onTap: () async {
+                        AuthController.otherUserProfile.clear();
+
+                        bool fetched = await Get.find<AuthController>()
+                            .otherUserProfileDetails(WebinarManagementController
+                                .currentWebinar['organizers'][index]['_id']);
+                        if (fetched) {
+                          Get.to(() => const UserProfileView());
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                            vertical: AppLayout.getHeight(20)),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(AppLayout.getHeight(10)),
+                          border: Border.all(
                             color: Get.isDarkMode
-                                ? Colors.white.withOpacity(0.9)
-                                : Colors.black.withOpacity(0.9),
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1,
-                            fontFamily: 'JosefinSans Regular',
+                                ? Colors.white.withOpacity(0.1)
+                                : Colors.black.withOpacity(0.1),
                           ),
+                          color: Get.isDarkMode ? Colors.black54 : Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              offset: const Offset(2, 2),
+                              blurRadius: 6,
+                              spreadRadius: 0,
+                            ),
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.01),
+                              offset: const Offset(-2, -2),
+                              blurRadius: 7,
+                            ),
+                          ],
                         ),
-                        subtitle: Text(
-                          WebinarManagementController
-                              .currentWebinar['organizers'][index]['email'],
-                          style: TextStyle(
-                            letterSpacing: 1,
-                            fontSize: AppLayout.getHeight(14),
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'JosefinSans Regular',
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            radius: AppLayout.getHeight(30),
+                            backgroundImage: NetworkImage(AppConstants.baseURL +
+                                WebinarManagementController
+                                        .currentWebinar['organizers'][index]
+                                    ['profile_image']),
+                          ),
+                          title: Text(
+                            WebinarManagementController
+                                .currentWebinar['organizers'][index]['name'],
+                            style: TextStyle(
+                              fontSize: AppLayout.getHeight(16),
+                              color: Get.isDarkMode
+                                  ? Colors.white.withOpacity(0.9)
+                                  : Colors.black.withOpacity(0.9),
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1,
+                              fontFamily: 'JosefinSans Regular',
+                            ),
+                          ),
+                          subtitle: Text(
+                            WebinarManagementController
+                                .currentWebinar['organizers'][index]['email'],
+                            style: TextStyle(
+                              letterSpacing: 1,
+                              fontSize: AppLayout.getHeight(14),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'JosefinSans Regular',
+                            ),
                           ),
                         ),
                       ),
@@ -1378,35 +1398,47 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           ),
                         ],
                       ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          radius: AppLayout.getHeight(30),
-                          backgroundImage: NetworkImage(AppConstants.baseURL +
-                              WebinarManagementController
-                                      .currentWebinar['guests'][index]
-                                  ['profile_image']),
-                        ),
-                        title: Text(
-                          WebinarManagementController.currentWebinar['guests']
-                              [index]['name'],
-                          style: TextStyle(
-                            fontSize: AppLayout.getHeight(16),
-                            color: Get.isDarkMode
-                                ? Colors.white.withOpacity(0.9)
-                                : Colors.black.withOpacity(0.9),
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1,
-                            fontFamily: 'JosefinSans Regular',
+                      child: GestureDetector(
+                        onTap: () async {
+                          AuthController.otherUserProfile.clear();
+                          bool fetched = await Get.find<AuthController>()
+                              .otherUserProfileDetails(
+                                  WebinarManagementController
+                                      .currentWebinar['guests'][index]['_id']);
+                          if (fetched) {
+                            Get.to(() => const UserProfileView());
+                          }
+                        },
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            radius: AppLayout.getHeight(30),
+                            backgroundImage: NetworkImage(AppConstants.baseURL +
+                                WebinarManagementController
+                                        .currentWebinar['guests'][index]
+                                    ['profile_image']),
                           ),
-                        ),
-                        subtitle: Text(
-                          WebinarManagementController.currentWebinar['guests']
-                              [index]['email'],
-                          style: TextStyle(
-                            letterSpacing: 1,
-                            fontSize: AppLayout.getHeight(14),
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'JosefinSans Regular',
+                          title: Text(
+                            WebinarManagementController.currentWebinar['guests']
+                                [index]['name'],
+                            style: TextStyle(
+                              fontSize: AppLayout.getHeight(16),
+                              color: Get.isDarkMode
+                                  ? Colors.white.withOpacity(0.9)
+                                  : Colors.black.withOpacity(0.9),
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1,
+                              fontFamily: 'JosefinSans Regular',
+                            ),
+                          ),
+                          subtitle: Text(
+                            WebinarManagementController.currentWebinar['guests']
+                                [index]['email'],
+                            style: TextStyle(
+                              letterSpacing: 1,
+                              fontSize: AppLayout.getHeight(14),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'JosefinSans Regular',
+                            ),
                           ),
                         ),
                       ),

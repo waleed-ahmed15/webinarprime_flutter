@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 class WebinarStreamController extends GetxController {
   static RxMap roomChatmessages = {}.obs;
   static String webinarStreamStaus = '';
+  static List currentStreamBlockParticipants = [];
   Future<void> startWebinarStream(
       String webianrId, BuildContext context) async {
     try {
@@ -30,6 +31,7 @@ class WebinarStreamController extends GetxController {
 
       if (response.statusCode == 200) {
         print('Webinar-Stream Started');
+        getBlockedusersForWebinar(webianrId);
         joinStream(webianrId, context);
       } else {
         print('Webinar-Stream Failed');
@@ -57,10 +59,14 @@ class WebinarStreamController extends GetxController {
       );
       // print('object');
 
+      print('join stream response------------------------------------');
       print(Response.body);
+
       String livekitToken = jsonDecode(Response.body)['token'];
       if (Response.statusCode == 200) {
         print('Webinar-Stream Joined');
+        getBlockedusersForWebinar(WebinarId);
+
         await connectToRoom(context, livekitToken, WebinarId);
       } else {
         print('Webinar-Stream joining Failed');
@@ -220,9 +226,67 @@ class WebinarStreamController extends GetxController {
 
       if (response.statusCode == 200) {
         print('User kicked successfully');
+        getBlockedusersForWebinar(webinarId);
+
         return true;
       } else {
+        print(response.body);
         print('User kicking  Failed');
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  //get list of blocked users in room
+  Future<void> getBlockedusersForWebinar(String webinarId) async {
+    try {
+      Uri url =
+          Uri.parse("${AppConstants.baseURL}/stream/blockedusers/$webinarId");
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+      });
+
+      if (response.statusCode == 200) {
+        print('list of blocked users fetched successfully');
+        currentStreamBlockParticipants.clear();
+        currentStreamBlockParticipants =
+            jsonDecode(response.body)['blockedUsers'];
+        print(currentStreamBlockParticipants);
+
+        update();
+      } else {
+        print('list of blocked users fetching  Failed');
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // unblock user for webinar stream
+  Future<bool> unblockparticipantFromWebinar(
+      String participantId, String webinarId) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/stream/unblockuser");
+      final response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({'userId': participantId, 'webinarId': webinarId}));
+
+      if (response.statusCode == 200) {
+        print('User unblocked successfully');
+        update();
+        return true;
+      } else {
+        print(response.body);
+        print('User unblocking  Failed');
         return false;
       }
     } catch (e) {

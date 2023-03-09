@@ -23,6 +23,7 @@ class AuthController extends GetxController {
   String token = '';
   List<dynamic> searchedUsers = [];
   List<dynamic> currentUserInvitations = [];
+  static Map<String, dynamic> otherUserProfile = {};
 
   @override
   void onInit() async {
@@ -417,6 +418,101 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       print(e);
+    }
+  }
+  // get details of other user profile being viewed
+
+  Future<bool> otherUserProfileDetails(String userId) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/$userId");
+
+      var response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print(data);
+        otherUserProfile.clear();
+        otherUserProfile = data['user'];
+        // otherUserProfile = data['user'];
+        update();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+  // follow user from other user profile
+
+  Future<bool> followUser(String userID, String followedUserID) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/follow");
+
+      var response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode({
+          "userId": userID,
+          "followingId": followedUserID,
+        }),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print(data);
+        // ShowCustomSnackBar(title: "User followed", isError: false, "");
+        currentUser['following'].add(followedUserID);
+
+        update();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // unflollow user from other user profile
+  Future<bool> unfollowUser(String userID, String followedUserID) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/unfollow");
+
+      var response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode({
+          "userId": userID,
+          "followingId": followedUserID,
+        }),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print(data);
+        // ShowCustomSnackBar(title: "User unfollowed", isError: false, "");
+        currentUser['following'].remove(followedUserID);
+
+        update();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 }
