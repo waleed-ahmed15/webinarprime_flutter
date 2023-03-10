@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/controllers/reviews_controlller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import '../utils/app_constants.dart';
 import 'package:http/http.dart' as http;
@@ -119,15 +120,9 @@ class WebinarManagementController extends GetxController {
         'Content-Type': 'application/json',
       });
       var data = jsonDecode(response.body);
-      // print(data);
+      currentWebinar.clear();
       currentWebinar = data['webinar'];
-      // print(currentWebinar);
-      // print('=======================current webinar====================');
-      // print(currentWebinar['guests']);
-      // print('=======================current webinar====================');
-
-      // print(
-      // '=======================current webinar guests====================');
+      await Get.find<ReviewController>().getReviewsOfCurrentWebinar(id);
       update();
     } catch (e) {
       print(e);

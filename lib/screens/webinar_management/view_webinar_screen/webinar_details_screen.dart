@@ -1,10 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/controllers/reviews_controlller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
@@ -44,6 +46,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
 
   String showFloatingButtonFor = '';
   bool showfloatingButton = false;
+  int reviewRating = 4;
 
   @override
   void initState() {
@@ -61,6 +64,17 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
     floatingActionbuttonDecider();
     CanuserStream();
     super.initState();
+  }
+
+  bool canpostreview() {
+    bool canpost = false;
+    WebinarManagementController.currentWebinar['attendees'].forEach((element) {
+      if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
+        canpost = true;
+        return;
+      }
+    });
+    return canpost;
   }
 
   void _scrollListener() {
@@ -1495,44 +1509,142 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       padding: EdgeInsets.symmetric(
                           vertical: 20.w, horizontal: 20.h),
                       children: [
-                        
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            TextFormField(
-                              style: Mystyles.onelineStyle,
-                              onChanged: (value) {
-                                setState(() {});
-                              },
-                              controller: reviewController,
-                              maxLines: 4,
-                              decoration: InputDecoration(
-                                hintText: 'Write a review. . .',
-                                hintStyle: Mystyles.onelineStyle,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                            Gap(10.h),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  fixedSize: Size(double.maxFinite, 10.h),
-                                ),
-                                onPressed:
-                                    reviewController.text.toString() == ""
-                                        ? null
-                                        : () {},
-                                child: const Text('Submit')),
-                          ],
-                        ),
+                        canpostreview()
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  TextFormField(
+                                    style: Mystyles.onelineStyle,
+                                    onChanged: (value) {
+                                      setState(() {});
+                                    },
+                                    controller: reviewController,
+                                    maxLines: 4,
+                                    decoration: InputDecoration(
+                                      hintText: 'Write a review. . .',
+                                      hintStyle: Mystyles.onelineStyle,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                  Gap(10.h),
+                                  RatingBar.builder(
+                                    initialRating: 4,
+                                    minRating: 1,
+                                    itemSize: 24.h,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: AppColors.LTsecondaryColor,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      reviewRating = rating.toInt();
+                                    },
+                                  ),
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        fixedSize: Size(double.maxFinite, 10.h),
+                                      ),
+                                      onPressed: reviewController.text
+                                                  .toString() ==
+                                              ""
+                                          ? null
+                                          : () async {
+                                              await Get.find<ReviewController>()
+                                                  .addReviewToWebinar(
+                                                      WebinarManagementController
+                                                              .currentWebinar[
+                                                          '_id'],
+                                                      Get.find<AuthController>()
+                                                          .currentUser['_id'],
+                                                      reviewController.text
+                                                          .toString(),
+                                                      reviewRating);
+                                              setState(() {
+                                                reviewController.text = '';
+                                                //close keyboard;
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                              });
+                                            },
+                                      child: const Text('Submit')),
+                                ],
+                              )
+                            : const SizedBox(),
                         Gap(20.h),
                         Divider(
                           color: Mystyles.onelineStyle.color,
                           thickness: 1,
                         ),
                         Gap(10.h),
-                        MyReviewWidget(),
+                        ReviewController.currentUserreview.isEmpty
+                            ? const SizedBox()
+                            : MyReviewWidget(
+                                editable: true,
+                                callbackAction: () {
+                                  setState(() {
+                                    _scrollController.animateTo(
+                                      0,
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.easeOut,
+                                    );
+                                    reviewController.text = ReviewController
+                                        .currentUserreview['comment'];
+                                  });
+                                },
+                                Date: ReviewController
+                                    .currentUserreview['updatedAt'],
+                                review: ReviewController
+                                    .currentUserreview['comment'],
+                                Name: Get.find<AuthController>()
+                                    .currentUser['name'],
+                                rating: ReviewController
+                                    .currentUserreview['rating'],
+                                profileImage: Get.find<AuthController>()
+                                    .currentUser['profile_image'],
+                              ),
+                        GetBuilder<ReviewController>(
+                            assignId: true,
+                            id: 'reviewsList',
+                            builder: (context) {
+                              print('reviews updated');
+                              return ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: ReviewController
+                                    .reviewsOfCurrentWebiar.length,
+                                itemBuilder: (context, index) {
+                                  if (ReviewController
+                                          .currentUserreview['_id'] ==
+                                      ReviewController
+                                              .reviewsOfCurrentWebiar[index]
+                                          ['_id']) {
+                                    return const SizedBox();
+                                  }
+                                  return MyReviewWidget(
+                                    editable: false,
+                                    Date: ReviewController
+                                            .reviewsOfCurrentWebiar[index]
+                                        ['updatedAt'],
+                                    profileImage: ReviewController
+                                            .reviewsOfCurrentWebiar[index]
+                                        ['user']['profile_image'],
+                                    review: ReviewController
+                                            .reviewsOfCurrentWebiar[index]
+                                        ['comment'],
+                                    Name: ReviewController
+                                            .reviewsOfCurrentWebiar[index]
+                                        ['user']['name'],
+                                  );
+                                },
+                              );
+                            }),
                       ],
                     )
             ],
