@@ -175,3 +175,5 @@ class MyBoxDecorations {
 
 Color receiverChatBubbleColor =
     Get.isDarkMode ? const Color(0xff262626) : const Color(0XFFEFEFEF);
+
+    

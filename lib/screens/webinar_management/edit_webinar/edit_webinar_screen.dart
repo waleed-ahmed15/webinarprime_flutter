@@ -406,24 +406,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                     const SizedBox(height: 20.0),
 
                     dialogboxWidgets[title]!,
-                    // TextFormField(
-                    //   maxLines: 1,
-                    //   controller: widget.editingController,
-                    //   onChanged: (text) {
-                    //     setState(() {});
-                    //   },
-                    //   decoration: const InputDecoration(
-                    //     hintText: "Enter new text",
-                    //     border: OutlineInputBorder(),
-                    //   ),
-                    //   validator: (val) {
-                    //     if (val == '') {
-                    //       return ' cannot be empty';
-                    //     }
-
-                    //     return null;
-                    //   },
-                    // ),
+                    
                     const SizedBox(height: 20.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

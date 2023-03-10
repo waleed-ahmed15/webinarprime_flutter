@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/screens/profile_view/edit_profile.dart';
 import 'package:webinarprime/screens/profile_view/space_bar_widget.dart';
 import 'package:webinarprime/screens/profile_view/tabBar_view_profile_view.dart';
 import 'package:webinarprime/screens/profile_view/tabs_widget.dart';
@@ -49,7 +50,9 @@ class _UserProfileViewState extends State<UserProfileView>
         floatingActionButton: (AuthController.otherUserProfile['_id'] ==
                 Get.find<AuthController>().currentUser['_id'])
             ? FloatingActionButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(() => const EditProfileScreen());
+                },
                 child: const Icon(Icons.edit),
               )
             : null,

@@ -516,5 +516,136 @@ class AuthController extends GetxController {
     }
   }
 
-  
+  //edit user details
+
+  //-------------------------edit email------------------------------------
+
+  Future<void> editemail(String email) async {
+    try {
+      if (email == currentUser['email']) {
+        return;
+      }
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/user/edit/${currentUser['_id']}/email");
+      var response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode({
+          "email": email,
+        }),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print(data);
+        currentUser['email'] = email;
+        update(['editprofile']);
+        ShowCustomSnackBar(title: "Email updated", isError: false, "");
+      } else {
+        var data = jsonDecode(response.body);
+        print(data);
+        ShowCustomSnackBar(
+            title: 'Error', isError: true, "Email already in use");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //update name of user
+  Future<void> editusername(String username) async {
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/user/edit/${currentUser['_id']}/name");
+      var response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode({
+          "name": username,
+        }),
+      );
+      if (response.statusCode == 200) {
+        // var data = jsonDecode(response.body);
+        // print(data);
+        currentUser['name'] = username;
+        update(['editprofile']);
+        ShowCustomSnackBar(
+            title: "Updated", isError: false, "user name updated successfully");
+      } else {
+        var data = jsonDecode(response.body);
+        print(data);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  // edit birthdate
+
+  Future<void> editBirthDate(String dob) async {
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/user/edit/${currentUser['_id']}/birthdate");
+      var response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode({
+          "birthdate": dob,
+        }),
+      );
+      if (response.statusCode == 200) {
+        // var data = jsonDecode(response.body);
+        // print(data);
+        currentUser['birthdate'] = dob;
+        update(['editprofile']);
+        ShowCustomSnackBar(
+            title: "Updated", isError: false, "Birthdate updated successfully");
+      } else {
+        var data = jsonDecode(response.body);
+        print(data);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // update regno
+  Future<void> editregno(String regno) async {
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/user/edit/${currentUser['_id']}/regno");
+      var response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode({
+          "registration_number": regno,
+        }),
+      );
+      if (response.statusCode == 200) {
+        // var data = jsonDecode(response.body);
+        // print(data);
+        currentUser['registration_number'] = regno;
+        update(['editprofile']);
+        ShowCustomSnackBar(
+            title: "Updated",
+            isError: false,
+            "Registration number updated successfully");
+      } else {
+        var data = jsonDecode(response.body);
+        print(data);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }
