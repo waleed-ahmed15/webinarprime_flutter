@@ -21,7 +21,7 @@ class ChatStreamController extends GetxController {
 
     //---------------------------------- join conversation socket---------------------------
     socket.emit('join', {
-      Get.find<AuthController>().currentUser['id'],
+      Get.find<AuthController>().currentUser['_id'],
     });
 
     //------------------------------- incoming messages-------------------------------------
@@ -38,7 +38,7 @@ class ChatStreamController extends GetxController {
 
       Get.find<ChatStreamController>().update();
       Get.find<ChatStreamController>()
-          .getConversations(Get.find<AuthController>().currentUser['id']);
+          .getConversations(Get.find<AuthController>().currentUser['_id']);
     });
 
     // -----------------------conversation deleted---------------------------
@@ -57,7 +57,7 @@ class ChatStreamController extends GetxController {
         Get.find<ChatStreamController>().update();
 
         Get.find<ChatStreamController>()
-            .getConversations(Get.find<AuthController>().currentUser['id']);
+            .getConversations(Get.find<AuthController>().currentUser['_id']);
       }
     });
 
@@ -121,7 +121,7 @@ class ChatStreamController extends GetxController {
         print('Conversations created');
         print(response.body);
         print('fetching conversations');
-        await getConversations(Get.find<AuthController>().currentUser['id']);
+        await getConversations(Get.find<AuthController>().currentUser['_id']);
         update();
       } else {
         print('Conversations creation Failed');
@@ -255,7 +255,7 @@ class ChatStreamController extends GetxController {
           },
           body: jsonEncode({
             'bannedUserId': bannedUserId,
-            'userId': Get.find<AuthController>().currentUser['id'],
+            'userId': Get.find<AuthController>().currentUser['_id'],
           }));
       if (response.statusCode == 200) {
         print('user banned successfully');
@@ -284,7 +284,7 @@ class ChatStreamController extends GetxController {
           },
           body: jsonEncode({
             'bannedUserId': bannedUserId,
-            'userId': Get.find<AuthController>().currentUser['id'],
+            'userId': Get.find<AuthController>().currentUser['_id'],
           }));
       if (response.statusCode == 200) {
         print('user unbanned successfully');

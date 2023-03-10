@@ -157,7 +157,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           Get.find<ChatStreamController>().update();
 
                           Get.find<ChatStreamController>().getConversations(
-                              Get.find<AuthController>().currentUser['id']);
+                              Get.find<AuthController>().currentUser['_id']);
                         },
                         child: Text(
                           'Delete',
@@ -317,12 +317,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     print(ChatStreamController
                             .userChatmessages[widget.ConversationId][index]
                         ['from']['_id']);
-                    print(Get.find<AuthController>().currentUser['id']);
+                    print(Get.find<AuthController>().currentUser['_id']);
                     bool issender = false;
                     if (ChatStreamController
                                 .userChatmessages[widget.ConversationId][index]
                             ['from']['_id'] ==
-                        Get.find<AuthController>().currentUser['id']) {
+                        Get.find<AuthController>().currentUser['_id']) {
                       issender = true;
                       print('sender');
                     }
@@ -481,10 +481,10 @@ class _ChatScreenState extends State<ChatScreen> {
   void sendPressed(String message) async {
     if (message.isNotEmpty) {
       print(message);
-      print(Get.find<AuthController>().currentUser['id']);
+      print(Get.find<AuthController>().currentUser['_id']);
       Map<String, dynamic> messageMap = {
         "message": {
-          "from": Get.find<AuthController>().currentUser['id'],
+          "from": Get.find<AuthController>().currentUser['_id'],
           "text": message,
         }
       };
@@ -510,7 +510,7 @@ class _ChatScreenState extends State<ChatScreen> {
       File imageFile = File(result.path);
       // print(imageFile.path);
       await ChatStreamController().sendFileMessage(widget.ConversationId,
-          File(result.path), Get.find<AuthController>().currentUser['id'], '');
+          File(result.path), Get.find<AuthController>().currentUser['_id'], '');
       // List<int> imageBytes = await imageFile.readAsBytes();
       // String base64Image = base64Encode(imageBytes);
       // print(base64Image);
@@ -528,7 +528,7 @@ class _ChatScreenState extends State<ChatScreen> {
     await ChatStreamController().sendFileMessage(
         widget.ConversationId,
         file,
-        Get.find<AuthController>().currentUser['id'],
+        Get.find<AuthController>().currentUser['_id'],
         result2.files.single.name);
   }
 }

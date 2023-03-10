@@ -222,7 +222,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
     bool found = false;
     WebinarManagementController.currentWebinar['organizers'].forEach((element) {
       print(element);
-      if (element['_id'] == Get.find<AuthController>().currentUser['id']) {
+      if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
         canStream = true;
         found = true;
         return;
@@ -231,7 +231,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
     if (!found) {
       WebinarManagementController.currentWebinar['guests'].forEach((element) {
         print(element);
-        if (element['_id'] == Get.find<AuthController>().currentUser['id']) {
+        if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
           canStream = true;
           found = true;
           return;
@@ -243,7 +243,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
       WebinarManagementController.currentWebinar['attendees']
           .forEach((element) {
         print(element);
-        if (element['_id'] == Get.find<AuthController>().currentUser['id']) {
+        if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
           canStream = true;
           found = true;
           return;
@@ -252,7 +252,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
     }
 
     if (WebinarManagementController.currentWebinar['createdBy']['_id'] ==
-        Get.find<AuthController>().currentUser['id']) {
+        Get.find<AuthController>().currentUser['_id']) {
       canStream = true;
     }
     Map<String, dynamic> res = await Get.find<WebinarStreamController>()
@@ -266,14 +266,14 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
 
   void floatingActionbuttonDecider() {
     if (WebinarManagementController.currentWebinar['createdBy']['_id'] ==
-        Get.find<AuthController>().currentUser['id']) {
+        Get.find<AuthController>().currentUser['_id']) {
       showFloatingButtonFor = 'creator';
       showfloatingButton = true;
       return;
     }
     WebinarManagementController.currentWebinar['organizers'].forEach((element) {
       print(element);
-      if (element['_id'] == Get.find<AuthController>().currentUser['id']) {
+      if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
         showFloatingButtonFor = 'organizer';
         showfloatingButton = true;
         return;

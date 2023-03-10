@@ -68,7 +68,7 @@ class _CreateNewChatState extends State<CreateNewChat> {
                   await Get.find<ChatStreamController>().createNewConversation([
                     await Get.find<AuthController>().searchedUsers[index]
                         ['_id'],
-                    await Get.find<AuthController>().currentUser['id']
+                    await Get.find<AuthController>().currentUser['_id']
                   ]);
                   await Get.find<ChatStreamController>()
                       .GetmessagesForAconversation(
@@ -76,7 +76,7 @@ class _CreateNewChatState extends State<CreateNewChat> {
                   // find index of receiver in userchats
                   int otheruserIndex = await ChatStreamController.userchats[0]
                               ['users'][0]['_id'] ==
-                          await Get.find<AuthController>().currentUser['id']
+                          await Get.find<AuthController>().currentUser['_id']
                       ? 1
                       : 0;
                   Get.find<AuthController>().searchedUsers.clear();

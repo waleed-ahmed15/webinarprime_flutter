@@ -49,9 +49,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
               // await ChatStreamController().createNewConversation(
               // ["63ea1f91bb071d3c3298000f", "63ea1fc7bb071d3c32980017"]);
 
-              // print(Get.find<AuthController>().currentUser['id']);
+              // print(Get.find<AuthController>().currentUser['_id']);
               ChatStreamController().getConversations(
-                  Get.find<AuthController>().currentUser['id']);
+                  Get.find<AuthController>().currentUser['_id']);
             },
             child: const Icon(Icons.add),
           ),
@@ -95,7 +95,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 itemBuilder: (BuildContext context, int index) {
                   int otheruserIndex = ChatStreamController.userchats[index]
                               ['users'][0]['_id'] ==
-                          Get.find<AuthController>().currentUser['id']
+                          Get.find<AuthController>().currentUser['_id']
                       ? 1
                       : 0;
                   print('other user index $otheruserIndex');

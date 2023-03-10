@@ -35,7 +35,7 @@ class AuthController extends GetxController {
     await initialRoute();
     print('innit called');
     // Timer.periodic(const Duration(seconds: 4), (timer) {
-    // getInvitations(currentUser['id'] ?? '');
+    // getInvitations(currentUser['_id'] ?? '');
     // });
     super.onInit();
   }
@@ -172,7 +172,7 @@ class AuthController extends GetxController {
 
     print(response.toString());
 
-    await getUserById(currentUser['id']);
+    await getUserById(currentUser['_id']);
     print('new user data is');
     print(currentUser);
     update();
@@ -224,7 +224,7 @@ class AuthController extends GetxController {
           Get.offAll(() => HomeScreen(
                 currIndex: 0,
               ));
-          getInvitations(currentUser['id']);
+          getInvitations(currentUser['_id']);
         } else {
           Get.toNamed(RoutesHelper.uploadProfileRoute);
         }
@@ -251,7 +251,7 @@ class AuthController extends GetxController {
       if (currentUser.isEmpty) {
         Get.toNamed(RoutesHelper.signInRoute);
       } else if (currentUser.containsKey('birthdate')) {
-        getInvitations(currentUser['id']);
+        getInvitations(currentUser['_id']);
         Get.toNamed(RoutesHelper.homeScreenRoute);
       } else {
         Get.toNamed(RoutesHelper.uploadProfileRoute);
@@ -385,7 +385,7 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         print(data);
         ShowCustomSnackBar(title: "Invitation accepted", isError: false, "");
-        getInvitations(currentUser['id']);
+        getInvitations(currentUser['_id']);
       } else {
         print(data.toString());
       }

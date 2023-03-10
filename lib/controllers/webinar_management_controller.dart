@@ -41,7 +41,7 @@ class WebinarManagementController extends GetxController {
             "price": webinardata['price'],
             "categories": webinardata['categories'],
             'tags': webinardata['tags'],
-            'creatorId': Get.find<AuthController>().currentUser['id'],
+            'creatorId': Get.find<AuthController>().currentUser['_id'],
           }));
       var data = jsonDecode(response.body);
       String id = data['id'];
@@ -83,7 +83,7 @@ class WebinarManagementController extends GetxController {
 
       print('webinar added sucessfully');
       addOrganizerToWebinarById(
-          id, Get.find<AuthController>().currentUser['id']);
+          id, Get.find<AuthController>().currentUser['_id']);
       getAllwebinars();
       update();
 
