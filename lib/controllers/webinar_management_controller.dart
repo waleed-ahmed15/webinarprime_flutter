@@ -681,4 +681,60 @@ class WebinarManagementController extends GetxController {
       print(e);
     }
   }
+
+  // add webinar to favourites
+  Future<void> addWebinarToFavs(String webinarId, String userId) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/add-favorite");
+      final response = await http.put(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({
+            "userId": userId,
+            "webinarId": webinarId,
+          }));
+      if (response.statusCode == 200) {
+        print('added to favs');
+        Get.find<AuthController>().currentUser['favorites'].add(webinarId);
+        // print(currentUser['favorites']);
+        // print(currentUser['favorites'] == null);
+        update();
+      }
+    } catch (e) {
+      print('could not add to favs');
+
+      print(e);
+    }
+  }
+
+  // remove webinar from favourites
+  Future<void> removeWebinarfromFavs(String webinarId, String userId) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/remove-favorite");
+      final response = await http.put(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({
+            "userId": userId,
+            "webinarId": webinarId,
+          }));
+      if (response.statusCode == 200) {
+        print('removed from favs');
+        Get.find<AuthController>().currentUser['favorites'].remove(webinarId);
+        // print(currentUser['favorites']);
+        // print(currentUser['favorites'] == null);
+        update();
+      }
+    } catch (e) {
+      print('could not remove from  favs');
+
+      print(e);
+    }
+  }
 }

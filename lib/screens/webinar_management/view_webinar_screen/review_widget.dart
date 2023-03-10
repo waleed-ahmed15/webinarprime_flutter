@@ -20,9 +20,10 @@ class MyReviewWidget extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            leading: CircleAvatar(
+            leading: const CircleAvatar(
               radius: 25,
-              backgroundImage: NetworkImage(profileImage),
+              backgroundImage:
+                  NetworkImage('https://picsum.photos/250?image=9'),
             ),
             title: Text(Name, style: Mystyles.listtileTitleStyle),
             subtitle: Text(

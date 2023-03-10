@@ -653,6 +653,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         // ),
                       ),
                     ),
+
                     Positioned(
                       top: AppLayout.getHeight(50.0),
                       left: AppLayout.getWidth(110.0),
@@ -874,8 +875,42 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     AppLayout.getHeight(20),
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Get.find<AuthController>()
+                              .currentUser['favorites']
+                              .contains(WebinarManagementController
+                                  .currentWebinar['_id'])
+                          ? IconButton(
+                              onPressed: () async {
+                                await Get.find<WebinarManagementController>()
+                                    .removeWebinarfromFavs(
+                                        WebinarManagementController
+                                            .currentWebinar['_id'],
+                                        Get.find<AuthController>()
+                                            .currentUser['_id']);
+                              },
+                              icon: Icon(
+                                Icons.favorite,
+                                size: 40.h,
+                                color: AppColors.LTprimaryColor,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: () async {
+                                await Get.find<WebinarManagementController>()
+                                    .addWebinarToFavs(
+                                        WebinarManagementController
+                                            .currentWebinar['_id'],
+                                        Get.find<AuthController>()
+                                            .currentUser['_id']);
+                              },
+                              icon: Icon(
+                                Icons.favorite_border,
+                                size: 40.h,
+                                color: AppColors.LTprimaryColor,
+                              ),
+                            ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -1448,48 +1483,58 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
               }),
 
               // The content for the ReviewsTab goes here
-              ListView(
-                physics: const ClampingScrollPhysics(),
-                padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 20.h),
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      TextFormField(
+              WebinarManagementController.currentWebinar['ended'] == null
+                  ? Center(
+                      child: Text(
+                        'Reviews will be available after the webinar ends',
                         style: Mystyles.onelineStyle,
-                        onChanged: (value) {
-                          setState(() {});
-                        },
-                        controller: reviewController,
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                          hintText: 'Write a review. . .',
-                          hintStyle: Mystyles.onelineStyle,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
                       ),
-                      Gap(10.h),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: Size(double.maxFinite, 10.h),
-                          ),
-                          onPressed: reviewController.text.toString() == ""
-                              ? null
-                              : () {},
-                          child: const Text('Submit')),
-                    ],
-                  ),
-                  Gap(20.h),
-                  Divider(
-                    color: Mystyles.onelineStyle.color,
-                    thickness: 1,
-                  ),
-                  Gap(10.h),
-                  MyReviewWidget(),
-                ],
-              )
+                    )
+                  : ListView(
+                      physics: const ClampingScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 20.w, horizontal: 20.h),
+                      children: [
+                        
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            TextFormField(
+                              style: Mystyles.onelineStyle,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              controller: reviewController,
+                              maxLines: 4,
+                              decoration: InputDecoration(
+                                hintText: 'Write a review. . .',
+                                hintStyle: Mystyles.onelineStyle,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            Gap(10.h),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(double.maxFinite, 10.h),
+                                ),
+                                onPressed:
+                                    reviewController.text.toString() == ""
+                                        ? null
+                                        : () {},
+                                child: const Text('Submit')),
+                          ],
+                        ),
+                        Gap(20.h),
+                        Divider(
+                          color: Mystyles.onelineStyle.color,
+                          thickness: 1,
+                        ),
+                        Gap(10.h),
+                        MyReviewWidget(),
+                      ],
+                    )
             ],
           );
         }),
