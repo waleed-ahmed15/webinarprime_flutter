@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/utils/app_constants.dart';
+import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class SpaceBarForProfileView extends StatelessWidget {
@@ -27,15 +28,33 @@ class SpaceBarForProfileView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      radius: AuthController.otherUserProfile['accountType'] ==
-                              'organizer'
-                          ? 60.r
-                          : 100.r,
-                      backgroundImage: NetworkImage(AppConstants.baseURL +
-                          AuthController.otherUserProfile['profile_image']),
-                    ),
+                    Builder(builder: (context) {
+                      if (AuthController.otherUserProfile['_id'] ==
+                          Get.find<AuthController>().currentUser['_id']) {
+                        return CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          radius: 100.r,
+                          backgroundImage: NetworkImage(AppConstants.baseURL +
+                              AuthController.otherUserProfile['profile_image']),
+                        );
+                      }
+                      if (AuthController.otherUserProfile['accountType'] ==
+                          'organizer') {
+                        return CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          radius: 60.r,
+                          backgroundImage: NetworkImage(AppConstants.baseURL +
+                              AuthController.otherUserProfile['profile_image']),
+                        );
+                      } else {
+                        return CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          radius: 100.r,
+                          backgroundImage: NetworkImage(AppConstants.baseURL +
+                              AuthController.otherUserProfile['profile_image']),
+                        );
+                      }
+                    }),
                     Gap(10.w),
                     AutoSizeText(
                       AuthController.otherUserProfile['name'],
@@ -72,7 +91,10 @@ class SpaceBarForProfileView extends StatelessWidget {
                                     AuthController.otherUserProfile['_id']);
                               },
                               style: ElevatedButton.styleFrom(
-                                  alignment: Alignment.center),
+                                  alignment: Alignment.center,
+                                  backgroundColor:
+                                      AppColors.LTsecondaryColor.withOpacity(
+                                          0.8)),
                               child: Text(
                                 'Unfollow',
                                 style: Mystyles.listtileTitleStyle.copyWith(
