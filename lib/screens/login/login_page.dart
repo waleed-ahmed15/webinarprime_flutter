@@ -18,6 +18,7 @@ class _LoginPage extends State<LoginPage> {
   bool rememberMeValue = false;
   var passController = TextEditingController();
   var emailController = TextEditingController();
+  bool loading = false;
 
   void Login() {
     print('ererer');

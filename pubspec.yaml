@@ -37,6 +37,7 @@ dependencies:
   floating_action_bubble: ^1.1.4
   flutter:
     sdk: flutter
+  flutter_animated_dialog: ^2.0.1
   flutter_background: ^1.2.0
   flutter_background_service: ^2.4.6
   flutter_chat_ui: ^1.6.6

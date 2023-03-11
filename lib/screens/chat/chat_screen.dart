@@ -209,11 +209,19 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     print(widget.receiever);
     print(widget.ConversationId);
     return WillPopScope(
       onWillPop: () async {
+        // Get.find<PagesNav>().updateChat(0);
         Get.to(() => HomeScreen(
               currIndex: 3,
             ));

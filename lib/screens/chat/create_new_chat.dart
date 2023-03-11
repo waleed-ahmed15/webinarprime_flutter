@@ -20,7 +20,7 @@ class _CreateNewChatState extends State<CreateNewChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Mycolors.myappbarcolor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
           automaticallyImplyLeading: false,
           title: Padding(
@@ -39,8 +39,6 @@ class _CreateNewChatState extends State<CreateNewChat> {
 
                     await Get.find<AuthController>()
                         .searchUserAll(serachcontroller.text.trim());
-                    print('object--------------------------');
-                    // setState(() {});
                   },
                 ),
                 hintText: 'Search. . .',

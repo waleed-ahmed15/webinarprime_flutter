@@ -609,7 +609,7 @@ class WebinarManagementController extends GetxController {
       String coverfileName = bannerImage.path.split('/').last;
 
       // print(bannerfileName);
-      // print(coverfileName);
+      // print(coverfileName); 
       FormData formData = FormData.fromMap(
         {
           "bannerImage": await MultipartFile.fromFile(

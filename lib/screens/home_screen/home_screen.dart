@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/chat_controlller.dart';
-import 'package:webinarprime/controllers/webinar_management_controller.dart';
-import 'package:webinarprime/routes/routes.dart';
-import 'package:webinarprime/screens/chat/chat_list_screen.dart';
-import 'package:webinarprime/screens/profile_sceen/profile_screen.dart';
+import 'package:webinarprime/controllers/pages_nav_controller.dart';
+import 'package:webinarprime/screens/chat/chat_pages.dart';
+import 'package:webinarprime/screens/chat/chatpage_c.dart';
+import 'package:webinarprime/screens/home_screen/home_screen_drawer_widget.dart';
+import 'package:webinarprime/screens/my_webinars/view_my_webinars_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
-import 'package:webinarprime/utils/app_fonts.dart';
-import 'package:webinarprime/utils/colors.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:webinarprime/utils/styles.dart';
 
@@ -24,10 +22,11 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final IO.Socket _socket = IO.io(AppConstants.baseURL,
       IO.OptionBuilder().setTransports(['websocket']).build());
   final IO.Socket socket = Get.find();
+  bool loading = false;
 
   @override
   void initState() {
@@ -66,27 +65,28 @@ class _HomeScreenState extends State<HomeScreen> {
       color: Theme.of(Get.context!).colorScheme.secondary);
 
   static final List<Widget> _widgetOptions = <Widget>[
-    Column(
-      children: [
-        Text(' Priramy heading11', style: AppConstants.PrimarayheadingStyle),
-        const Gap(10),
-        const Text(
-          'Secondary Heading11',
-          style: TextStyle(
-              fontFamily: AppFont.secondaryHeading1,
-              fontSize: 20,
-              fontWeight: FontWeight.w500
+    const View_my_Webinar_Screen(),
+    // Column(
+    //   children: [
+    //     Text(' Priramy heading11', style: AppConstants.PrimarayheadingStyle),
+    //     const Gap(10),
+    //     const Text(
+    //       'Secondary Heading11',
+    //       style: TextStyle(
+    //           fontFamily: AppFont.secondaryHeading1,
+    //           fontSize: 20,
+    //           fontWeight: FontWeight.w500
 
-              //
-              //fontSize: AppLayout.getHeight(30),
-              ),
-        ),
-        Text(
-          'how to be more Productive',
-          style: Mystyles.bigTitleStyle,
-        )
-      ],
-    ),
+    //           //
+    //           //fontSize: AppLayout.getHeight(30),
+    //           ),
+    //     ),
+    //     Text(
+    //       'how to be more Productive',
+    //       style: Mystyles.bigTitleStyle,
+    //     )
+    //   ],
+    // ),
     const Text(
       'Likes',
       style: optionStyle,
@@ -95,7 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
       'Search',
       style: optionStyle,
     ),
-    const ChatListScreen(),
+    // const ChatListScreen(),
+    const ChatPages(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -103,226 +104,76 @@ class _HomeScreenState extends State<HomeScreen> {
     AuthController authController = Get.find();
 
     return SafeArea(
-      child: Scaffold(
-        key: scaffoldKey,
-        drawer: Drawer(
-          width: 0.7.sw,
-          backgroundColor: Get.isDarkMode
-              ? const Color(0xff0A2647)
-              : const Color(0xffFDFDF6),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              const Gap(20),
-              UnconstrainedBox(
-                child: Container(
-                  margin: const EdgeInsets.all(10),
-                  height: 150.h,
-                  width: 150.h,
-                  decoration: MyBoxDecorations.listtileDecoration.copyWith(
-                      borderRadius: BorderRadius.circular(300.r),
-                      image: DecorationImage(
-                          image: NetworkImage(
-                            Get.find<AuthController>()
-                                        .currentUser['profile_image'][0] ==
-                                    'h'
-                                ? Get.find<AuthController>()
-                                    .currentUser['profile_image']
-                                : AppConstants.baseURL +
-                                    Get.find<AuthController>()
-                                        .currentUser['profile_image'],
-                          ),
-                          fit: BoxFit.cover)),
-                ),
-              ),
-              Gap(10.h),
-              Column(
-                children: [
-                  ListTile(
-                    onTap: () {
-                      Get.to(() => const ProfileScreen());
-                    },
-                    leading: const Icon(Icons.person),
-                    title: Text(
-                      'Profile',
-                      style: Mystyles.listtileTitleStyle
-                          .copyWith(height: 1.5.h, fontSize: 18.sp),
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.insert_invitation),
-                    title: Text(
-                      'Invitations',
-                      style: Mystyles.listtileTitleStyle
-                          .copyWith(height: 1.5, fontSize: 18.sp),
-                    ),
-                    onTap: () {
-                      // Update the state of the app.
-                      Get.toNamed(RoutesHelper.notificationScreenRoute);
-                    },
-                  ),
-                  ListTile(
-                    leading:
-                        authController.currentUser['accountType'] == 'organizer'
-                            ? const Icon(Icons.add)
-                            : const Icon(Icons.mail),
-                    title:
-                        authController.currentUser['accountType'] == 'organizer'
-                            ? Text(
-                                'Create new webinar',
-                                style: Mystyles.listtileTitleStyle
-                                    .copyWith(height: 1.5, fontSize: 18.sp),
-                              )
-                            : Text(
-                                'Apply for organizer',
-                                style: Mystyles.listtileTitleStyle
-                                    .copyWith(height: 1.5, fontSize: 18.sp),
-                              ),
-                    onTap: () {
-                      // Update the state of the app.
-                      if (authController.currentUser['accountType'] ==
-                          'organizer') {
-                        Get.toNamed(RoutesHelper.addWebinarScreen1route);
-                      } else {
-                        print('apply for organizer');
-                        // Get.toNamed(RoutesHelper.applyForOrganizerRoute);
-                      }
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.web),
-                    title: Text(
-                      'My Webinars',
-                      style: Mystyles.listtileTitleStyle
-                          .copyWith(height: 1.5, fontSize: 18.sp),
-                    ),
-                    onTap: () {
-                      // Update the state of the app.
-                      // if (authController.currentUser['accountType'] ==
-
-                      //     'organizer')
-                      if (true) {
-                        Get.put(WebinarManagementController());
-                        Get.toNamed('view-my-webinars');
-                        print(
-                            'go to route that shows my webinars as organizer');
-                        // Get.toNamed(RoutesHelper.addWebinarScreen1route);
-                      } else {
-                        print('apply for organizer');
-                        // Get.toNamed(RoutesHelper.applyForOrganizerRoute);
-                      }
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: Text('Settings',
-                        style: Mystyles.listtileTitleStyle
-                            .copyWith(height: 1.5, fontSize: 18.sp)),
-                    onTap: () {
-                      // Update the state of the app.
-                      print('setting');
-                      // ...
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.logout),
-                    title: Text('Logout',
-                        style: Mystyles.listtileTitleStyle
-                            .copyWith(height: 1.5, fontSize: 18.sp)),
-                    onTap: () {
-                      // Update the state of the app.
-                      // ...
-                      print('logout');
-                      Get.find<AuthController>().logout();
-                    },
-                  ),
-                ],
-              ),
-            ],
+      child: WillPopScope(
+        onWillPop: () async {
+          print('homescreen');
+          return false;
+        },
+        child: Scaffold(
+          key: scaffoldKey,
+          drawer: const HomeScreenDrawer(),
+          body: Center(
+            child: _widgetOptions.elementAt(widget.currIndex!),
           ),
-        ),
-        // backgroundColor: Colors.white,
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(color: Mycolors.myappbarcolor),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                child: GNav(
+                  rippleColor: Colors.grey[300]!,
+                  gap: 8,
+                  activeColor: Colors.black,
+                  iconSize: 24,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  // duration: const Duration(milliseconds: 400),
+                  tabBackgroundColor: Colors.grey[100]!,
+                  // color: Colors.black,
+                  tabs: [
+                    GButton(
+                      icon: Icons.home,
+                      iconSize: 30.h,
+                      text: 'Home',
+                    ),
+                    GButton(
+                      icon: Icons.favorite,
+                      iconSize: 30.h,
+                      text: 'Likes',
+                    ),
+                    GButton(
+                      icon: Icons.search,
+                      iconSize: 30.h,
+                      text: 'Search',
+                    ),
+                    GButton(
+                      onPressed: () async {
+                        print('tapping chat');
 
-        appBar: widget.currIndex == 0
-            ? AppBar(
-                // title: Text(
-                //   "Home",
-                //   style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                // ),
-                // centerTitle: true,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                elevation: 0,
-                // backgroundColor: AppColors.LTprimaryColor.withOpacity(0.8),
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.menu_sharp,
-                    size: 30,
-                    color: AppColors.LTprimaryColor,
-                  ),
-                  onPressed: () {
-                    SharedPreferences sharedPreferences = Get.find();
-                    AuthController authController = Get.find();
-                    authController.authenticateUser(
-                        sharedPreferences.getString('token') != null);
-                    print(authController.currentUser);
-                    print('hereauth1111');
-                    if (scaffoldKey.currentState!.isDrawerOpen) {
-                      scaffoldKey.currentState!.closeDrawer();
-                      //close drawer, if drawer is open
-                    } else {
-                      scaffoldKey.currentState!.openDrawer();
-                      //open drawer, if drawer is closed
-                    }
+                        if (PagesNav.chatPagesindex != 0) {
+                          await Get.find<PagesNav>().updateChat(0);
+                          globalPageControllerForchat.animateTo(
+                              globalPageControllerForchat
+                                  .positions.last.minScrollExtent,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut);
+                          // globalPageControllerForchat.position.minScrollExtent;
+                          // globalPageControllerForchat
+                          // .jumpToPage(PagesNav.chatPagesindex);
+                        }
+                      },
+                      icon: Icons.chat_bubble,
+                      iconSize: 30.h,
+                      text: 'Chat',
+                    ),
+                  ],
+                  selectedIndex: widget.currIndex!,
+                  onTabChange: (index) {
+                    setState(() {
+                      widget.currIndex = index;
+                    });
                   },
                 ),
-              )
-            : null,
-        body: Center(
-          child: _widgetOptions.elementAt(widget.currIndex!),
-        ),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(color: Mycolors.myappbarcolor),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-              child: GNav(
-                rippleColor: Colors.grey[300]!,
-                gap: 8,
-                activeColor: Colors.black,
-                iconSize: 24,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                // duration: const Duration(milliseconds: 400),
-                tabBackgroundColor: Colors.grey[100]!,
-                // color: Colors.black,
-                tabs: [
-                  GButton(
-                    icon: Icons.home,
-                    iconSize: 30.h,
-                    text: 'Home',
-                  ),
-                  GButton(
-                    icon: Icons.favorite,
-                    iconSize: 30.h,
-                    text: 'Likes',
-                  ),
-                  GButton(
-                    icon: Icons.search,
-                    iconSize: 30.h,
-                    text: 'Search',
-                  ),
-                  GButton(
-                    icon: Icons.chat_bubble,
-                    iconSize: 30.h,
-                    text: 'Chat',
-                  ),
-                ],
-                selectedIndex: widget.currIndex!,
-                onTabChange: (index) {
-                  setState(() {
-                    widget.currIndex = index;
-                  });
-                },
               ),
             ),
           ),

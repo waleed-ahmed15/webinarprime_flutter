@@ -1,9 +1,14 @@
+import 'dart:io';
+import 'package:flutter/gestures.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/screens/profile_view/change_password_view.dart';
 import 'package:webinarprime/screens/profile_view/icon_label_row_widget.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
@@ -32,6 +37,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     'SE',
   ];
   var dob = '';
+
+  /// upload image
+  final ImagePicker imagePicker = ImagePicker();
+  File? _imagefile;
+  // Uint8List? imagebyte;
+  String? base64img;
+  String? coverImagePath;
+  void _pickBase64Image() async {
+    final XFile? image =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+    // uploadImage(File(image!.path));
+    if (image != null) {
+      print('image picked');
+
+      // if (imagetoEdit == 'coverImage') {
+      await AuthController().editprofilePic(File(image.path));
+      // String coverpath = await widget.webinarcontroller.editWebinarCoverImage(
+      // widget.webinarDetails['_id'], File(image.path));
+      // widget.webinarDetails['coverImage'] = coverpath;
+      // } else {
+      // String thumbnailpath = await widget.webinarcontroller
+      // .editWebinarBannerImage(
+      // widget.webinarDetails['_id'], File(image.path));
+      // widget.webinarDetails['bannerImage'] = thumbnailpath;
+
+      setState(() {});
+    } else {
+      print('No image selected.');
+    }
+    setState(() {});
+    return;
+  }
 
   void _onEditIconPressed(String title, String value) {
     var editingController = TextEditingController(text: value);
@@ -174,7 +211,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ],
       )
     };
-    showDialog(
+    showAnimatedDialog(
+      barrierDismissible: true,
+      animationType: DialogTransitionType.rotate3D,
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -261,32 +300,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Gap(20.h),
-              Container(
-                height: 200.h,
-                width: 200.h,
-                // width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(200.r),
-                  image: DecorationImage(
-                      image: NetworkImage(AppConstants.baseURL +
-                          Get.find<AuthController>()
-                              .currentUser['profile_image']),
-                      fit: BoxFit.cover),
-                ),
-                child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.camera_alt_outlined,
-                      size: 80.h,
-                    )),
-              ),
+              GetBuilder<AuthController>(
+                  assignId: true,
+                  id: 'editprofile_pic',
+                  builder: (context) {
+                    print('upadte pic');
+                    return Container(
+                      height: 200.h,
+                      width: 200.h,
+                      // width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(200.r),
+                        image: DecorationImage(
+                            image: NetworkImage(AppConstants.baseURL +
+                                Get.find<AuthController>()
+                                    .currentUser['profile_image']),
+                            fit: BoxFit.cover),
+                      ),
+                      child: IconButton(
+                          onPressed: () async {
+                            _pickBase64Image();
+                          },
+                          icon: Icon(
+                            Icons.camera_alt_outlined,
+                            size: 80.h,
+                          )),
+                    );
+                  }),
               Gap(20.h),
               GetBuilder<AuthController>(
                   assignId: true,
                   id: 'editprofile',
                   builder: (context) {
                     return Container(
-                      decoration: MyBoxDecorations.listtileDecoration,
+                      decoration:
+                          MyBoxDecorations.listtileDecoration.copyWith(),
                       margin: EdgeInsets.symmetric(horizontal: 10.w),
                       padding: EdgeInsets.symmetric(horizontal: 10.w),
                       child: Column(
@@ -389,6 +437,73 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Gap(5.h),
                           const Divider(),
                           Gap(5.h),
+                          IconLabelRow(
+                              label: 'Password',
+                              icon: Icons.edit,
+                              callbackAction: () {
+                                Get.to(
+                                    transition: Transition.rightToLeft,
+                                    () => const ChangePasswordScreen());
+                              }),
+                          Text(
+                            '***********',
+                            style: Mystyles.listtileSubtitleStyle.copyWith(
+                                fontSize: 19.h,
+                                fontWeight: FontWeight.w300,
+                                fontFamily: 'JosefinSans Regular',
+                                letterSpacing: 1,
+                                color: Mystyles.listtileTitleStyle.color),
+                          ),
+                          Gap(5.h),
+                          const Divider(),
+                          Gap(5.h),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Notification',
+                                  style: TextStyle(
+                                    letterSpacing: 1,
+                                    fontSize: 20.sp,
+                                    color: Mycolors.iconColor,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'JosefinSans Bold',
+                                  )),
+                              GetBuilder<AuthController>(
+                                  assignId: true,
+                                  id: 'updateNotification',
+                                  builder: (context) {
+                                    return Switch(
+                                        splashRadius: 0,
+                                        thumbIcon:
+                                            MaterialStateProperty.all(Icon(
+                                          Icons.notifications,
+                                          color: Get.isDarkMode
+                                              ? AppColors.LTsecondaryColor
+                                              : AppColors.LTprimaryColor,
+                                        )),
+                                        dragStartBehavior:
+                                            DragStartBehavior.start,
+                                        activeColor: Get.isDarkMode
+                                            ? AppColors.LTsecondaryColor
+                                                .withOpacity(0.7)
+                                            : AppColors.LTprimaryColor
+                                                .withOpacity(0.7),
+                                        value: Get.find<AuthController>()
+                                            .currentUser['notificationsOn'],
+                                        onChanged: (value) async {
+                                          await Get.find<AuthController>()
+                                              .notificationsToggel(
+                                                  value,
+                                                  Get.find<AuthController>()
+                                                      .currentUser['_id']);
+                                          Get.find<AuthController>()
+                                                  .currentUser[
+                                              'notificationsOn'] = value;
+                                        });
+                                  }),
+                            ],
+                          ),
                         ],
                       ),
                     );

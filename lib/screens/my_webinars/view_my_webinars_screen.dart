@@ -166,21 +166,6 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
     return GetBuilder<WebinarManagementController>(builder: (co) {
       return SafeArea(
         child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios,
-                  color: Theme.of(context).colorScheme.secondary),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-            actions: const [],
-            elevation: 0,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            centerTitle: true,
-            title: Text("My Webinars",
-                style: Mystyles.bigTitleStyle.copyWith(fontSize: 20.h)),
-          ),
           body: GetBuilder<WebinarManagementController>(
             builder: (controller) {
               return ListView.builder(

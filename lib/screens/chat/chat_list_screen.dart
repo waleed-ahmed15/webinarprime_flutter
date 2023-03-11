@@ -16,9 +16,11 @@ class ChatListScreen extends StatefulWidget {
   State<ChatListScreen> createState() => _ChatListScreenState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen> {
+class _ChatListScreenState extends State<ChatListScreen>
+    with SingleTickerProviderStateMixin {
   TextEditingController searchController = TextEditingController();
   bool hideSearch = true;
+  
 
   // List<String> users = [
   //   'ali',

@@ -24,6 +24,7 @@ class AuthController extends GetxController {
   List<dynamic> searchedUsers = [];
   List<dynamic> currentUserInvitations = [];
   static Map<String, dynamic> otherUserProfile = {};
+  static List<dynamic> bannedChats = [];
 
   @override
   void onInit() async {
@@ -202,8 +203,11 @@ class AuthController extends GetxController {
       Uri url = Uri.parse("${AppConstants.baseURL}/user/login");
       print("email is{$email}");
       print("password is{$password}");
-      Map body = {"email": email.toString(), "password": password.toString()};
-      var response = await http.post(url, body: body);
+      // Map body = {"email": email.toString(), "password": password.toString()};
+      var response = await http.post(url, body: {
+        "email": email,
+        "password": password,
+      });
       var data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -641,6 +645,156 @@ class AuthController extends GetxController {
             isError: false,
             "Registration number updated successfully");
       } else {
+        var data = jsonDecode(response.body);
+        print(data);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  // edit profile pic
+
+  Future<void> editprofilePic(File profileImage) async {
+    print('edit profilr image called');
+    try {
+      String mimeType = mime(profileImage.path) ?? 'image/jpg';
+      String mimee = mimeType.split('/')[0];
+      String type = mimeType.split('/')[1];
+      print(mimee);
+      print(type);
+      Dio dio = Dio();
+      String picname = profileImage.path.split('/').last;
+
+      FormData formData = FormData.fromMap(
+        {
+          "profile_image": await MultipartFile.fromFile(
+            filename: picname,
+            profileImage.path,
+            contentType: MediaType(mimee, type),
+          ),
+        },
+      );
+      String userid = Get.find<AuthController>().currentUser['_id'];
+      print(userid);
+      // await Future.delayed(const Duration(seconds: 4), () {
+      // print('4');
+      // });s
+      Response response1 = await dio.put(
+          "${AppConstants.baseURL}/user/edit/$userid/profile-image",
+          data: formData,
+          options: Options(headers: {'Content-Type': 'multipart/form-data'}));
+      // print(response1.data['bannerPath']);
+      // getwebinarById(id);
+      print('profile pic updated');
+
+      print(response1.data['user']['profile_image']);
+      Get.find<AuthController>().currentUser['profile_image'] =
+          response1.data['user']['profile_image'];
+      print(response1.data);
+      update(['editprofile_pic']);
+      // getAllwebinars();
+      // return response1.data['bannerPath'];
+    } catch (e) {
+      print(e);
+      // return 'error';
+    }
+  }
+
+  //change password
+
+  Future<bool> changePassword(String oldpass, String newpass) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/change-password");
+      var response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode({
+          'userId': Get.find<AuthController>().currentUser['_id'],
+          'oldPassword': oldpass,
+          'newPassword': newpass,
+
+          // "email": email,
+        }),
+      );
+      if (response.statusCode == 200) {
+        print('herer');
+        var data = jsonDecode(response.body);
+        print(data);
+        // currentUser['email'] = email;
+        // update(['editprofile']);
+        ShowCustomSnackBar(title: "Password updated", isError: false, "");
+        return true;
+      } else if (response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        print(data);
+        ShowCustomSnackBar(
+            title: '', isError: true, 'current password is incorrect');
+        return false;
+      }
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // turn notification on or off
+  Future<bool> notificationsToggel(bool value, String userId) async {
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/user/edit/$userId/notificationsOn");
+      var response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+        body: jsonEncode({
+          "notificationsOn": value,
+        }),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        // print(data);
+        print('notification toggled');
+        update(['updateNotification']);
+
+        return true;
+      } else {
+        // var data = jsonDecode(response.body);
+        // print(data);
+        print('notification not toggled');
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  //get banned chats list
+  Future<void> getbannedchats() async {
+    print('get banned chats called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/banned-chats");
+      var response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+      );
+      if (response.statusCode == 200) {
+        print('banned chats fetched');
+        var data = jsonDecode(response.body);
+        bannedChats.clear();
+        bannedChats = data['bannedChats'];
+        update(['bannedchats']);
+      } else {
+        print('banned chats not fetched');
         var data = jsonDecode(response.body);
         print(data);
       }
