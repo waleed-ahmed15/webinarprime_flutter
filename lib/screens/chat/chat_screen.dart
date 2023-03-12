@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/chat_controlller.dart';
+import 'package:webinarprime/controllers/pages_nav_controller.dart';
 import 'package:webinarprime/screens/chat/chat_field_widget.dart';
 import 'package:webinarprime/screens/chat/file_message_view_widget.dart';
 import 'package:webinarprime/screens/chat/image_Viewer_widget.dart';
@@ -221,11 +222,14 @@ class _ChatScreenState extends State<ChatScreen> {
     print(widget.ConversationId);
     return WillPopScope(
       onWillPop: () async {
-        // Get.find<PagesNav>().updateChat(0);
+        Get.find<PagesNav>().updateChat(0);
         Get.to(() => HomeScreen(
               currIndex: 3,
             ));
+        // Get.back();
+
         return false;
+        // return true;
       },
       child: SafeArea(
         child: Scaffold(

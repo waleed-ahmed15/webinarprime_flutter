@@ -47,13 +47,6 @@ class _TabbarViewForProfileViewState extends State<TabbarViewForProfileView> {
                 index,
               ),
             );
-            return Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              child: Text(AuthController.otherUserProfile['created_webinars']
-                      [index]['name']
-                  .toString()),
-            );
-            // return null;
           },
         );
       }),

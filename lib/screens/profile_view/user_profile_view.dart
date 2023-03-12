@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/screens/profile_view/edit_profile.dart';
+import 'package:webinarprime/screens/profile_view/favourites_screen.dart';
 import 'package:webinarprime/screens/profile_view/space_bar_widget.dart';
 import 'package:webinarprime/screens/profile_view/tabBar_view_profile_view.dart';
 import 'package:webinarprime/screens/profile_view/tabs_widget.dart';
+import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class UserProfileView extends StatefulWidget {
@@ -47,13 +49,47 @@ class _UserProfileViewState extends State<UserProfileView>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        //  floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         floatingActionButton: (AuthController.otherUserProfile['_id'] ==
                 Get.find<AuthController>().currentUser['_id'])
-            ? FloatingActionButton(
-                onPressed: () {
-                  Get.to(() => const EditProfileScreen());
-                },
-                child: const Icon(Icons.edit),
+            ? SizedBox(
+                //  margin: EdgeInsets.only(top: 10.h),
+                width: 0.9.sw,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: null,
+                      backgroundColor:
+                          AppColors.LTsecondaryColor.withOpacity(0.8),
+                      onPressed: () async {
+                        //show my favs
+                        bool fetched = await Get.find<AuthController>()
+                            .getFavoriteWebinars();
+                        if (fetched) {
+                          Get.to(() => const FavoriteWebinars());
+                        }
+                        // Get.to(() => const EditProfileScreen());
+                      },
+                      child: const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                    ),
+                    FloatingActionButton(
+                      heroTag: null,
+                      backgroundColor:
+                          AppColors.LTsecondaryColor.withOpacity(0.8),
+                      onPressed: () {
+                        Get.to(() => const EditProfileScreen());
+                      },
+                      child: Icon(
+                        Icons.edit,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                  ],
+                ),
               )
             : null,
         body: NestedScrollView(

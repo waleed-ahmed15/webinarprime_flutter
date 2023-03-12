@@ -63,7 +63,7 @@ class SpaceBarForProfileView extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           color: Colors.white),
                     ),
-                    Gap(10.w),
+                    Gap(10.h),
                     AutoSizeText(
                       AuthController.otherUserProfile['registration_number'],
                       style: Mystyles.listtileSubtitleStyle.copyWith(
@@ -71,7 +71,7 @@ class SpaceBarForProfileView extends StatelessWidget {
                           fontWeight: FontWeight.w300,
                           color: Colors.white),
                     ),
-                    Gap(30.w),
+                    Gap(30.h),
                     GetBuilder<AuthController>(builder: (controler) {
                       if (AuthController.otherUserProfile['_id'] ==
                           Get.find<AuthController>().currentUser['_id']) {
@@ -96,7 +96,7 @@ class SpaceBarForProfileView extends StatelessWidget {
                                       AppColors.LTsecondaryColor.withOpacity(
                                           0.8)),
                               child: Text(
-                                'Unfollow',
+                                'Following',
                                 style: Mystyles.listtileTitleStyle.copyWith(
                                     fontSize: 14.sp,
                                     letterSpacing: 1.6,

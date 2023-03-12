@@ -20,7 +20,6 @@ class _ChatListScreenState extends State<ChatListScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController searchController = TextEditingController();
   bool hideSearch = true;
-  
 
   // List<String> users = [
   //   'ali',
@@ -45,6 +44,8 @@ class _ChatListScreenState extends State<ChatListScreen>
         return false;
       },
       child: Scaffold(
+          backgroundColor:
+              Get.isDarkMode ? Colors.black : const Color(0xffffffff),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
               Get.to(() => const CreateNewChat());
@@ -60,19 +61,25 @@ class _ChatListScreenState extends State<ChatListScreen>
           appBar: AppBar(
             automaticallyImplyLeading: false,
             // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            backgroundColor: Mycolors.myappbarcolor,
+            // backgroundColor: Mycolors.myappbarcolor,
+            backgroundColor:
+                Get.isDarkMode ? Colors.black : const Color(0xffffffff),
+
             title: SizedBox(
               child: TextFormField(
                 controller: searchController,
-                style: Mystyles.bigTitleStyle
-                    .copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500),
+                style: Mystyles.listtileTitleStyle
+                    .copyWith(fontWeight: FontWeight.w500),
                 decoration: InputDecoration(
                   hintText: 'Search. . .',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 19.sp,
+                  hintStyle: Mystyles.listtileTitleStyle
+                      .copyWith(fontWeight: FontWeight.w500),
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
                   ),
-                  border: InputBorder.none,
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.cyan),
+                  ),
                 ),
                 onChanged: (value) {
                   setState(() {});
@@ -115,10 +122,14 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 [otheruserIndex]));
                       },
                       style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          elevation: 0,
-                          backgroundColor:
-                              Theme.of(context).scaffoldBackgroundColor),
+                        padding: EdgeInsets.zero,
+                        elevation: 0,
+                        // backgroundColor:
+                        // Theme.of(context).scaffoldBackgroundColor,
+                        backgroundColor: Get.isDarkMode
+                            ? Colors.black
+                            : const Color(0xffffffff),
+                      ),
                       child: Container(
                         margin: EdgeInsets.only(
                           top: 10.h,
@@ -154,34 +165,54 @@ class _ChatListScreenState extends State<ChatListScreen>
                     );
                   } else if (user.contains(
                       searchController.text.toLowerCase().toString())) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          radius: 30,
-                          backgroundImage: NetworkImage(AppConstants.baseURL +
-                              ChatStreamController.userchats[index]['users']
-                                  [otheruserIndex]['profile_image']),
+                    return ElevatedButton(
+                      onPressed: () async {
+                        await Get.find<ChatStreamController>()
+                            .GetmessagesForAconversation(
+                                ChatStreamController.userchats[index]['_id']);
+                        Get.to(() => ChatScreen(
+                            ChatStreamController.userchats[index]['_id'],
+                            ChatStreamController.userchats[index]['users']
+                                [otheruserIndex]));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        elevation: 0,
+                        // backgroundColor:
+                        // Theme.of(context).scaffoldBackgroundColor,
+                        backgroundColor: Get.isDarkMode
+                            ? Colors.black
+                            : const Color(0xffffffff),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            radius: 30,
+                            backgroundImage: NetworkImage(AppConstants.baseURL +
+                                ChatStreamController.userchats[index]['users']
+                                    [otheruserIndex]['profile_image']),
+                          ),
+                          title: Text(
+                            ChatStreamController.userchats[index]['users']
+                                [otheruserIndex]['name'],
+                            overflow: TextOverflow.ellipsis,
+                            style: Mystyles.listtileTitleStyle
+                                .copyWith(fontWeight: FontWeight.w500),
+                          ),
+                          subtitle: Text(
+                            ChatStreamController
+                                    .userchats[index]['messages'].isEmpty
+                                ? 'start a conversation'
+                                : ChatStreamController.userchats[index]
+                                    ['messages'][0]['text'],
+                            style: Mystyles.listtileTitleStyle
+                                .copyWith(fontSize: 14.sp),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Text(
+                              "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}"),
                         ),
-                        title: Text(
-                          ChatStreamController.userchats[index]['users']
-                              [otheruserIndex]['name'],
-                          overflow: TextOverflow.ellipsis,
-                          style: Mystyles.listtileTitleStyle
-                              .copyWith(fontWeight: FontWeight.w500),
-                        ),
-                        subtitle: Text(
-                          ChatStreamController
-                                  .userchats[index]['messages'].isEmpty
-                              ? 'start a conversation'
-                              : ChatStreamController.userchats[index]
-                                  ['messages'][0]['text'],
-                          style: Mystyles.listtileTitleStyle
-                              .copyWith(fontSize: 14.sp),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: Text(
-                            "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}"),
                       ),
                     );
                   }

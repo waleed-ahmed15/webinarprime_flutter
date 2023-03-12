@@ -25,6 +25,7 @@ class AuthController extends GetxController {
   List<dynamic> currentUserInvitations = [];
   static Map<String, dynamic> otherUserProfile = {};
   static List<dynamic> bannedChats = [];
+  static List<dynamic> favoriteWebinars = [];
 
   @override
   void onInit() async {
@@ -400,7 +401,7 @@ class AuthController extends GetxController {
 
   // search all users avaible for creating new conversation
 
-  Future<void> searchUserAll(String keyword) async {
+  Future<bool> searchUserAll(String keyword) async {
     try {
       Uri url = Uri.parse("${AppConstants.baseURL}/user/search/$keyword");
       Map body = {"keyword": keyword.toString()};
@@ -416,12 +417,15 @@ class AuthController extends GetxController {
         print(data);
         searchedUsers.clear();
         searchedUsers = data['users'];
-        update();
+        update(['searchedUsers']);
+        return true;
       } else {
         print(data.toString());
       }
+      return false;
     } catch (e) {
       print(e);
+      return false;
     }
   }
   // get details of other user profile being viewed
@@ -800,6 +804,37 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       print(e);
+    }
+  }
+
+  // get favorties webinars of current user.
+
+  Future<bool> getFavoriteWebinars() async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/favorites");
+      var response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        // print(data);
+        favoriteWebinars.clear();
+        favoriteWebinars = data['favorites'];
+        print(favoriteWebinars);
+        update(['favorites']);
+        return true;
+      } else {
+        // var data = jsonDecode(response.body);
+        // print(data);
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 }

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/pages_nav_controller.dart';
 import 'package:webinarprime/screens/chat/chatpage_c.dart';
+import 'package:webinarprime/utils/colors.dart';
 
 class ChatPages extends StatefulWidget {
   const ChatPages({super.key});
@@ -63,7 +64,7 @@ class _ChatPagesState extends State<ChatPages> with TickerProviderStateMixin {
               title: "Banned Chats",
               iconColor: Colors.white,
               bubbleColor: Colors.blue,
-              icon: Icons.settings,
+              icon: Icons.person_off_rounded,
               titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
               onPress: () async {
                 await Get.find<AuthController>().getbannedchats();
@@ -101,11 +102,12 @@ class _ChatPagesState extends State<ChatPages> with TickerProviderStateMixin {
               : _animationController.forward(),
 
           // Floating Action button Icon color
-          iconColor: Colors.blue,
+          iconColor: Colors.white,
 
           // Flaoting Action button Icon
           iconData: Icons.menu,
-          backGroundColor: Colors.white,
+          backGroundColor:
+              Get.isDarkMode ? Colors.cyan : AppColors.LTprimaryColor,
         ),
         body: PageView(
           physics: const NeverScrollableScrollPhysics(),
