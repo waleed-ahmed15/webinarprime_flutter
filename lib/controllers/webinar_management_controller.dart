@@ -85,9 +85,10 @@ class WebinarManagementController extends GetxController {
           options: Options(headers: {'Content-Type': 'multipart/form-data'}));
 
       print('webinar added sucessfully');
-      addOrganizerToWebinarById(
-          id, Get.find<AuthController>().currentUser['_id']);
+      // addOrganizerToWebinarById(
+      //     id, Get.find<AuthController>().currentUser['_id']);
       getAllwebinars();
+      Get.find<AuthController>().getFavoriteWebinars();
       update();
 
       print(response1.toString());

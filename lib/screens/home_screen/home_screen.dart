@@ -226,7 +226,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ],
                 selectedIndex: widget.currIndex!,
-                onTabChange: (index) {
+                onTabChange: (index) async {
+                  if (index == 2) {
+                    await Get.find<AuthController>().getFavoriteWebinars();
+                    widget.currIndex = index;
+                  }
+                  if (index == 4) {
+                    await Get.find<AuthController>().otherUserProfileDetails(
+                        Get.find<AuthController>().currentUser['_id']);
+                    widget.currIndex = index;
+                  }
                   setState(() {
                     widget.currIndex = index;
                   });

@@ -93,10 +93,10 @@ class _CreateNewChatState extends State<CreateNewChat> {
                           ? 1
                           : 0;
                       Get.find<AuthController>().searchedUsers.clear();
-                      print('------------------------->');
-                      print(ChatStreamController.userchats[convoIdx]);
-                      print(otheruserIndex);
-                      print('<-------------------------');
+                      // print('------------------------->');
+                      // print(ChatStreamController.userchats[convoIdx]);
+                      // print(otheruserIndex);
+                      // print('<-------------------------');
 
                       Get.off(() => ChatScreen(
                           ChatStreamController.userchats[convoIdx]['_id'],

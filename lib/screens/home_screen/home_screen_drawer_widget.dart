@@ -92,61 +92,6 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                       },
                     ),
                     ListTile(
-                      leading: Get.find<AuthController>()
-                                  .currentUser['accountType'] ==
-                              'organizer'
-                          ? const Icon(Icons.add)
-                          : const Icon(Icons.mail),
-                      title: Get.find<AuthController>()
-                                  .currentUser['accountType'] ==
-                              'organizer'
-                          ? Text(
-                              'Create new webinar',
-                              style: Mystyles.listtileTitleStyle
-                                  .copyWith(height: 1.5, fontSize: 18.sp),
-                            )
-                          : Text(
-                              'Apply for organizer',
-                              style: Mystyles.listtileTitleStyle
-                                  .copyWith(height: 1.5, fontSize: 18.sp),
-                            ),
-                      onTap: () {
-                        // Update the state of the app.
-                        if (Get.find<AuthController>()
-                                .currentUser['accountType'] ==
-                            'organizer') {
-                          Get.toNamed(RoutesHelper.addWebinarScreen1route);
-                        } else {
-                          print('apply for organizer');
-                          // Get.toNamed(RoutesHelper.applyForOrganizerRoute);
-                        }
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.web),
-                      title: Text(
-                        'My Webinars',
-                        style: Mystyles.listtileTitleStyle
-                            .copyWith(height: 1.5, fontSize: 18.sp),
-                      ),
-                      onTap: () {
-                        // Update the state of the app.
-                        // if (authController.currentUser['accountType'] ==
-
-                        //     'organizer')
-                        if (true) {
-                          // Get.put(WebinarManagementController());
-                          Get.toNamed('view-my-webinars');
-                          print(
-                              'go to route that shows my webinars as organizer');
-                          // Get.toNamed(RoutesHelper.addWebinarScreen1route);
-                        } else {
-                          print('apply for organizer');
-                          // Get.toNamed(RoutesHelper.applyForOrganizerRoute);
-                        }
-                      },
-                    ),
-                    ListTile(
                       leading: const Icon(Icons.settings),
                       title: Text('Settings',
                           style: Mystyles.listtileTitleStyle

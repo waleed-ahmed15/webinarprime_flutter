@@ -825,7 +825,7 @@ class AuthController extends GetxController {
         favoriteWebinars.clear();
         favoriteWebinars = data['favorites'];
         print(favoriteWebinars);
-        update(['favorites']);
+        update(['favoriteWebinars']);
         return true;
       } else {
         // var data = jsonDecode(response.body);
