@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/categoryController.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/models/category_model.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class EditCategories extends StatefulWidget {
+  // this is same class which is being used to edit interst of the user.
   List<dynamic> webinarCategories;
   String webinarId;
+  bool userinterest = false;
   EditCategories(
-      {super.key, required this.webinarCategories, required this.webinarId});
+      {this.userinterest = false,
+      super.key,
+      required this.webinarCategories,
+      required this.webinarId});
   List<String>? webinarCategoriesid;
 
   @override
@@ -23,6 +29,15 @@ class _EditCategoriesState extends State<EditCategories> {
   @override
   void initState() {
     super.initState();
+    if (widget.userinterest) {
+      print('---------------------------------userinterest');
+      print(Get.find<AuthController>().currentUser['interests']);
+      widget.webinarCategoriesid =
+          widget.webinarCategories.map((e) => e as String).toList();
+
+      return;
+    }
+    print('---------------------------------webinarCategories');
 
     widget.webinarCategoriesid =
         widget.webinarCategories.map((e) => e['_id'] as String).toList();
@@ -69,11 +84,22 @@ class _EditCategoriesState extends State<EditCategories> {
         ),
         bottomNavigationBar: Container(
           margin: const EdgeInsets.all(10),
-          height: 50,
+          height: 40,
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () async {
               // Get.back(result: widget.webinarCategoriesid);
+              if (widget.userinterest) {
+                await Get.find<AuthController>()
+                    .addInterests(widget.webinarCategoriesid!);
+                // Get.back();
+                Get.find<AuthController>().currentUser['interests'].clear();
+                Get.find<AuthController>()
+                    .currentUser['interests']
+                    .addAll(widget.webinarCategoriesid!);
+                return;
+              }
+
               bool updated = await Get.find<WebinarManagementController>()
                   .editWebinarCategories(
                       widget.webinarId, widget.webinarCategoriesid!);
@@ -82,7 +108,10 @@ class _EditCategoriesState extends State<EditCategories> {
                 Get.back();
               }
             },
-            child: const Text('Update'),
+            child: Text(
+              'Update',
+              style: Mystyles.listtileTitleStyle,
+            ),
           ),
         ));
   }

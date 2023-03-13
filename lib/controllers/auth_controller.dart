@@ -312,7 +312,7 @@ class AuthController extends GetxController {
       AuthController authController = Get.find();
       // print(authController.currentUser['email']);
       var body = {
-        'email': authController.currentUser['email'],
+        'email': Get.find<AuthController>().currentUser['email'],
         "interests": pickedInerests,
       };
       print(json.encode(body));

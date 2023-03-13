@@ -77,6 +77,19 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
     return canpost;
   }
 
+  bool alreadyRegistered() {
+    bool registerd = false;
+    WebinarManagementController.currentWebinar['attendees'].forEach((element) {
+      if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
+        // Get.snackbar('Already Registered',
+        // 'You have already registered for this webinar');
+        registerd = true;
+        return;
+      }
+    });
+    return registerd;
+  }
+
   void _scrollListener() {
     if (_scrollController.offset >= 400 && !_showTitle) {
       setState(() {
@@ -467,7 +480,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   iconColor: Colors.white,
 
                   // Flaoting Action button Icon
-                  iconData: Icons.menu,
+                  animatedIconData: AnimatedIcons.menu_close,
+                  // iconData: Icons.menu,
                   backGroundColor: AppColors.LTprimaryColor,
                 )
               // this is to show for organizer
@@ -575,7 +589,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   iconColor: Colors.white,
 
                   // Flaoting Action button Icon
-                  iconData: Icons.menu,
+                  // iconData: Icons.menu,
+                  animatedIconData: AnimatedIcons.menu_close,
                   backGroundColor: AppColors.LTprimaryColor,
                 )
           : null,
@@ -1008,14 +1023,20 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                   ),
                                 ),
                               );
-                            } else if (!canStream) {
+                            } else if (WebinarManagementController
+                                    .currentWebinar['createdBy']['_id'] ==
+                                Get.find<AuthController>().currentUser['_id']) {
+                              return const Text('');
+                            } else if (!alreadyRegistered()) {
                               return GestureDetector(
                                 onTap: () async {
                                   print('Resgister now pressed');
-                                  // await Get.find<WebinarStreamController>()
-                                  //     .joinStream(
-                                  //         WebinarManagementController.currentWebinar['_id'], context);
-                                  // print('join now pressed');
+                                  await Get.find<WebinarManagementController>()
+                                      .registerForwebinar(
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
+                                  );
+                                  print('Resgister now pressed');
                                 },
                                 child: Container(
                                   width: AppLayout.getWidth(130),
@@ -1627,20 +1648,23 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                           ['_id']) {
                                     return const SizedBox();
                                   }
-                                  return MyReviewWidget(
-                                    editable: false,
-                                    Date: ReviewController
-                                            .reviewsOfCurrentWebiar[index]
-                                        ['updatedAt'],
-                                    profileImage: ReviewController
-                                            .reviewsOfCurrentWebiar[index]
-                                        ['user']['profile_image'],
-                                    review: ReviewController
-                                            .reviewsOfCurrentWebiar[index]
-                                        ['comment'],
-                                    Name: ReviewController
-                                            .reviewsOfCurrentWebiar[index]
-                                        ['user']['name'],
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 20.h),
+                                    child: MyReviewWidget(
+                                      editable: false,
+                                      Date: ReviewController
+                                              .reviewsOfCurrentWebiar[index]
+                                          ['updatedAt'],
+                                      profileImage: ReviewController
+                                              .reviewsOfCurrentWebiar[index]
+                                          ['user']['profile_image'],
+                                      review: ReviewController
+                                              .reviewsOfCurrentWebiar[index]
+                                          ['comment'],
+                                      Name: ReviewController
+                                              .reviewsOfCurrentWebiar[index]
+                                          ['user']['name'],
+                                    ),
                                   );
                                 },
                               );

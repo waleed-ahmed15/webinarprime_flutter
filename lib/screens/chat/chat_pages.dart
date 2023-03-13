@@ -105,7 +105,9 @@ class _ChatPagesState extends State<ChatPages> with TickerProviderStateMixin {
           iconColor: Colors.white,
 
           // Flaoting Action button Icon
-          iconData: Icons.menu,
+          animatedIconData: AnimatedIcons.menu_close,
+
+          // iconData: Icons.edit,
           backGroundColor:
               Get.isDarkMode ? Colors.cyan : AppColors.LTprimaryColor,
         ),

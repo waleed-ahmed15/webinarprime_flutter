@@ -16,7 +16,11 @@ class WebinarInfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
+      margin: EdgeInsets.only(
+        top: 10.h,
+        left: 10.w,
+        right: 10.w,
+      ),
       decoration: MyBoxDecorations.listtileDecoration.copyWith(
           color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [

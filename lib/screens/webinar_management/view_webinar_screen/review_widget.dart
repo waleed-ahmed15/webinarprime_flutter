@@ -88,7 +88,7 @@ class MyReviewWidget extends StatelessWidget {
                     )
                   : const SizedBox()
             ],
-          )
+          ),
         ],
       ),
     );

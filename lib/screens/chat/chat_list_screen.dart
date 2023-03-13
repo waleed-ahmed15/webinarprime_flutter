@@ -21,17 +21,6 @@ class _ChatListScreenState extends State<ChatListScreen>
   TextEditingController searchController = TextEditingController();
   bool hideSearch = true;
 
-  // List<String> users = [
-  //   'ali',
-  //   'ahmed',
-  //   'mohamed',
-  //   'umar',
-  //   'hazim',
-  //   'kk',
-  //   'sdk',
-  //   'xami',
-  //   'issam'
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +135,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 [otheruserIndex]['name'],
                             overflow: TextOverflow.ellipsis,
                             style: Mystyles.listtileTitleStyle
-                                .copyWith(fontWeight: FontWeight.w500),
+                                .copyWith(fontWeight: FontWeight.w700),
                           ),
                           subtitle: Text(
                             ChatStreamController
@@ -154,7 +143,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 ? 'start a conversation'
                                 : ChatStreamController.userchats[index]
                                     ['messages'][0]['text'],
-                            style: Mystyles.listtileTitleStyle
+                            style: Mystyles.listtileSubtitleStyle
                                 .copyWith(fontSize: 14.sp),
                             overflow: TextOverflow.ellipsis,
                           ),

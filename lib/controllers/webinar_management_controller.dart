@@ -6,9 +6,11 @@ import 'package:dio/dio.dart';
 // import 'package:get/get.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/reviews_controlller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
+import 'package:webinarprime/widgets/snackbar.dart';
 import '../utils/app_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
@@ -99,12 +101,14 @@ class WebinarManagementController extends GetxController {
     webinarsList.clear();
 
     try {
-      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/home");
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/get/home");
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
       var data = jsonDecode(response.body);
 
-      // print(data['webinars']);
+      print('=------------------------webianrs------------------------');
+      print(data);
+      print(data['webinars']);
       webinarsList.addAll(data['webinars']);
       update();
     } catch (e) {
@@ -609,7 +613,7 @@ class WebinarManagementController extends GetxController {
       String coverfileName = bannerImage.path.split('/').last;
 
       // print(bannerfileName);
-      // print(coverfileName); 
+      // print(coverfileName);
       FormData formData = FormData.fromMap(
         {
           "bannerImage": await MultipartFile.fromFile(
@@ -729,6 +733,48 @@ class WebinarManagementController extends GetxController {
     } catch (e) {
       print('could not remove from  favs');
 
+      print(e);
+    }
+  }
+
+  //register webianr user=========================================================================
+  Future<void> registerForwebinar(String webinarid) async {
+    print('register for webinar called');
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$webinarid/join");
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+      );
+      if (response.statusCode == 200) {
+        print('registered for webinar');
+        Map<String, dynamic> data = jsonDecode(response.body);
+        print(data);
+        if (data.containsKey('sessionUrl')) {
+          await launchUrl(Uri.parse(data['sessionUrl']));
+          await getwebinarById(webinarid);
+        } else {
+          ShowCustomSnackBar(
+              title: 'Resgistered', 'Resgisterd successfully', isError: false);
+          await getwebinarById(webinarid);
+        }
+        print(data);
+
+        update();
+      } else {
+        print('could not register for webinar');
+        ShowCustomSnackBar(
+            title: 'Sorry', 'Could not Register now try later', isError: true);
+
+        print(response.statusCode);
+        print(response.body);
+      }
+    } catch (e) {
+      print('error in registering for webinar');
+      print(e);
       print(e);
     }
   }

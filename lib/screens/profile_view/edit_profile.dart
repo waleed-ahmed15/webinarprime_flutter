@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/screens/profile_view/change_password_view.dart';
 import 'package:webinarprime/screens/profile_view/icon_label_row_widget.dart';
+import 'package:webinarprime/screens/webinar_management/edit_webinar/edit_categories.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
@@ -433,7 +434,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           IconLabelRow(
                               label: 'Intrests',
                               icon: Icons.add_box,
-                              callbackAction: () {}),
+                              callbackAction: () {
+                                print('helllo');
+                                print(Get.find<AuthController>()
+                                    .currentUser['interests']);
+
+                                Get.to(EditCategories(
+                                    userinterest: true,
+                                    webinarCategories:
+                                        Get.find<AuthController>()
+                                            .currentUser['interests'],
+                                    webinarId: Get.find<AuthController>()
+                                        .currentUser['_id']));
+                              }),
                           Gap(5.h),
                           const Divider(),
                           Gap(5.h),
