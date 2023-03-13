@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/chat_controlller.dart';
 import 'package:webinarprime/screens/chat/chat_screen.dart';
-import 'package:webinarprime/screens/chat/create_new_chat.dart';
 import 'package:webinarprime/screens/home_screen/home_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
@@ -21,7 +20,6 @@ class _ChatListScreenState extends State<ChatListScreen>
   TextEditingController searchController = TextEditingController();
   bool hideSearch = true;
 
-
   @override
   Widget build(BuildContext context) {
     print('object');
@@ -35,18 +33,6 @@ class _ChatListScreenState extends State<ChatListScreen>
       child: Scaffold(
           backgroundColor:
               Get.isDarkMode ? Colors.black : const Color(0xffffffff),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              Get.to(() => const CreateNewChat());
-              // await ChatStreamController().createNewConversation(
-              // ["63ea1f91bb071d3c3298000f", "63ea1fc7bb071d3c32980017"]);
-
-              // print(Get.find<AuthController>().currentUser['_id']);
-              ChatStreamController().getConversations(
-                  Get.find<AuthController>().currentUser['_id']);
-            },
-            child: const Icon(Icons.add),
-          ),
           appBar: AppBar(
             automaticallyImplyLeading: false,
             // backgroundColor: Theme.of(context).scaffoldBackgroundColor,

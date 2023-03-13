@@ -21,37 +21,24 @@ class _FavoriteWebinarsState extends State<FavoriteWebinars> {
     return Scaffold(
       // backgroundColor: Get.isDarkMode ? Colors.black : const Color(0xffffffff),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Center(
-          child: Row(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(flex: 1),
-              Icon(
-                Icons.favorite,
-                color: Colors.red[500],
-              ),
-              Text(
-                ' Webinars',
-                style: Mystyles.bigTitleStyle
-                    .copyWith(fontSize: 20.sp, fontWeight: FontWeight.w500),
-              ),
-              const Spacer(
-                flex: 2,
-              ),
-            ],
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.favorite,
+              color: Colors.red[500],
+            ),
+            Text(
+              ' Webinars',
+              style: Mystyles.bigTitleStyle
+                  .copyWith(fontSize: 20.sp, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-          ),
-          onPressed: () {
-            Get.back();
-          },
-        ),
       )
       // body: const Text("Favorite Webinars"),
       ,

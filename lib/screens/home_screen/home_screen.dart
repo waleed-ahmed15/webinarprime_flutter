@@ -10,8 +10,12 @@ import 'package:webinarprime/screens/chat/chat_pages.dart';
 import 'package:webinarprime/screens/chat/chatpage_c.dart';
 import 'package:webinarprime/screens/home_screen/home_screen_drawer_widget.dart';
 import 'package:webinarprime/screens/my_webinars/view_my_webinars_screen.dart';
+import 'package:webinarprime/screens/profile_view/favourites_screen.dart';
+import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
+import 'package:webinarprime/screens/webinar_management/add_webinar_screens/add_webinar_screen1.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,11 +31,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       IO.OptionBuilder().setTransports(['websocket']).build());
   final IO.Socket socket = Get.find();
   bool loading = false;
+  // working on presistent navbar item
 
   @override
   void initState() {
     // TODO: implement initState
     // connecteSocket();
+    //get fav list
+    Get.find<AuthController>().getFavoriteWebinars();
+    Get.find<AuthController>()
+        .otherUserProfileDetails(Get.find<AuthController>().currentUser['_id']);
     preload();
     super.initState();
     // print("height: ${AppLayout.getScreenHeight()}");
@@ -91,12 +100,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       'Likes',
       style: optionStyle,
     ),
-    const Text(
-      'Search',
-      style: optionStyle,
-    ),
+    const FavoriteWebinars(),
     // const ChatListScreen(),
     const ChatPages(),
+    const UserProfileView(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -110,70 +117,120 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           return false;
         },
         child: Scaffold(
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: widget.currIndex == 0
+              ? Container(
+                  margin: EdgeInsets.only(bottom: 50.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FloatingActionButton(
+                        backgroundColor: Get.isDarkMode
+                            ? Mycolors.myappbarcolor
+                            : AppColors.LTprimaryColor,
+                        heroTag: null,
+                        onPressed: () {
+                          // Get.toNamed('/create_webinar');
+                          // Get.to(() => const HomeScreenNew());
+                          Get.to(() => const AddWebinarScreen1());
+                        },
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : null,
           key: scaffoldKey,
           drawer: const HomeScreenDrawer(),
           body: Center(
             child: _widgetOptions.elementAt(widget.currIndex!),
           ),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(color: Mycolors.myappbarcolor),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                child: GNav(
-                  rippleColor: Colors.grey[300]!,
-                  gap: 8,
-                  activeColor: Colors.black,
-                  iconSize: 24,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  // duration: const Duration(milliseconds: 400),
-                  tabBackgroundColor: Colors.grey[100]!,
-                  // color: Colors.black,
-                  tabs: [
-                    GButton(
-                      icon: Icons.home,
-                      iconSize: 30.h,
-                      text: 'Home',
-                    ),
-                    GButton(
-                      icon: Icons.favorite,
-                      iconSize: 30.h,
-                      text: 'Likes',
-                    ),
-                    GButton(
-                      icon: Icons.search,
-                      iconSize: 30.h,
-                      text: 'Search',
-                    ),
-                    GButton(
-                      onPressed: () async {
-                        print('tapping chat');
+          bottomNavigationBar: ClipRRect(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15.r),
+                topRight: Radius.circular(15.r)),
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: 60.h,
+                minHeight: 60.h,
+              ),
+              decoration: BoxDecoration(
+                color: Mycolors.myappbarcolor,
+              ),
+              child: GNav(
+                backgroundColor: Mycolors.myappbarcolor,
+                // curve: Curves.ease,
+                curve: Curves.easeInOut,
 
-                        if (PagesNav.chatPagesindex != 0) {
-                          await Get.find<PagesNav>().updateChat(0);
-                          globalPageControllerForchat.animateTo(
-                              globalPageControllerForchat
-                                  .positions.last.minScrollExtent,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeOut);
-                          // globalPageControllerForchat.position.minScrollExtent;
-                          // globalPageControllerForchat
-                          // .jumpToPage(PagesNav.chatPagesindex);
-                        }
-                      },
-                      icon: Icons.chat_bubble,
-                      iconSize: 30.h,
-                      text: 'Chat',
-                    ),
-                  ],
-                  selectedIndex: widget.currIndex!,
-                  onTabChange: (index) {
-                    setState(() {
-                      widget.currIndex = index;
-                    });
-                  },
-                ),
+                // rippleColor: Colors.grey[300]!,
+                gap: 1,
+                activeColor:
+                    Get.isDarkMode ? Colors.cyan : AppColors.LTprimaryColor,
+                iconSize: 24,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                duration: const Duration(microseconds: 1),
+                // tabBackgroundColor: Colors.grey[100]!,
+                // color: Colors.black,
+                tabs: [
+                  GButton(
+                    icon: widget.currIndex == 0
+                        ? Icons.home
+                        : Icons.home_outlined,
+                    iconSize: 30.h,
+                    text: '',
+                  ),
+                  GButton(
+                    icon: widget.currIndex == 2
+                        ? Icons.search
+                        : Icons.search_outlined,
+                    iconSize: 30.h,
+                    text: '',
+                  ),
+                  GButton(
+                    icon: widget.currIndex == 2
+                        ? Icons.favorite
+                        : Icons.favorite_outline,
+                    iconSize: 30.h,
+                    text: '',
+                  ),
+                  GButton(
+                    onPressed: () async {
+                      print('tapping chat');
+
+                      if (PagesNav.chatPagesindex != 0) {
+                        await Get.find<PagesNav>().updateChat(0);
+                        globalPageControllerForchat.animateTo(
+                            globalPageControllerForchat
+                                .positions.last.minScrollExtent,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut);
+                      }
+                    },
+                    icon: widget.currIndex == 3
+                        ? Icons.chat_bubble
+                        : Icons.chat_bubble_outline,
+                    iconSize: 30.h,
+                  ),
+                  GButton(
+                    onPressed: () async {},
+                    icon: widget.currIndex == 4
+                        ? Icons.person
+                        : Icons.person_2_outlined,
+                    iconSize: 30.h,
+                    text: '',
+                  ),
+                ],
+                selectedIndex: widget.currIndex!,
+                onTabChange: (index) {
+                  setState(() {
+                    widget.currIndex = index;
+                  });
+                },
               ),
             ),
           ),

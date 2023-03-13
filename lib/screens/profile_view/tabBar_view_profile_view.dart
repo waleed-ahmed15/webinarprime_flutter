@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
@@ -123,7 +122,7 @@ class _TabbarViewForProfileViewState extends State<TabbarViewForProfileView> {
           );
         }
         return ListView.builder(
-          padding: EdgeInsets.only(bottom: 10.h, left: 10.w, right: 10.w),
+          // padding: EdgeInsets.only(bottom: 10.h, left: 10.w, right: 10.w),
           physics: const BouncingScrollPhysics(),
           itemCount:
               AuthController.otherUserProfile['attended_webinars'].length,

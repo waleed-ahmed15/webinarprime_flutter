@@ -21,9 +21,11 @@ class _CreateNewChatState extends State<CreateNewChat> {
   Widget build(BuildContext context) {
     Get.find<AuthController>().searchedUsers.clear();
     return Scaffold(
-      backgroundColor: Get.isDarkMode ? Colors.black : Colors.white,
+      backgroundColor:
+          Get.isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white,
       appBar: AppBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor:
+              Get.isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white,
           elevation: 0,
           automaticallyImplyLeading: false,
           title: Padding(
@@ -33,20 +35,21 @@ class _CreateNewChatState extends State<CreateNewChat> {
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search_sharp),
-                  color: Mycolors.iconColor,
+                  color: Get.isDarkMode ? Colors.white : Colors.black,
                   iconSize: 30.h,
                   onPressed: () async {
                     if (serachcontroller.text.trim().isEmpty) {
                       return;
                     }
-
+                    Get.find<AuthController>().searchedUsers.clear();
                     await Get.find<AuthController>()
                         .searchUserAll(serachcontroller.text.trim());
                     // serachcontroller.clear();
                   },
                 ),
                 hintText: 'Search. . .',
-                hintStyle: Mystyles.myhintTextstyle,
+                hintStyle: Mystyles.myhintTextstyle.copyWith(
+                    color: Get.isDarkMode ? Colors.white : Colors.black),
                 border: InputBorder.none,
               ),
               // style: const TextStyle(color: Colors.white),
@@ -73,7 +76,7 @@ class _CreateNewChatState extends State<CreateNewChat> {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ElevatedButton(
                     onPressed: () async {
-                      await Get.find<ChatStreamController>()
+                      int convoIdx = await Get.find<ChatStreamController>()
                           .createNewConversation([
                         await Get.find<AuthController>().searchedUsers[index]
                             ['_id'],
@@ -81,19 +84,23 @@ class _CreateNewChatState extends State<CreateNewChat> {
                       ]);
                       await Get.find<ChatStreamController>()
                           .GetmessagesForAconversation(
-                              ChatStreamController.userchats[0]['_id']);
+                              ChatStreamController.userchats[convoIdx]['_id']);
                       // find index of receiver in userchats
                       int otheruserIndex = await ChatStreamController
-                                  .userchats[0]['users'][0]['_id'] ==
+                                  .userchats[convoIdx]['users'][0]['_id'] ==
                               await Get.find<AuthController>()
                                   .currentUser['_id']
                           ? 1
                           : 0;
                       Get.find<AuthController>().searchedUsers.clear();
+                      print('------------------------->');
+                      print(ChatStreamController.userchats[convoIdx]);
+                      print(otheruserIndex);
+                      print('<-------------------------');
 
                       Get.off(() => ChatScreen(
-                          ChatStreamController.userchats[0]['_id'],
-                          ChatStreamController.userchats[0]['users']
+                          ChatStreamController.userchats[convoIdx]['_id'],
+                          ChatStreamController.userchats[convoIdx]['users']
                               [otheruserIndex]));
                     },
                     style: ElevatedButton.styleFrom(

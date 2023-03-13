@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'package:expandable_text/expandable_text.dart';
@@ -223,6 +224,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return WillPopScope(
       onWillPop: () async {
         Get.find<PagesNav>().updateChat(0);
+        // PersistentNavBarNavigator.pushNewScreen(context, screen: HomeScreen)
         Get.to(() => HomeScreen(
               currIndex: 3,
             ));

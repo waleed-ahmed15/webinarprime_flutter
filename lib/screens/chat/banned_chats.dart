@@ -12,14 +12,21 @@ class BannedChats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Get.isDarkMode
+          ? Colors.black.withOpacity(0.4)
+          : const Color(0xffffffff),
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Get.isDarkMode
+            ? Colors.black.withOpacity(0.4)
+            : const Color(0xffffffff),
         automaticallyImplyLeading: false,
         elevation: 0,
         title: Text(
           "Banned Chats",
-          style: Mystyles.mediumHeadingStyle,
+          style: Mystyles.mediumHeadingStyle.copyWith(
+            color: Get.isDarkMode ? Colors.white : Colors.black,
+          ),
         ),
       ),
       body: GetBuilder<AuthController>(

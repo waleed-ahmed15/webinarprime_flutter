@@ -176,6 +176,12 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                       await WebinarManagementController().getwebinarById(
                           WebinarManagementController.webinarsList[index]
                               ['_id']);
+
+                      // PersistentNavBarNavigator.pushNewScreen(context,
+                      //     screen: WebinarDetailsScreen(
+                      //       webinarDetails:
+                      //           WebinarManagementController.currentWebinar,
+                      //     ));
                       Get.to(() => WebinarDetailsScreen(
                             webinarDetails:
                                 WebinarManagementController.currentWebinar,

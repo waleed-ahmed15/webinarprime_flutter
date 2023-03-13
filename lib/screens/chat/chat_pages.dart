@@ -6,6 +6,7 @@ import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/pages_nav_controller.dart';
 import 'package:webinarprime/screens/chat/chatpage_c.dart';
 import 'package:webinarprime/utils/colors.dart';
+import 'package:webinarprime/utils/styles.dart';
 
 class ChatPages extends StatefulWidget {
   const ChatPages({super.key});
@@ -57,60 +58,64 @@ class _ChatPagesState extends State<ChatPages> with TickerProviderStateMixin {
       },
       child: Scaffold(
         floatingActionButton: FloatingActionBubble(
-          // Menu items
-          items: <Bubble>[
-            // Floating action menu item
-            Bubble(
-              title: "Banned Chats",
-              iconColor: Colors.white,
-              bubbleColor: Colors.blue,
-              icon: Icons.person_off_rounded,
-              titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
-              onPress: () async {
-                await Get.find<AuthController>().getbannedchats();
-                globalPageControllerForchat.positions.last.animateTo(2.sw,
-                    duration: const Duration(milliseconds: 1),
-                    curve: Curves.easeOut);
-                // globalPageControllerForchat.positions.last.jumpTo(1.3);
-                _animationController.reverse();
-              },
-            ),
-            // Floating action menu item
-            Bubble(
-              title: "New",
-              iconColor: Colors.white,
-              bubbleColor: Colors.blue,
-              icon: Icons.add,
-              titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
-              onPress: () async {
-                globalPageControllerForchat.animateTo(1.sw,
-                    duration: const Duration(microseconds: 1),
-                    curve: Curves.fastLinearToSlowEaseIn);
+            // Menu items
+            items: <Bubble>[
+              // Floating action menu item
+              Bubble(
+                title: "Banned Chats",
+                iconColor: Colors.white,
+                bubbleColor: Get.isDarkMode
+                    ? Mycolors.myappbarcolor
+                    : AppColors.LTprimaryColor,
+                icon: Icons.person_off_rounded,
+                titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                onPress: () async {
+                  await Get.find<AuthController>().getbannedchats();
+                  globalPageControllerForchat.positions.last.animateTo(2.sw,
+                      duration: const Duration(milliseconds: 1),
+                      curve: Curves.easeOut);
+                  // globalPageControllerForchat.positions.last.jumpTo(1.3);
+                  _animationController.reverse();
+                },
+              ),
+              // Floating action menu item
+              Bubble(
+                title: "New",
+                iconColor: Colors.white,
+                bubbleColor: Get.isDarkMode
+                    ? Mycolors.myappbarcolor
+                    : AppColors.LTprimaryColor,
+                icon: Icons.add,
+                titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                onPress: () async {
+                  globalPageControllerForchat.animateTo(1.sw,
+                      duration: const Duration(microseconds: 1),
+                      curve: Curves.fastLinearToSlowEaseIn);
 
-                _animationController.reverse();
-              },
-            ),
-            //Floating action menu item
-          ],
+                  _animationController.reverse();
+                },
+              ),
+              //Floating action menu item
+            ],
 
-          // animation controller
-          animation: _animation,
+            // animation controller
+            animation: _animation,
 
-          // On pressed change animation state
-          onPress: () => _animationController.isCompleted
-              ? _animationController.reverse()
-              : _animationController.forward(),
+            // On pressed change animation state
+            onPress: () => _animationController.isCompleted
+                ? _animationController.reverse()
+                : _animationController.forward(),
 
-          // Floating Action button Icon color
-          iconColor: Colors.white,
+            // Floating Action button Icon color
+            iconColor: Colors.white,
 
-          // Flaoting Action button Icon
-          animatedIconData: AnimatedIcons.menu_close,
+            // Flaoting Action button Icon
+            animatedIconData: AnimatedIcons.menu_close,
 
-          // iconData: Icons.edit,
-          backGroundColor:
-              Get.isDarkMode ? Colors.cyan : AppColors.LTprimaryColor,
-        ),
+            // iconData: Icons.edit,
+            backGroundColor: Get.isDarkMode
+                ? Mycolors.myappbarcolor
+                : AppColors.LTprimaryColor),
         body: PageView(
           physics: const NeverScrollableScrollPhysics(),
           onPageChanged: (index) async {

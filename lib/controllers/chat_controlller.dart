@@ -104,7 +104,7 @@ class ChatStreamController extends GetxController {
     }
   }
 
-  Future<void> createNewConversation(List<String> users) async {
+  Future<int> createNewConversation(List<String> users) async {
     try {
       Uri url = Uri.parse('${AppConstants.baseURL}/chat/create-conversation/');
       final response = await http.post(
@@ -123,11 +123,26 @@ class ChatStreamController extends GetxController {
         print('fetching conversations');
         await getConversations(Get.find<AuthController>().currentUser['_id']);
         update();
+        if (jsonDecode(response.body)['alreadyExists'] == true) {
+          print('conversation already exists');
+          print(userchats.indexWhere((element) =>
+              element['_id'] ==
+              jsonDecode(response.body)['conversation']['_id']));
+          print(userchats[0]);
+
+          return userchats.indexWhere((element) =>
+              element['_id'] ==
+              jsonDecode(response.body)['conversation']['_id']);
+        }
+
+        return 0;
       } else {
         print('Conversations creation Failed');
+        return 0;
       }
     } catch (e) {
       print(e);
+      return 0;
     }
   }
   // get messages of a conversation
