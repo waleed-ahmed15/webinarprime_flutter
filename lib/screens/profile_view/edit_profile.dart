@@ -295,6 +295,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+      backgroundColor: Get.isDarkMode
+          ? Colors.black
+          : Theme.of(context).scaffoldBackgroundColor,
       body: ListView(
         children: [
           Column(

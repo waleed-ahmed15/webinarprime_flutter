@@ -3,7 +3,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:webinarprime/screens/chat/chat_pages.dart';
 import 'package:webinarprime/screens/chat/chatpage_c.dart';
 import 'package:webinarprime/screens/home_screen/home_screen.dart';
-import 'package:webinarprime/screens/home_screen/home_screen_drawer_widget.dart';
+import 'package:webinarprime/screens/home_screen/widgets/home_screen_drawer_widget.dart';
 import 'package:webinarprime/screens/webinar_management/add_webinar_screens/add_webinar_screen1.dart';
 import 'package:webinarprime/utils/styles.dart';
 

@@ -8,8 +8,8 @@ import 'package:webinarprime/controllers/chat_controlller.dart';
 import 'package:webinarprime/controllers/pages_nav_controller.dart';
 import 'package:webinarprime/screens/chat/chat_pages.dart';
 import 'package:webinarprime/screens/chat/chatpage_c.dart';
-import 'package:webinarprime/screens/home_screen/home_screen_drawer_widget.dart';
-import 'package:webinarprime/screens/my_webinars/view_my_webinars_screen.dart';
+import 'package:webinarprime/screens/home_screen/nav_tabs/home_screen_home_tab.dart';
+import 'package:webinarprime/screens/home_screen/widgets/home_screen_drawer_widget.dart';
 import 'package:webinarprime/screens/profile_view/favourites_screen.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
 import 'package:webinarprime/screens/webinar_management/add_webinar_screens/add_webinar_screen1.dart';
@@ -74,28 +74,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       color: Theme.of(Get.context!).colorScheme.secondary);
 
   static final List<Widget> _widgetOptions = <Widget>[
-    const View_my_Webinar_Screen(),
-    // Column(
-    //   children: [
-    //     Text(' Priramy heading11', style: AppConstants.PrimarayheadingStyle),
-    //     const Gap(10),
-    //     const Text(
-    //       'Secondary Heading11',
-    //       style: TextStyle(
-    //           fontFamily: AppFont.secondaryHeading1,
-    //           fontSize: 20,
-    //           fontWeight: FontWeight.w500
-
-    //           //
-    //           //fontSize: AppLayout.getHeight(30),
-    //           ),
-    //     ),
-    //     Text(
-    //       'how to be more Productive',
-    //       style: Mystyles.bigTitleStyle,
-    //     )
-    //   ],
-    // ),
+    // const View_my_Webinar_Screen(),
+    const HomeScreenHomeTab(),
     const Text(
       'Likes',
       style: optionStyle,
@@ -120,29 +100,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: widget.currIndex == 0
-              ? Container(
-                  margin: EdgeInsets.only(bottom: 50.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FloatingActionButton(
-                        backgroundColor: Get.isDarkMode
-                            ? Mycolors.myappbarcolor
-                            : AppColors.LTprimaryColor,
-                        heroTag: null,
-                        onPressed: () {
-                          // Get.toNamed('/create_webinar');
-                          // Get.to(() => const HomeScreenNew());
-                          Get.to(() => const AddWebinarScreen1());
-                        },
-                        child: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
+              ? Get.find<AuthController>().currentUser['accountType'] ==
+                      'organizer'
+                  ? Container(
+                      margin: EdgeInsets.only(bottom: 50.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FloatingActionButton(
+                            backgroundColor: Get.isDarkMode
+                                ? Mycolors.myappbarcolor
+                                : AppColors.LTprimaryColor,
+                            heroTag: null,
+                            onPressed: () {
+                              // Get.toNamed('/create_webinar');
+                              // Get.to(() => const HomeScreenNew());
+                              Get.to(() => const AddWebinarScreen1());
+                            },
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
+                    )
+                  : null
               : null,
           key: scaffoldKey,
           drawer: const HomeScreenDrawer(),
@@ -162,7 +145,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 color: Mycolors.myappbarcolor,
               ),
               child: GNav(
-                backgroundColor: Mycolors.myappbarcolor,
+                backgroundColor:
+                    Get.isDarkMode ? Mycolors.myappbarcolor : Colors.white,
                 // curve: Curves.ease,
                 curve: Curves.easeInOut,
 

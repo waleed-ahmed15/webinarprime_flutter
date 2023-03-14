@@ -334,7 +334,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                 ? 'Join'
                                 : "Start Stream",
                             iconColor: Colors.white,
-                            bubbleColor: Colors.blue,
+                            bubbleColor: Get.isDarkMode
+                                ? Mycolors.myappbarcolor
+                                : AppColors.LTprimaryColor,
                             icon: Icons.stream_outlined,
                             titleStyle: const TextStyle(
                                 fontSize: 16, color: Colors.white),
