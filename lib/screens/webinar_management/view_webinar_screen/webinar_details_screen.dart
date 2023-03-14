@@ -12,6 +12,7 @@ import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
 import 'package:webinarprime/screens/user_search/user_search_screen.dart';
 import 'package:webinarprime/screens/webinar_management/edit_webinar/edit_webinar_screen.dart';
+import 'package:webinarprime/screens/webinar_management/view_webinar_screen/attendees_list_screen.dart';
 import 'package:webinarprime/screens/webinar_management/view_webinar_screen/review_widget.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
@@ -359,7 +360,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       title: "End Webinar",
                       iconColor: Colors.white,
                       bubbleColor: webinarStreamStatus.value == 'live'
-                          ? Colors.blue
+                          ? Get.isDarkMode
+                              ? Mycolors.myappbarcolor
+                              : AppColors.LTprimaryColor
                           : Colors.grey,
                       icon: Icons.stop,
                       titleStyle:
@@ -380,7 +383,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Post Notification",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.notification_add,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -393,7 +398,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Edit",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.edit,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -409,7 +416,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Organizers",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -429,7 +438,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Guests",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -447,7 +458,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Attendees",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -484,7 +497,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   // Flaoting Action button Icon
                   animatedIconData: AnimatedIcons.menu_close,
                   // iconData: Icons.menu,
-                  backGroundColor: AppColors.LTprimaryColor,
+                  backGroundColor: Get.isDarkMode
+                      ? Mycolors.myappbarcolor
+                      : AppColors.LTprimaryColor,
                 )
               // this is to show for organizer
               : FloatingActionBubble(
@@ -492,7 +507,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Post Notification",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.notification_add,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -505,7 +522,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Edit",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.edit,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -521,7 +540,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Organizers",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -541,7 +562,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Guests",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -559,7 +582,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                     Bubble(
                       title: "Attendees",
                       iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
+                      bubbleColor: Get.isDarkMode
+                          ? Mycolors.myappbarcolor
+                          : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),
@@ -593,7 +618,9 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   // Flaoting Action button Icon
                   // iconData: Icons.menu,
                   animatedIconData: AnimatedIcons.menu_close,
-                  backGroundColor: AppColors.LTprimaryColor,
+                  backGroundColor: Get.isDarkMode
+                      ? Mycolors.myappbarcolor
+                      : AppColors.LTprimaryColor,
                 )
           : null,
       body: NestedScrollView(
@@ -776,15 +803,26 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         child: Center(
                           child: GetBuilder<WebinarManagementController>(
                               builder: (context) {
-                            return Text(
-                              '${WebinarManagementController.currentWebinar['attendees'].length} people attending',
-                              style: TextStyle(
-                                fontSize: AppLayout.getHeight(16),
-                                fontFamily: 'JosefinSans Bold',
-                                fontWeight: FontWeight.w500,
-                                color: Get.isDarkMode
-                                    ? const Color.fromRGBO(74, 229, 239, 1)
-                                    : const Color.fromRGBO(248, 79, 57, 1),
+                            return GestureDetector(
+                              onTap: () {
+                                Get.to(
+                                  () => AttendessList(
+                                    attendeesList: WebinarManagementController
+                                        .currentWebinar['attendees'],
+                                  ),
+                                  transition: Transition.rightToLeft,
+                                );
+                              },
+                              child: Text(
+                                '${WebinarManagementController.currentWebinar['attendees'].length} people attending',
+                                style: TextStyle(
+                                  fontSize: AppLayout.getHeight(16),
+                                  fontFamily: 'JosefinSans Bold',
+                                  fontWeight: FontWeight.w500,
+                                  color: Get.isDarkMode
+                                      ? const Color.fromRGBO(74, 229, 239, 1)
+                                      : const Color.fromRGBO(248, 79, 57, 1),
+                                ),
                               ),
                             );
                           }),

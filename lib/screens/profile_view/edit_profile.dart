@@ -299,6 +299,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ? Colors.black
           : Theme.of(context).scaffoldBackgroundColor,
       body: ListView(
+        physics: const BouncingScrollPhysics(),
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
