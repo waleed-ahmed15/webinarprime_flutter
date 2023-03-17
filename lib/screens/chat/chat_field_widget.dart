@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:webinarprime/utils/styles.dart';
 
 class ChatFieldWidget extends StatefulWidget {
   final Function onSend;
@@ -40,7 +39,7 @@ class _ChatFieldWidgetState extends State<ChatFieldWidget> {
               });
             },
             decoration: InputDecoration(
-              fillColor: receiverChatBubbleColor,
+              fillColor: Theme.of(context).cardColor,
               filled: true,
               hintText: "Type a message",
               prefixIcon: IconButton(

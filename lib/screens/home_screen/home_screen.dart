@@ -17,7 +17,6 @@ import 'package:webinarprime/utils/app_constants.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
-import 'package:webinarprime/utils/themes.dart';
 
 class HomeScreen extends StatefulWidget {
   int? currIndex;
@@ -39,9 +38,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // TODO: implement initState
     // connecteSocket();
     //get fav list
-    Get.find<AuthController>().getFavoriteWebinars();
-    Get.find<AuthController>()
-        .otherUserProfileDetails(Get.find<AuthController>().currentUser['_id']);
     preload();
     super.initState();
     // print("height: ${AppLayout.getScreenHeight()}");
@@ -49,8 +45,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Future preload() async {
-    print('=-------------------------------------------');
-    print(Get.find<AuthController>().currentUser);
+    // print('=-------------------------------------------');
+    // await Get.find<WebinarManagementController>().getAllwebinars();
+    // await Get.find<AuthController>().getFavoriteWebinars();
+    // await Get.find<AuthController>()
+    // .otherUserProfileDetails(Get.find<AuthController>().currentUser['_id']);
+
+    // print(Get.find<AuthController>().currentUser);
     await Get.find<ChatStreamController>()
         .getConversations(Get.find<AuthController>().currentUser['_id']);
     socket.onConnect((data) => print(' socket stream chat connected'));
@@ -108,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           FloatingActionButton(
-                            backgroundColor: Get.theme == darkTheme
+                            backgroundColor: Get.isDarkMode
                                 ? myappbarcolor
                                 : AppColors.LTprimaryColor,
                             heroTag: null,
@@ -145,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 color: myappbarcolor,
               ),
               child: GNav(
-                backgroundColor: Get.isDarkMode ? myappbarcolor : Colors.white,
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
                 // curve: Curves.ease,
                 curve: Curves.easeInOut,
 

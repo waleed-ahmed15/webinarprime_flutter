@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/screens/home_screen/widgets/carasoul_slider_home.dart';
 import 'package:webinarprime/screens/home_screen/widgets/discover_organizers_widget.dart';
 import 'package:webinarprime/screens/home_screen/widgets/webinar_dynamic_tile.dart';
 import 'package:webinarprime/screens/home_screen/widgets/webinar_info_card.dart';
-import 'package:webinarprime/utils/styles.dart';
 
 class HomeScreenHomeTab extends StatefulWidget {
   const HomeScreenHomeTab({super.key});
-
+ 
   @override
   State<HomeScreenHomeTab> createState() => _HomeScreenHomeTabState();
 }

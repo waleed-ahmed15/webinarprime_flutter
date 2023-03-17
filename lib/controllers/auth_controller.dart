@@ -257,6 +257,7 @@ class AuthController extends GetxController {
         Get.toNamed(RoutesHelper.signInRoute);
       } else if (currentUser.containsKey('birthdate')) {
         getInvitations(currentUser['_id']);
+        //  a   WebinarManagementController().getAllwebinars();
         Get.toNamed(RoutesHelper.homeScreenRoute);
       } else {
         Get.toNamed(RoutesHelper.uploadProfileRoute);

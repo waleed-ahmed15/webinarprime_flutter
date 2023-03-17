@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
-import 'package:webinarprime/routes/routes.dart';
 import 'package:webinarprime/screens/sign_up/signup_page.dart';
 import 'package:webinarprime/utils/dimension.dart';
 
@@ -59,12 +59,24 @@ class _LoginPage extends State<LoginPage> {
 
                     TextFormField(
                       controller: emailController,
-                      decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
+                      style: Theme.of(context).textTheme.displayMedium!,
+                      decoration: InputDecoration(
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .secondaryHeaderColor
+                                    .withOpacity(0.5)),
+                          ),
+                          border: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
                           labelText: 'Enter email',
-                          labelStyle: TextStyle(
+                          labelStyle: const TextStyle(
+                              fontFamily: 'joefinSans Regular',
                               color: Color.fromARGB(255, 134, 163, 160)),
-                          suffixIcon: Icon(
+                          suffixIcon: const Icon(
                             Icons.email_outlined,
                             color: Color.fromARGB(255, 134, 163, 160),
                           )),
@@ -83,14 +95,22 @@ class _LoginPage extends State<LoginPage> {
                     TextFormField(
                       controller: passController,
                       obscureText: true,
-                      decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
-                        suffixIcon: Icon(
+                      style: Theme.of(context).textTheme.displayMedium!,
+                      decoration: InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .secondaryHeaderColor
+                                  .withOpacity(0.5)),
+                        ),
+                        border: const UnderlineInputBorder(),
+                        suffixIcon: const Icon(
                           Icons.lock_outline,
                           color: Colors.grey,
                         ),
                         labelText: 'Enter Password',
-                        labelStyle: TextStyle(
+                        labelStyle: const TextStyle(
+                            fontFamily: 'joefinSans Regular',
                             color: Color.fromARGB(255, 134, 163, 160)),
                       ),
                       validator: (value) {
@@ -160,7 +180,7 @@ class _LoginPage extends State<LoginPage> {
                         }
                       },
                       child: Container(
-                        width: double.maxFinite,
+                        width: 250.w,
                         padding: EdgeInsets.symmetric(
                             vertical: AppLayout.getHeight(10),
                             horizontal: AppLayout.getWidth(10)),
@@ -172,9 +192,9 @@ class _LoginPage extends State<LoginPage> {
                           child: Text(
                             "Sign in",
                             style: TextStyle(
-                                fontFamily: 'Montserrat',
+                                fontFamily: 'josefinSans Regular',
                                 color: Colors.white,
-                                fontSize: AppLayout.getHeight(25)),
+                                fontSize: 20.sp),
                           ),
                         ),
                       ),
@@ -186,36 +206,24 @@ class _LoginPage extends State<LoginPage> {
                     RichText(
                       text: TextSpan(
                         text: "Don't have an account? ",
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.8),
-                          fontSize: AppLayout.getHeight(20),
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
                         children: [
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap =
                                   () => Get.to(() => const SignUpScreen()),
                             text: 'Create',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat-Bold',
-                              color: Theme.of(context).primaryColor,
-                              fontSize: AppLayout.getHeight(20),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: AppLayout.getHeight(20),
+                                ),
                           )
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: AppLayout.getHeight(20),
-                    ),
-                    GestureDetector(
-                      onTap: () => Get.toNamed(RoutesHelper.liveKitConnectPage),
-                      child: const Text('livekit'),
-                    )
                   ],
                 ),
               ),

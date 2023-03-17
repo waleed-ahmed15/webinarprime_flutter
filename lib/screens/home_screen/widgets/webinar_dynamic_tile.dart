@@ -117,7 +117,7 @@ class WebinarDynamicInfoTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   AutoSizeText(
-                    webinar['datetime'].toString(),
+                    webinar['datetime'].toString().split('T')[0],
                     style: Theme.of(context).textTheme.displayMedium!.copyWith(
                         color: Theme.of(context).textTheme.displaySmall!.color,
                         fontSize: 10.sp,

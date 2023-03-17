@@ -127,7 +127,10 @@ class _ChatListScreenState extends State<ChatListScreen>
                             style: Theme.of(context)
                                 .textTheme
                                 .displayMedium!
-                                .copyWith(fontWeight: FontWeight.w700),
+                                .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16.sp,
+                                ),
                           ),
                           subtitle: Text(
                             ChatStreamController
