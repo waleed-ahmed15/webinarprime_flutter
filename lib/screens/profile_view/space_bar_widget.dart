@@ -14,8 +14,7 @@ class SpaceBarForProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          gradient: MyBoxDecorations.webinarInfoTileGradient),
+      decoration: const BoxDecoration(gradient: webinarInfoTileGradient),
       child: FlexibleSpaceBar(
         background: Stack(
           children: [
@@ -66,7 +65,7 @@ class SpaceBarForProfileView extends StatelessWidget {
                     Gap(10.h),
                     AutoSizeText(
                       AuthController.otherUserProfile['registration_number'],
-                      style: Mystyles.listtileSubtitleStyle.copyWith(
+                      style: listtileSubtitleStyle.copyWith(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w300,
                           color: Colors.white),
@@ -97,11 +96,14 @@ class SpaceBarForProfileView extends StatelessWidget {
                                           0.8)),
                               child: Text(
                                 'Following',
-                                style: Mystyles.listtileTitleStyle.copyWith(
-                                    fontSize: 14.sp,
-                                    letterSpacing: 1.6,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(
+                                        fontSize: 14.sp,
+                                        letterSpacing: 1.6,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600),
                               ));
                         }
 
@@ -116,10 +118,13 @@ class SpaceBarForProfileView extends StatelessWidget {
                                 alignment: Alignment.center),
                             child: Text(
                               'Follow',
-                              style: Mystyles.listtileTitleStyle.copyWith(
-                                  fontSize: 14.sp,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(
+                                      fontSize: 14.sp,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600),
                             ));
                       }
                       return Container();

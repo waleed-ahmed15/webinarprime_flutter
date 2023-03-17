@@ -135,14 +135,14 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       children: [
                         Center(
                           child: Text("Post Notification",
-                              style: Mystyles.categoriesHeadingStyle.copyWith(
+                              style: categoriesHeadingStyle.copyWith(
                                   color: Get.isDarkMode
                                       ? Colors.white70
                                       : Colors.black38)),
                         ),
                         TextFormField(
                           controller: titleController,
-                          style: Mystyles.onelineStyle,
+                          style: onelineStyle,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius:
@@ -161,7 +161,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         ),
                         // Gap(10.h),
                         TextFormField(
-                          style: Mystyles.myParagraphStyle,
+                          style: myParagraphStyle,
                           maxLines: 7,
                           controller: descriptionController,
                           decoration: InputDecoration(
@@ -287,7 +287,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
         .webianrStreamStatus(WebinarManagementController.currentWebinar['_id']);
     print(res);
     print('object===============================');
-    webinarStreamStatus.value = res['status'];
+    webinarStreamStatus.value =
+        res['success'] == false ? "ended" : res['status'];
     setState(() {});
     print(webinarStreamStatus.value);
   }
@@ -315,192 +316,204 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: showfloatingButton
           ? showFloatingButtonFor == 'creator'
-              ? FloatingActionBubble(
-                  items: [
-                    // Floating action menu item
-                    widget.webinarDetails.containsKey('ended')
-                        ? Bubble(
-                            title: "Webinar Ended",
-                            iconColor: Colors.white,
-                            bubbleColor: Colors.red,
-                            icon: Icons.stop_rounded,
-                            titleStyle: const TextStyle(
-                                fontSize: 16, color: Colors.white),
-                            onPress: () {
-                              _animationController!.reverse();
-                            },
-                          )
-                        : Bubble(
-                            title: webinarStreamStatus.value == 'live'
-                                ? 'Join'
-                                : "Start Stream",
-                            iconColor: Colors.white,
-                            bubbleColor: Get.isDarkMode
-                                ? Mycolors.myappbarcolor
-                                : AppColors.LTprimaryColor,
-                            icon: Icons.stream_outlined,
-                            titleStyle: const TextStyle(
-                                fontSize: 16, color: Colors.white),
-                            onPress: () async {
-                              webinarStreamStatus.value == 'live'
-                                  ? Get.find<WebinarStreamController>()
-                                      .joinStream(
-                                          WebinarManagementController
-                                              .currentWebinar['_id'],
-                                          context)
-                                  : Get.find<WebinarStreamController>()
-                                      .startWebinarStream(
-                                          WebinarManagementController
-                                              .currentWebinar['_id'],
-                                          context);
-                              _animationController!.reverse();
-                            },
-                          ),
-                    Bubble(
-                      title: "End Webinar",
-                      iconColor: Colors.white,
-                      bubbleColor: webinarStreamStatus.value == 'live'
-                          ? Get.isDarkMode
-                              ? Mycolors.myappbarcolor
-                              : AppColors.LTprimaryColor
-                          : Colors.grey,
-                      icon: Icons.stop,
-                      titleStyle:
-                          const TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: webinarStreamStatus.value == 'live'
-                          ? () async {
-                              await Get.find<WebinarManagementController>()
-                                  .endWebinarStream(WebinarManagementController
+              ? GetBuilder<WebinarStreamController>(
+                  builder: (streamcontroller) {
+                  return FloatingActionBubble(
+                    items: [
+                      // Floating action menu item
+                      widget.webinarDetails.containsKey('ended')
+                          ? Bubble(
+                              title: "Webinar Ended",
+                              iconColor: Colors.white,
+                              bubbleColor: Colors.red,
+                              icon: Icons.stop_rounded,
+                              titleStyle: const TextStyle(
+                                  fontSize: 16, color: Colors.white),
+                              onPress: () {
+                                _animationController!.reverse();
+                              },
+                            )
+                          : Bubble(
+                              title: webinarStreamStatus.value == 'live'
+                                  ? 'Join'
+                                  : "Start Stream",
+                              iconColor: Colors.white,
+                              bubbleColor: Get.isDarkMode
+                                  ? myappbarcolor
+                                  : AppColors.LTprimaryColor,
+                              icon: Icons.stream_outlined,
+                              titleStyle: const TextStyle(
+                                  fontSize: 16, color: Colors.white),
+                              onPress: () async {
+                                webinarStreamStatus.value == 'live'
+                                    ? Get.find<WebinarStreamController>()
+                                        .joinStream(
+                                            WebinarManagementController
+                                                .currentWebinar['_id'],
+                                            context)
+                                    : Get.find<WebinarStreamController>()
+                                        .startWebinarStream(
+                                            WebinarManagementController
+                                                .currentWebinar['_id'],
+                                            context);
+                                _animationController!.reverse();
+                              },
+                            ),
+                      Bubble(
+                        title: "End Webinar",
+                        iconColor: Colors.white,
+                        bubbleColor: webinarStreamStatus.value == 'live'
+                            ? Get.isDarkMode
+                                ? myappbarcolor
+                                : AppColors.LTprimaryColor
+                            : Colors.grey,
+                        icon: Icons.stop,
+                        titleStyle:
+                            const TextStyle(fontSize: 16, color: Colors.white),
+                        onPress: webinarStreamStatus.value == 'live'
+                            ? () async {
+                                await Get.find<WebinarManagementController>()
+                                    .endWebinarStream(
+                                        WebinarManagementController
+                                            .currentWebinar['_id']);
+                                _animationController!.reverse();
+
+                                setState(() {
+                                  webinarStreamStatus.value = 'ended';
+                                });
+                              }
+                            : () {
+                                print('end stream grey');
+                              },
+                      ),
+                      // Floating action menu item
+
+                      Bubble(
+                        title: "Post Notification",
+                        iconColor: Colors.white,
+                        bubbleColor: Get.isDarkMode
+                            ? myappbarcolor
+                            : AppColors.LTprimaryColor,
+                        icon: Icons.notification_add,
+                        titleStyle:
+                            const TextStyle(fontSize: 16, color: Colors.white),
+                        onPress: () {
+                          _animationController!.reverse();
+                          showDialogBoxForPostNotification(
+                              WebinarManagementController
+                                  .currentWebinar['_id']);
+                        },
+                      ),
+                      Bubble(
+                        title: "Edit",
+                        iconColor: Colors.white,
+                        bubbleColor: Get.isDarkMode
+                            ? myappbarcolor
+                            : AppColors.LTprimaryColor,
+                        icon: Icons.edit,
+                        titleStyle:
+                            const TextStyle(fontSize: 16, color: Colors.white),
+                        onPress: () {
+                          _animationController!.reverse();
+                          Get.to(() => EditWebinarScreen(
+                                webinarDetails:
+                                    WebinarManagementController.currentWebinar,
+                              ));
+                        },
+                      ),
+                      //Floating action menu item
+                      Bubble(
+                        title: "Organizers",
+                        iconColor: Colors.white,
+                        bubbleColor: Get.isDarkMode
+                            ? myappbarcolor
+                            : AppColors.LTprimaryColor,
+                        icon: Icons.group,
+                        titleStyle:
+                            const TextStyle(fontSize: 16, color: Colors.white),
+                        onPress: () async {
+                          // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                          _animationController!.reverse();
+                          await WebinarManagementController()
+                              .getOrganizersForWebinar(
+                                  WebinarManagementController
                                       .currentWebinar['_id']);
-                              _animationController!.reverse();
-                            }
-                          : () {
-                              print('end stream grey');
-                            },
-                    ),
-                    // Floating action menu item
 
-                    Bubble(
-                      title: "Post Notification",
-                      iconColor: Colors.white,
-                      bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
-                          : AppColors.LTprimaryColor,
-                      icon: Icons.notification_add,
-                      titleStyle:
-                          const TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () {
-                        _animationController!.reverse();
-                        showDialogBoxForPostNotification(
-                            WebinarManagementController.currentWebinar['_id']);
-                      },
-                    ),
-                    Bubble(
-                      title: "Edit",
-                      iconColor: Colors.white,
-                      bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
-                          : AppColors.LTprimaryColor,
-                      icon: Icons.edit,
-                      titleStyle:
-                          const TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () {
-                        _animationController!.reverse();
-                        Get.to(() => EditWebinarScreen(
-                              webinarDetails:
-                                  WebinarManagementController.currentWebinar,
-                            ));
-                      },
-                    ),
-                    //Floating action menu item
-                    Bubble(
-                      title: "Organizers",
-                      iconColor: Colors.white,
-                      bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
-                          : AppColors.LTprimaryColor,
-                      icon: Icons.group,
-                      titleStyle:
-                          const TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () async {
-                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
-                        _animationController!.reverse();
-                        await WebinarManagementController()
-                            .getOrganizersForWebinar(WebinarManagementController
-                                .currentWebinar['_id']);
-
-                        Get.to(() => UserSearchScreen(
-                            usersType: 1,
-                            webinarId: WebinarManagementController
-                                .currentWebinar['_id']));
-                      },
-                    ),
-                    Bubble(
-                      title: "Guests",
-                      iconColor: Colors.white,
-                      bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
-                          : AppColors.LTprimaryColor,
-                      icon: Icons.group,
-                      titleStyle:
-                          const TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () async {
-                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
-                        _animationController!.reverse();
-                        await WebinarManagementController().getGuestsForWebinar(
-                            WebinarManagementController.currentWebinar['_id']);
-                        Get.to(() => UserSearchScreen(
-                            usersType: 2,
-                            webinarId: WebinarManagementController
-                                .currentWebinar['_id']));
-                      },
-                    ),
-                    Bubble(
-                      title: "Attendees",
-                      iconColor: Colors.white,
-                      bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
-                          : AppColors.LTprimaryColor,
-                      icon: Icons.group,
-                      titleStyle:
-                          const TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () async {
-                        // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
-                        _animationController!.reverse();
-
-                        await WebinarManagementController()
-                            .getAttendeesForWebinar(WebinarManagementController
-                                .currentWebinar['_id']);
-                        Get.to(() => UserSearchScreen(
-                              usersType: 3,
+                          Get.to(() => UserSearchScreen(
+                              usersType: 1,
                               webinarId: WebinarManagementController
-                                  .currentWebinar['_id'],
-                            ));
-                      },
-                    ),
-                  ],
+                                  .currentWebinar['_id']));
+                        },
+                      ),
+                      Bubble(
+                        title: "Guests",
+                        iconColor: Colors.white,
+                        bubbleColor: Get.isDarkMode
+                            ? myappbarcolor
+                            : AppColors.LTprimaryColor,
+                        icon: Icons.group,
+                        titleStyle:
+                            const TextStyle(fontSize: 16, color: Colors.white),
+                        onPress: () async {
+                          // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                          _animationController!.reverse();
+                          await WebinarManagementController()
+                              .getGuestsForWebinar(WebinarManagementController
+                                  .currentWebinar['_id']);
+                          Get.to(() => UserSearchScreen(
+                              usersType: 2,
+                              webinarId: WebinarManagementController
+                                  .currentWebinar['_id']));
+                        },
+                      ),
+                      Bubble(
+                        title: "Attendees",
+                        iconColor: Colors.white,
+                        bubbleColor: Get.isDarkMode
+                            ? myappbarcolor
+                            : AppColors.LTprimaryColor,
+                        icon: Icons.group,
+                        titleStyle:
+                            const TextStyle(fontSize: 16, color: Colors.white),
+                        onPress: () async {
+                          // Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) => Homepage()));
+                          _animationController!.reverse();
 
-                  // animation controller
-                  animation: _animation!,
+                          await WebinarManagementController()
+                              .getAttendeesForWebinar(
+                                  WebinarManagementController
+                                      .currentWebinar['_id']);
+                          Get.to(() => UserSearchScreen(
+                                usersType: 3,
+                                webinarId: WebinarManagementController
+                                    .currentWebinar['_id'],
+                              ));
+                        },
+                      ),
+                    ],
 
-                  // On pressed change animation state
-                  onPress: () {
-                    setState(() {});
-                    _animationController!.isCompleted
-                        ? _animationController!.reverse()
-                        : _animationController!.forward();
-                  },
+                    // animation controller
+                    animation: _animation!,
 
-                  // Floating Action button Icon color
-                  iconColor: Colors.white,
+                    // On pressed change animation state
+                    onPress: () {
+                      setState(() {});
+                      _animationController!.isCompleted
+                          ? _animationController!.reverse()
+                          : _animationController!.forward();
+                    },
 
-                  // Flaoting Action button Icon
-                  animatedIconData: AnimatedIcons.menu_close,
-                  // iconData: Icons.menu,
-                  backGroundColor: Get.isDarkMode
-                      ? Mycolors.myappbarcolor
-                      : AppColors.LTprimaryColor,
-                )
+                    // Floating Action button Icon color
+                    iconColor: Colors.white,
+
+                    // Flaoting Action button Icon
+                    animatedIconData: AnimatedIcons.menu_close,
+                    // iconData: Icons.menu,
+                    backGroundColor: Get.isDarkMode
+                        ? myappbarcolor
+                        : AppColors.LTprimaryColor,
+                  );
+                })
               // this is to show for organizer
               : FloatingActionBubble(
                   items: [
@@ -508,7 +521,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       title: "Post Notification",
                       iconColor: Colors.white,
                       bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
+                          ? myappbarcolor
                           : AppColors.LTprimaryColor,
                       icon: Icons.notification_add,
                       titleStyle:
@@ -523,7 +536,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       title: "Edit",
                       iconColor: Colors.white,
                       bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
+                          ? myappbarcolor
                           : AppColors.LTprimaryColor,
                       icon: Icons.edit,
                       titleStyle:
@@ -541,7 +554,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       title: "Organizers",
                       iconColor: Colors.white,
                       bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
+                          ? myappbarcolor
                           : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
@@ -563,7 +576,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       title: "Guests",
                       iconColor: Colors.white,
                       bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
+                          ? myappbarcolor
                           : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
@@ -583,7 +596,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                       title: "Attendees",
                       iconColor: Colors.white,
                       bubbleColor: Get.isDarkMode
-                          ? Mycolors.myappbarcolor
+                          ? myappbarcolor
                           : AppColors.LTprimaryColor,
                       icon: Icons.group,
                       titleStyle:
@@ -618,9 +631,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   // Flaoting Action button Icon
                   // iconData: Icons.menu,
                   animatedIconData: AnimatedIcons.menu_close,
-                  backGroundColor: Get.isDarkMode
-                      ? Mycolors.myappbarcolor
-                      : AppColors.LTprimaryColor,
+                  backGroundColor:
+                      Get.isDarkMode ? myappbarcolor : AppColors.LTprimaryColor,
                 )
           : null,
       body: NestedScrollView(
@@ -1562,7 +1574,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                   ? Center(
                       child: Text(
                         'Reviews will be available after the webinar ends',
-                        style: Mystyles.onelineStyle,
+                        style: onelineStyle,
                       ),
                     )
                   : ListView(
@@ -1575,7 +1587,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   TextFormField(
-                                    style: Mystyles.onelineStyle,
+                                    style: onelineStyle,
                                     onChanged: (value) {
                                       setState(() {});
                                     },
@@ -1583,7 +1595,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                     maxLines: 4,
                                     decoration: InputDecoration(
                                       hintText: 'Write a review. . .',
-                                      hintStyle: Mystyles.onelineStyle,
+                                      hintStyle: onelineStyle,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
@@ -1639,7 +1651,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             : const SizedBox(),
                         Gap(20.h),
                         Divider(
-                          color: Mystyles.onelineStyle.color,
+                          color: onelineStyle.color,
                           thickness: 1,
                         ),
                         Gap(10.h),

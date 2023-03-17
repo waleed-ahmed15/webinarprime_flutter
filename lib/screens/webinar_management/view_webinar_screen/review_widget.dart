@@ -29,7 +29,7 @@ class MyReviewWidget extends StatelessWidget {
     return Container(
       padding:
           EdgeInsets.only(left: 10.h, right: 10.h, top: 10.h, bottom: 10.h),
-      decoration: MyBoxDecorations.listtileDecoration,
+      decoration: listtileDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -39,10 +39,11 @@ class MyReviewWidget extends StatelessWidget {
               backgroundImage:
                   NetworkImage(AppConstants.baseURL + profileImage),
             ),
-            title: Text(Name, style: Mystyles.listtileTitleStyle),
+            title:
+                Text(Name, style: Theme.of(context).textTheme.displayMedium!),
             subtitle: Text(
               DateFormat('dd/MM/yy, hh:mm').format(DateTime.parse(Date)),
-              style: Mystyles.listtileSubtitleStyle,
+              style: listtileSubtitleStyle,
             ),
           ),
           Gap(2.h),
@@ -55,7 +56,7 @@ class MyReviewWidget extends StatelessWidget {
               expandOnTextTap: true,
               collapseOnTextTap: true,
               review,
-              style: Mystyles.myParagraphStyle,
+              style: myParagraphStyle,
               textAlign: TextAlign.justify,
             ),
           ),

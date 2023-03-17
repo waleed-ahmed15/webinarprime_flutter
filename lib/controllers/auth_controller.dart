@@ -812,6 +812,7 @@ class AuthController extends GetxController {
   Future<bool> getFavoriteWebinars() async {
     try {
       Uri url = Uri.parse("${AppConstants.baseURL}/user/favorites");
+      print(Get.find<SharedPreferences>().getString('tempToken')!);
       var response = await http.get(
         url,
         headers: {
@@ -821,8 +822,9 @@ class AuthController extends GetxController {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        // print(data);
+        print(data);
         favoriteWebinars.clear();
+
         favoriteWebinars = data['favorites'];
         print(favoriteWebinars);
         update(['favoriteWebinars']);

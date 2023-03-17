@@ -76,7 +76,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     Map<String, Widget> widgetsBox = {
       'name': TextFormField(
-        style: Mystyles.listtileTitleStyle,
+        style: Theme.of(context).textTheme.displayMedium!,
         controller: editingController,
         decoration: const InputDecoration(
             border: UnderlineInputBorder(),
@@ -96,7 +96,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       'email': TextFormField(
         controller: editingController,
-        style: Mystyles.listtileTitleStyle,
+        style: Theme.of(context).textTheme.displayMedium!,
         decoration: const InputDecoration(
             border: UnderlineInputBorder(),
             labelStyle: TextStyle(color: Color.fromARGB(255, 134, 163, 160)),
@@ -336,10 +336,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               GetBuilder<AuthController>(
                   assignId: true,
                   id: 'editprofile',
-                  builder: (context) {
+                  builder: (controller) {
                     return Container(
-                      decoration:
-                          MyBoxDecorations.listtileDecoration.copyWith(),
+                      decoration: listtileDecoration,
                       margin: EdgeInsets.symmetric(horizontal: 10.w),
                       padding: EdgeInsets.symmetric(horizontal: 10.w),
                       child: Column(
@@ -358,12 +357,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Gap(10.h),
                           Text(
                             Get.find<AuthController>().currentUser['name'],
-                            style: Mystyles.bigTitleStyle.copyWith(
-                                fontSize: 20.h,
-                                fontWeight: FontWeight.w300,
-                                fontFamily: 'JosefinSans Regular',
-                                letterSpacing: 1,
-                                color: Mystyles.listtileTitleStyle.color),
+                            style: Theme.of(Get.context!)
+                                .textTheme
+                                .displayLarge!
+                                .copyWith(
+                                    fontSize: 20.h,
+                                    fontWeight: FontWeight.w300,
+                                    fontFamily: 'JosefinSans Regular',
+                                    letterSpacing: 1,
+                                    color: Theme.of(Get.context!)
+                                        .textTheme
+                                        .displayMedium!
+                                        .color),
                           ),
                           Gap(5.h),
                           const Divider(),
@@ -380,12 +385,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Gap(10.h),
                           Text(
                             Get.find<AuthController>().currentUser['email'],
-                            style: Mystyles.listtileSubtitleStyle.copyWith(
+                            style: listtileSubtitleStyle.copyWith(
                                 fontSize: 19.h,
                                 fontWeight: FontWeight.w300,
                                 fontFamily: 'JosefinSans Regular',
                                 letterSpacing: 1,
-                                color: Mystyles.listtileTitleStyle.color),
+                                color: Theme.of(Get.context!)
+                                    .textTheme
+                                    .displayMedium!
+                                    .color),
                           ),
                           Gap(5.h),
                           const Divider(),
@@ -402,12 +410,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Gap(10.h),
                           Text(
                             Get.find<AuthController>().currentUser['birthdate'],
-                            style: Mystyles.listtileSubtitleStyle.copyWith(
+                            style: listtileSubtitleStyle.copyWith(
                                 fontSize: 19.h,
                                 fontWeight: FontWeight.w300,
                                 fontFamily: 'JosefinSans Regular',
                                 letterSpacing: 1,
-                                color: Mystyles.listtileTitleStyle.color),
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .color),
                           ),
                           Gap(5.h),
                           const Divider(),
@@ -425,12 +436,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Text(
                             Get.find<AuthController>()
                                 .currentUser['registration_number'],
-                            style: Mystyles.listtileSubtitleStyle.copyWith(
+                            style: listtileSubtitleStyle.copyWith(
                                 fontSize: 19.h,
                                 fontWeight: FontWeight.w300,
                                 fontFamily: 'JosefinSans Regular',
                                 letterSpacing: 1,
-                                color: Mystyles.listtileTitleStyle.color),
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .color),
                           ),
                           Gap(5.h),
                           const Divider(),
@@ -464,12 +478,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               }),
                           Text(
                             '***********',
-                            style: Mystyles.listtileSubtitleStyle.copyWith(
+                            style: listtileSubtitleStyle.copyWith(
                                 fontSize: 19.h,
                                 fontWeight: FontWeight.w300,
                                 fontFamily: 'JosefinSans Regular',
                                 letterSpacing: 1,
-                                color: Mystyles.listtileTitleStyle.color),
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .color),
                           ),
                           Gap(5.h),
                           const Divider(),
@@ -482,7 +499,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   style: TextStyle(
                                     letterSpacing: 1,
                                     fontSize: 20.sp,
-                                    color: Mycolors.iconColor,
+                                    color: iconColor,
                                     fontWeight: FontWeight.w700,
                                     fontFamily: 'JosefinSans Bold',
                                   )),

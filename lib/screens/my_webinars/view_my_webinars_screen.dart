@@ -35,6 +35,7 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
             ), //this right here
             child: Container(
               decoration: BoxDecoration(
+                // color: Theme.of(context).scaffoldBackgroundColor,
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20.r),
               ),
@@ -49,14 +50,14 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                       children: [
                         Center(
                           child: Text("Post Notification",
-                              style: Mystyles.categoriesHeadingStyle.copyWith(
+                              style: categoriesHeadingStyle.copyWith(
                                   color: Get.isDarkMode
                                       ? Colors.white70
                                       : Colors.black38)),
                         ),
                         TextFormField(
                           controller: titleController,
-                          style: Mystyles.onelineStyle,
+                          style: onelineStyle,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius:
@@ -75,7 +76,7 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                         ),
                         // Gap(10.h),
                         TextFormField(
-                          style: Mystyles.myParagraphStyle,
+                          style: myParagraphStyle,
                           maxLines: 7,
                           controller: descriptionController,
                           decoration: InputDecoration(
@@ -194,7 +195,7 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                           horizontal: AppLayout.getWidth(10),
                           vertical: AppLayout.getHeight(10)),
                       // padding: EdgeInsets.symmetric(horizontal: AppLayout.getWidth(10)),
-                      decoration: MyBoxDecorations.listtileDecoration,
+                      decoration: listtileDecoration,
                       child: Column(
                         children: [
                           ListTile(
@@ -216,8 +217,7 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                                                   .currentWebinar,
                                         ));
                                   },
-                                  child: Text("Edit",
-                                      style: Mystyles.popupHeadingStyle),
+                                  child: Text("Edit", style: popupHeadingStyle),
                                 ),
                                 PopupMenuItem(
                                   onTap: () async {
@@ -229,14 +229,14 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                                     print("Post Notification tapped");
                                   },
                                   child: Text("Post Notification",
-                                      style: Mystyles.popupHeadingStyle),
+                                      style: popupHeadingStyle),
                                 ),
                                 PopupMenuItem(
                                   onTap: () async {
                                     print("add webinar event schedule");
                                   },
                                   child: Text("Event Schedule",
-                                      style: Mystyles.popupHeadingStyle),
+                                      style: popupHeadingStyle),
                                 ),
                                 PopupMenuItem(
                                   onTap: () async {
@@ -262,14 +262,14 @@ class _View_my_Webinar_ScreenState extends State<View_my_Webinar_Screen> {
                                     print("add organizers to webinar pressed");
                                   },
                                   child: Text("Add Organizers",
-                                      style: Mystyles.popupHeadingStyle),
+                                      style: popupHeadingStyle),
                                 ),
                                 PopupMenuItem(
                                   onTap: () {
                                     print("Join requests tapped");
                                   },
                                   child: Text("Join Requests",
-                                      style: Mystyles.popupHeadingStyle),
+                                      style: popupHeadingStyle),
                                 ),
                               ],
                             ),

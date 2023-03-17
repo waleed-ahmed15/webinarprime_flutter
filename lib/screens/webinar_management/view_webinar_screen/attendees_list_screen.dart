@@ -17,10 +17,10 @@ class AttendessList extends StatelessWidget {
         centerTitle: true,
         title: Text(
           'Attendees',
-          style: Mystyles.bigTitleStyle.copyWith(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w500,
-          ),
+          style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w500,
+              ),
         ),
       ),
       body: ListView.builder(
@@ -28,8 +28,7 @@ class AttendessList extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
           return Container(
-            decoration:
-                MyBoxDecorations.listtileDecoration.copyWith(boxShadow: []),
+            decoration: listtileDecoration.copyWith(boxShadow: []),
             margin: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
             child: ListTile(
               leading: CircleAvatar(
@@ -39,11 +38,11 @@ class AttendessList extends StatelessWidget {
               ),
               title: Text(
                 attendeesList[index]['name'],
-                style: Mystyles.listtileTitleStyle,
+                style: Theme.of(context).textTheme.displayMedium!,
               ),
               subtitle: Text(
                 attendeesList[index]['email'],
-                style: Mystyles.listtileSubtitleStyle,
+                style: listtileSubtitleStyle,
               ),
             ),
           );

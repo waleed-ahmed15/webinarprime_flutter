@@ -1,57 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:webinarprime/utils/colors.dart';
+import 'package:webinarprime/utils/styles.dart';
 
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: AppColors.LTprimaryColor,
+  appBarTheme: const AppBarTheme(color: Colors.white),
   secondaryHeaderColor: AppColors.LTsecondaryColor,
   scaffoldBackgroundColor: AppColors.LTBackgroundColor,
-  textTheme: const TextTheme(
-      displayLarge: TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-      displayMedium: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-      displaySmall: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-      headlineMedium: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-      headlineSmall: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-      titleLarge: TextStyle(
+  textTheme: TextTheme(
+      displayLarge: bigTitleStyle,
+      displayMedium: listtileTitleStyle,
+      displaySmall: listtileSubtitleStyle,
+      headlineMedium: tabTextstyle,
+      headlineSmall: myhintTextstyle,
+      titleLarge: const TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-      bodyLarge: TextStyle(
+      bodyLarge: const TextStyle(
         fontSize: 16,
         color: Colors.black,
       ),
-      bodyMedium: TextStyle(
+      bodyMedium: const TextStyle(
         fontSize: 14,
         color: Colors.black,
       )),
   colorScheme:
       ColorScheme.fromSwatch().copyWith(secondary: AppColors.LTforgroundColor),
+  
 );
 
 ThemeData darkTheme = ThemeData(
+  appBarTheme: const AppBarTheme(color: Color(0xff0A2647)),
   brightness: Brightness.dark,
-  fontFamily: 'Montserrat',
+  fontFamily: 'JosefinSans',
   inputDecorationTheme: const InputDecorationTheme(
     border: InputBorder.none,
   ),

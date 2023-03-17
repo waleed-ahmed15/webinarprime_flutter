@@ -33,7 +33,9 @@ class _FavoriteWebinarsState extends State<FavoriteWebinars> {
             ),
             Text(
               ' Webinars',
-              style: Mystyles.bigTitleStyle
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge!
                   .copyWith(fontSize: 20.sp, fontWeight: FontWeight.w500),
             ),
           ],
@@ -53,7 +55,7 @@ class _FavoriteWebinarsState extends State<FavoriteWebinars> {
               itemBuilder: (context, index) {
                 return Container(
                   margin: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-                  decoration: MyBoxDecorations.listtileDecoration.copyWith(
+                  decoration: listtileDecoration.copyWith(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       boxShadow: [
                         BoxShadow(
@@ -95,18 +97,24 @@ class _FavoriteWebinarsState extends State<FavoriteWebinars> {
                                 AutoSizeText(
                                   AuthController.favoriteWebinars[index]
                                       ['name'],
-                                  style: Mystyles.bigTitleStyle.copyWith(
-                                      fontSize: 20.sp,
-                                      overflow: TextOverflow.ellipsis),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displayLarge!
+                                      .copyWith(
+                                          fontSize: 20.sp,
+                                          overflow: TextOverflow.ellipsis),
                                   maxLines: 2,
                                 ),
                                 Gap(10.h),
                                 AutoSizeText(
                                   AuthController.favoriteWebinars[index]['tags']
                                       .toString(),
-                                  style: Mystyles.listtileTitleStyle.copyWith(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 14.sp),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displayMedium!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 14.sp),
                                 ),
                                 Gap(25.h),
                                 Row(
@@ -117,7 +125,9 @@ class _FavoriteWebinarsState extends State<FavoriteWebinars> {
                                       AuthController.favoriteWebinars[index]
                                               ['duration'] +
                                           ' mins',
-                                      style: Mystyles.bigTitleStyle
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayLarge!
                                           .copyWith(fontSize: 16.sp),
                                     ),
                                     AutoSizeText(
@@ -125,11 +135,14 @@ class _FavoriteWebinarsState extends State<FavoriteWebinars> {
                                                     ['price']
                                                 .toString() +
                                             ' \$'.toString(),
-                                        style: Mystyles.bigTitleStyle.copyWith(
-                                            color: Get.isDarkMode
-                                                ? AppColors.LTsecondaryColor
-                                                : AppColors.LTprimaryColor,
-                                            fontSize: 16.sp)),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayLarge!
+                                            .copyWith(
+                                                color: Get.isDarkMode
+                                                    ? AppColors.LTsecondaryColor
+                                                    : AppColors.LTprimaryColor,
+                                                fontSize: 16.sp)),
                                   ],
                                 ),
                               ],
@@ -147,15 +160,21 @@ class _FavoriteWebinarsState extends State<FavoriteWebinars> {
                             AutoSizeText(
                               AuthController.favoriteWebinars[index]['datetime']
                                   .toString(),
-                              style: Mystyles.listtileTitleStyle.copyWith(
-                                  fontSize: 10.sp, fontWeight: FontWeight.w300),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.w300),
                             ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   'Created by',
-                                  style: Mystyles.listtileTitleStyle
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displayMedium!
                                       .copyWith(fontSize: 14.sp),
                                 ),
                                 Gap(5.w),

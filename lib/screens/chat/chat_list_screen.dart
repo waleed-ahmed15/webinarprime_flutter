@@ -36,18 +36,22 @@ class _ChatListScreenState extends State<ChatListScreen>
           appBar: AppBar(
             automaticallyImplyLeading: false,
             // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            // backgroundColor: Mycolors.myappbarcolor,
+            // backgroundColor:  myappbarcolor,
             backgroundColor:
                 Get.isDarkMode ? Colors.black : const Color(0xffffffff),
 
             title: SizedBox(
               child: TextFormField(
                 controller: searchController,
-                style: Mystyles.listtileTitleStyle
+                style: Theme.of(context)
+                    .textTheme
+                    .displayMedium!
                     .copyWith(fontWeight: FontWeight.w500),
                 decoration: InputDecoration(
                   hintText: 'Search. . .',
-                  hintStyle: Mystyles.listtileTitleStyle
+                  hintStyle: Theme.of(context)
+                      .textTheme
+                      .displayMedium!
                       .copyWith(fontWeight: FontWeight.w500),
                   enabledBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -69,7 +73,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 return Center(
                   child: Text(
                     'No Chats Yet',
-                    style: Mystyles.bigTitleStyle,
+                    style: Theme.of(context).textTheme.displayLarge!,
                   ),
                 );
               }
@@ -120,7 +124,9 @@ class _ChatListScreenState extends State<ChatListScreen>
                             ChatStreamController.userchats[index]['users']
                                 [otheruserIndex]['name'],
                             overflow: TextOverflow.ellipsis,
-                            style: Mystyles.listtileTitleStyle
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
                                 .copyWith(fontWeight: FontWeight.w700),
                           ),
                           subtitle: Text(
@@ -129,8 +135,8 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 ? 'start a conversation'
                                 : ChatStreamController.userchats[index]
                                     ['messages'][0]['text'],
-                            style: Mystyles.listtileSubtitleStyle
-                                .copyWith(fontSize: 14.sp),
+                            style:
+                                listtileSubtitleStyle.copyWith(fontSize: 14.sp),
                             overflow: TextOverflow.ellipsis,
                           ),
                           trailing: Text(
@@ -172,7 +178,9 @@ class _ChatListScreenState extends State<ChatListScreen>
                             ChatStreamController.userchats[index]['users']
                                 [otheruserIndex]['name'],
                             overflow: TextOverflow.ellipsis,
-                            style: Mystyles.listtileTitleStyle
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
                                 .copyWith(fontWeight: FontWeight.w500),
                           ),
                           subtitle: Text(
@@ -181,7 +189,9 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 ? 'start a conversation'
                                 : ChatStreamController.userchats[index]
                                     ['messages'][0]['text'],
-                            style: Mystyles.listtileTitleStyle
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
                                 .copyWith(fontSize: 14.sp),
                             overflow: TextOverflow.ellipsis,
                           ),

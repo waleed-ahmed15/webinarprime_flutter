@@ -404,9 +404,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                       ),
                     ),
                     const SizedBox(height: 20.0),
-
                     dialogboxWidgets[title]!,
-                    
                     const SizedBox(height: 20.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -536,16 +534,17 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
   Widget build(BuildContext context) {
     print('webinarDetails: ${widget.webinarDetails}');
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print('hrreer');
-          print(widget.webinarDetails['datetime']);
-          Get.isDarkMode
-              ? Get.changeThemeMode(ThemeMode.light)
-              : Get.changeThemeMode(ThemeMode.dark);
-        },
-        child: const Icon(Icons.play_arrow),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     print('hrreer');
+      //     print(widget.webinarDetails['datetime']);
+      //     Get.isDarkMode
+      //         ? Get.changeThemeMode(ThemeMode.light)
+      //         : Get.changeThemeMode(ThemeMode.dark);
+      //   },
+      //   child: const Icon(Icons.play_arrow),
+      // ),
+
       body: NestedScrollView(
         controller: scrollController,
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -1593,7 +1592,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
 
             // The content for the fourth tab goes here
             const Center(
-              child: Text("Content for Tab 4"),
+              child: Text(""),
             ),
           ],
         ),

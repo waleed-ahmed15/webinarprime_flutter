@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/categoryController.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/models/category_model.dart';
+import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class EditCategories extends StatefulWidget {
@@ -56,8 +58,16 @@ class _EditCategoriesState extends State<EditCategories> {
     print(widget.webinarCategoriesid);
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Mycolors.myappbarcolor,
-          title: const Text('Edit Categories'),
+          backgroundColor: myappbarcolor,
+          title: Text(
+            'Edit Categories',
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(fontSize: 15.sp),
+          ),
+          centerTitle: true,
+          elevation: 0,
         ),
         body: ListView.builder(
           physics: const BouncingScrollPhysics(),
@@ -87,6 +97,14 @@ class _EditCategoriesState extends State<EditCategories> {
           height: 40,
           width: double.infinity,
           child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Get.isDarkMode
+                  ? AppColors.LTsecondaryColor
+                  : AppColors.LTprimaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             onPressed: () async {
               // Get.back(result: widget.webinarCategoriesid);
               if (widget.userinterest) {
@@ -110,7 +128,10 @@ class _EditCategoriesState extends State<EditCategories> {
             },
             child: Text(
               'Update',
-              style: Mystyles.listtileTitleStyle,
+              style: Theme.of(context)
+                  .textTheme
+                  .displayMedium!
+                  .copyWith(color: Colors.white),
             ),
           ),
         ));

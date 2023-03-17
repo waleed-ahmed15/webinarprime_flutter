@@ -177,14 +177,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         title: Text(
           'Details',
-          style: Mystyles.bigTitleStyle.copyWith(fontSize: 20.sp),
+          style: Theme.of(context)
+              .textTheme
+              .displayLarge!
+              .copyWith(fontSize: 20.sp),
         ),
       ),
       body: Container(
         margin: EdgeInsets.symmetric(
             vertical: AppLayout.getHeight(20),
             horizontal: AppLayout.getWidth(6)),
-        decoration: MyBoxDecorations.listtileDecoration,
+        decoration: listtileDecoration,
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: AppLayout.getHeight(20)),
           children: [

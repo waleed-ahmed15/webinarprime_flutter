@@ -48,7 +48,7 @@ class _CreateNewChatState extends State<CreateNewChat> {
                   },
                 ),
                 hintText: 'Search. . .',
-                hintStyle: Mystyles.myhintTextstyle.copyWith(
+                hintStyle: myhintTextstyle.copyWith(
                     color: Get.isDarkMode ? Colors.white : Colors.black),
                 border: InputBorder.none,
               ),
@@ -70,8 +70,7 @@ class _CreateNewChatState extends State<CreateNewChat> {
               itemCount: Get.find<AuthController>().searchedUsers.length,
               itemBuilder: (context, index) {
                 return Container(
-                  decoration: MyBoxDecorations.listtileDecoration
-                      .copyWith(boxShadow: []),
+                  decoration: listtileDecoration.copyWith(boxShadow: []),
                   margin:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ElevatedButton(
@@ -115,12 +114,12 @@ class _CreateNewChatState extends State<CreateNewChat> {
                       ),
                       title: Text(
                         Get.find<AuthController>().searchedUsers[index]['name'],
-                        style: Mystyles.listtileTitleStyle,
+                        style: Theme.of(context).textTheme.displayMedium!,
                       ),
                       subtitle: Text(
                         Get.find<AuthController>().searchedUsers[index]
                             ['email'],
-                        style: Mystyles.listtileSubtitleStyle,
+                        style: listtileSubtitleStyle,
                       ),
                     ),
                   ),

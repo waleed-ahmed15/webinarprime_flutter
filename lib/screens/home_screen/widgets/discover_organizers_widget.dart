@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:webinarprime/utils/styles.dart';
 
 class DiscoverOrganizerList extends StatefulWidget {
   const DiscoverOrganizerList({super.key});
@@ -22,7 +21,9 @@ class _DiscoverOrganizerListState extends State<DiscoverOrganizerList> {
           padding: EdgeInsets.only(left: 10.w),
           child: Text(
             'Discover Organizers',
-            style: Mystyles.listtileTitleStyle
+            style: Theme.of(context)
+                .textTheme
+                .displayMedium!
                 .copyWith(fontSize: 18.h, fontWeight: FontWeight.w400),
           ),
         ),
@@ -56,13 +57,19 @@ class _DiscoverOrganizerListState extends State<DiscoverOrganizerList> {
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
-                    style: Mystyles.listtileTitleStyle
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium!
                         .copyWith(fontSize: 14.sp, fontWeight: FontWeight.w200),
                   ),
                   Gap(2.h),
                   ElevatedButton(
                     onPressed: () {},
-                    child: Text('Follow', style: Mystyles.listtileTitleStyle),
+                    child: Text('Follow',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(color: Colors.white, fontSize: 14.sp)),
                   ),
                 ]),
               );

@@ -51,9 +51,8 @@ class _UserProfileViewState extends State<UserProfileView>
         //  floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         floatingActionButton: FloatingActionButton(
           heroTag: null,
-          backgroundColor: Get.isDarkMode
-              ? Mycolors.myappbarcolor
-              : AppColors.LTprimaryColor,
+          backgroundColor:
+              Get.isDarkMode ? myappbarcolor : AppColors.LTprimaryColor,
           onPressed: () {
             Get.to(() => const EditProfileScreen());
           },
@@ -84,10 +83,13 @@ class _UserProfileViewState extends State<UserProfileView>
                 expandedHeight: 340.h,
                 title: _showTitle
                     ? Text(AuthController.otherUserProfile['name'],
-                        style: Mystyles.listtileTitleStyle.copyWith(
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white))
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(
+                                fontSize: 17.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white))
                     : null,
                 flexibleSpace: const SpaceBarForProfileView(),
                 bottom: PreferredSize(

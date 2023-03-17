@@ -8,9 +8,11 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/models/question_model.dart';
 import 'package:webinarprime/models/room_chat_answerModel.dart';
+import 'package:webinarprime/screens/webinar_management/view_webinar_screen/webinar_details_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
@@ -246,218 +248,250 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        drawer: Scaffold(
-          appBar: AppBar(
+  Widget build(BuildContext context) => WillPopScope(
+        onWillPop: () async {
+          // await widget.room.disconnect();
+          scaffoldKey.currentState!.closeEndDrawer();
+          scaffoldKey.currentState!.closeDrawer();
+          // print('geeerr');
+          Get.off(() => WebinarDetailsScreen(
+              webinarDetails: WebinarManagementController.currentWebinar));
+
+          return false;
+        },
+        child: Scaffold(
+          drawer: Scaffold(
             backgroundColor: AppColors.DTbackGroundColor,
-            elevation: 0,
-            toolbarHeight: 0,
-            bottom: TabBar(controller: _tabController2, tabs: [
-              Tab(
-                child: Text(
-                  'participants',
-                  style: Mystyles.listtileTitleStyle.copyWith(fontSize: 20.sp),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  'blocked',
-                  style: Mystyles.listtileTitleStyle.copyWith(fontSize: 20.sp),
-                ),
-              ),
-            ]),
-          ),
-          body: TabBarView(
-            controller: _tabController2,
-            children: [
-              ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  // SizedBox(
-                  //   height: 70.h,
-                  //   child: DrawerHeader(
-                  //     decoration: const BoxDecoration(
-                  //       border: Border(
-                  //         bottom: BorderSide(
-                  //           color: Colors.white,
-                  //           width: 1,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     child: Text(
-                  //       'Participants',
-                  //       style: TextStyle(
-                  //         fontFamily: 'JosefinSans Regular',
-                  //         color: Colors.white,
-                  //         fontSize: 20.sp,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  SizedBox(
-                    height: 0.7.sh,
-                    child: ListView.builder(
-                      itemCount: widget.room.participants.length + 1,
-                      itemBuilder: (BuildContext context, int index) {
-                        return index == widget.room.participants.length
-                            ? Padding(
-                                padding: EdgeInsets.only(bottom: 2.h),
-                                child: ListTile(
-                                    subtitle: Text(
-                                      jsonDecode(widget.room.localParticipant!
-                                          .metadata!)['role'],
-                                      style: Mystyles.listtileSubtitleStyle
-                                          .copyWith(color: Colors.white),
-                                    ),
-                                    title: Text(
-                                      jsonDecode(widget.room.localParticipant!
-                                          .metadata!)['name'],
-                                      style: TextStyle(
-                                        color: widget.room.localParticipant!
-                                                .isSpeaking
-                                            ? Colors.green
-                                            : Colors.white,
-                                        fontSize: 20,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    leading: CircleAvatar(
-                                      radius: 20.r,
-                                      backgroundImage: NetworkImage(
-                                          AppConstants.baseURL +
-                                              jsonDecode(widget
-                                                  .room
-                                                  .localParticipant!
-                                                  .metadata!)['profile_image']),
-                                    ),
-                                    trailing: SizedBox(
-                                      width: 100.h,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () {},
-                                            icon: widget.room.localParticipant!
-                                                    .isMuted
-                                                ? const Icon(
-                                                    Icons.mic_off,
-                                                    color: Colors.red,
-                                                  )
-                                                : const Icon(
-                                                    Icons.mic,
-                                                    color: Colors.green,
-                                                  ),
-                                          ),
-                                        ],
-                                      ),
-                                    )),
-                              )
-                            : Padding(
-                                padding: EdgeInsets.only(bottom: 2.h),
-                                child: ListTile(
-                                    subtitle: Text(
-                                      jsonDecode(widget.room.participants.values
-                                          .elementAt(index)
-                                          .metadata!)['role'],
-                                      style: Mystyles.listtileSubtitleStyle
-                                          .copyWith(color: Colors.white),
-                                    ),
-                                    title: Text(
-                                      jsonDecode(widget.room.participants.values
-                                          .elementAt(index)
-                                          .metadata!)['name'],
-                                      style: TextStyle(
-                                        color: widget.room.participants.values
-                                                .elementAt(index)
-                                                .isSpeaking
-                                            ? Colors.green
-                                            : Colors.white,
-                                        fontSize: 20.sp,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    leading: CircleAvatar(
-                                      radius: 20.r,
-                                      backgroundImage: NetworkImage(
-                                          AppConstants.baseURL +
-                                              jsonDecode(widget
-                                                  .room.participants.values
-                                                  .elementAt(index)
-                                                  .metadata!)['profile_image']),
-                                    ),
-                                    trailing: SizedBox(
-                                      width: 100.h,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () {
-                                              // mute participant
-
-                                              print(widget.room.participants
-                                                  .values.first.isMuted);
-                                              print(widget.room.participants[0]!
-                                                  .isMuted);
-                                            },
-                                            icon: widget
-                                                    .room.participants.values
-                                                    .elementAt(index)
-                                                    .isMuted
-                                                ? const Icon(
-                                                    Icons.mic_off,
-                                                    color: Colors.red,
-                                                  )
-                                                : const Icon(
-                                                    Icons.mic,
-                                                    color: Colors.green,
-                                                  ),
-                                          ),
-                                          jsonDecode(widget
-                                                      .room
-                                                      .localParticipant!
-                                                      .metadata!)['role'] ==
-                                                  'organizer'
-                                              ? IconButton(
-                                                  onPressed: () async {
-                                                    String kickedparticipantId =
-                                                        jsonDecode(widget.room
-                                                            .participants.values
-                                                            .elementAt(index)
-                                                            .metadata!)['_id'];
-                                                    print(jsonDecode(widget.room
-                                                        .participants.values
-                                                        .elementAt(index)
-                                                        .metadata!));
-                                                    print(
-                                                        'person kicked from roster');
-                                                    print(kickedparticipantId);
-                                                    print(widget.webinarRoomId);
-
-                                                    await Get.find<
-                                                            WebinarStreamController>()
-                                                        .kickparticipantFromWebinar(
-                                                            kickedparticipantId,
-                                                            widget
-                                                                .webinarRoomId);
-                                                  },
-                                                  icon: const Icon(
-                                                      Icons.person_remove),
-                                                  color: Colors.red,
-                                                )
-                                              : const SizedBox(),
-                                        ],
-                                      ),
-                                    )),
-                              );
-                      },
+            appBar: AppBar(
+              backgroundColor: AppColors.DTbackGroundColor,
+              elevation: 0,
+              toolbarHeight: 0,
+              bottom: TabBar(
+                  controller: _tabController2,
+                  indicatorColor: AppColors.LTprimaryColor,
+                  tabs: [
+                    Tab(
+                      child: Text(
+                        'participants',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(fontSize: 20.sp, color: Colors.white),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-             GetBuilder<WebinarStreamController>(
-                builder: (controller) {
+                    Tab(
+                      child: Text(
+                        'blocked',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(fontSize: 20.sp, color: Colors.white),
+                      ),
+                    ),
+                  ]),
+            ),
+            body: TabBarView(
+              controller: _tabController2,
+              children: [
+                ListView(
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    // SizedBox(
+                    //   height: 70.h,
+                    //   child: DrawerHeader(
+                    //     decoration: const BoxDecoration(
+                    //       border: Border(
+                    //         bottom: BorderSide(
+                    //           color: Colors.white,
+                    //           width: 1,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     child: Text(
+                    //       'Participants',
+                    //       style: TextStyle(
+                    //         fontFamily: 'JosefinSans Regular',
+                    //         color: Colors.white,
+                    //         fontSize: 20.sp,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: 0.7.sh,
+                      child: ListView.builder(
+                        itemCount: widget.room.participants.length + 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return index == widget.room.participants.length
+                              ? Padding(
+                                  padding: EdgeInsets.only(bottom: 2.h),
+                                  child: ListTile(
+                                      subtitle: Text(
+                                        jsonDecode(widget.room.localParticipant!
+                                            .metadata!)['role'],
+                                        style: listtileSubtitleStyle.copyWith(
+                                            color: Colors.white),
+                                      ),
+                                      title: Text(
+                                        jsonDecode(widget.room.localParticipant!
+                                            .metadata!)['name'],
+                                        style: TextStyle(
+                                          color: widget.room.localParticipant!
+                                                  .isSpeaking
+                                              ? Colors.green
+                                              : Colors.white,
+                                          fontSize: 20,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      leading: CircleAvatar(
+                                        radius: 20.r,
+                                        backgroundImage: NetworkImage(
+                                            AppConstants.baseURL +
+                                                jsonDecode(widget
+                                                        .room
+                                                        .localParticipant!
+                                                        .metadata!)[
+                                                    'profile_image']),
+                                      ),
+                                      trailing: SizedBox(
+                                        width: 100.h,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {},
+                                              icon: widget.room
+                                                      .localParticipant!.isMuted
+                                                  ? const Icon(
+                                                      Icons.mic_off,
+                                                      color: Colors.red,
+                                                    )
+                                                  : const Icon(
+                                                      Icons.mic,
+                                                      color: Colors.green,
+                                                    ),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.only(bottom: 2.h),
+                                  child: ListTile(
+                                      subtitle: Text(
+                                        jsonDecode(widget
+                                            .room.participants.values
+                                            .elementAt(index)
+                                            .metadata!)['role'],
+                                        style: listtileSubtitleStyle.copyWith(
+                                            color: Colors.white),
+                                      ),
+                                      title: Text(
+                                        jsonDecode(widget
+                                            .room.participants.values
+                                            .elementAt(index)
+                                            .metadata!)['name'],
+                                        style: TextStyle(
+                                          color: widget.room.participants.values
+                                                  .elementAt(index)
+                                                  .isSpeaking
+                                              ? Colors.green
+                                              : Colors.white,
+                                          fontSize: 20.sp,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      leading: CircleAvatar(
+                                        radius: 20.r,
+                                        backgroundImage: NetworkImage(
+                                            AppConstants.baseURL +
+                                                jsonDecode(
+                                                        widget.room.participants
+                                                            .values
+                                                            .elementAt(index)
+                                                            .metadata!)[
+                                                    'profile_image']),
+                                      ),
+                                      trailing: SizedBox(
+                                        width: 100.h,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {
+                                                // mute participant
+
+                                                print(widget.room.participants
+                                                    .values.first.isMuted);
+                                                print(widget.room
+                                                    .participants[0]!.isMuted);
+                                              },
+                                              icon: widget
+                                                      .room.participants.values
+                                                      .elementAt(index)
+                                                      .isMuted
+                                                  ? const Icon(
+                                                      Icons.mic_off,
+                                                      color: Colors.red,
+                                                    )
+                                                  : const Icon(
+                                                      Icons.mic,
+                                                      color: Colors.green,
+                                                    ),
+                                            ),
+                                            jsonDecode(widget
+                                                        .room
+                                                        .localParticipant!
+                                                        .metadata!)['role'] ==
+                                                    'organizer'
+                                                ? IconButton(
+                                                    onPressed: () async {
+                                                      String
+                                                          kickedparticipantId =
+                                                          jsonDecode(widget
+                                                              .room
+                                                              .participants
+                                                              .values
+                                                              .elementAt(index)
+                                                              .metadata!)['_id'];
+                                                      print(jsonDecode(widget
+                                                          .room
+                                                          .participants
+                                                          .values
+                                                          .elementAt(index)
+                                                          .metadata!));
+                                                      print(
+                                                          'person kicked from roster');
+                                                      print(
+                                                          kickedparticipantId);
+                                                      print(
+                                                          widget.webinarRoomId);
+
+                                                      await Get.find<
+                                                              WebinarStreamController>()
+                                                          .kickparticipantFromWebinar(
+                                                              kickedparticipantId,
+                                                              widget
+                                                                  .webinarRoomId);
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.person_remove),
+                                                    color: Colors.red,
+                                                  )
+                                                : const SizedBox(),
+                                          ],
+                                        ),
+                                      )),
+                                );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                GetBuilder<WebinarStreamController>(builder: (controller) {
                   return ListView.builder(
                     itemCount: WebinarStreamController
                         .currentStreamBlockParticipants.length,
@@ -482,738 +516,804 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                           ),
                         ),
                         trailing: TextButton(
-                            child: const Text('Unblock'),
+                            child: Text(
+                              'Unblock',
+                              style: listtileSubtitleStyle.copyWith(
+                                  color: Colors.white),
+                            ),
                             onPressed: () {
                               Get.find<WebinarStreamController>()
                                   .unblockparticipantFromWebinar(
                                       WebinarStreamController
-                                              .currentStreamBlockParticipants[index]
-                                          ['_id'],
+                                              .currentStreamBlockParticipants[
+                                          index]['_id'],
                                       widget.room.name!);
                             }),
                       );
                     },
                   );
-                }
-              ),
-            ],
+                }),
+              ],
+            ),
           ),
-        ),
-        //chat drawer
-        endDrawer: Drawer(
-          //chat drawer,
-          width: 1.sw,
-          child: WillPopScope(
-            onWillPop: () async {
-              scaffoldKey.currentState!.closeEndDrawer();
-
-              return false;
-            },
-            child: Scaffold(
-                //onback
-
-                appBar: AppBar(
+          //chat drawer
+          endDrawer: Drawer(
+            //chat drawer,
+            width: 1.sw,
+            child: WillPopScope(
+              onWillPop: () async {
+                scaffoldKey.currentState!.closeEndDrawer();
+                return false;
+              },
+              child: Scaffold(
                   backgroundColor: AppColors.DTbackGroundColor,
-                  elevation: 0,
-                  toolbarHeight: 0,
-                  bottom: TabBar(controller: _tabController, tabs: [
-                    Tab(
-                      child: Text(
-                        'Chat',
-                        style: Mystyles.listtileTitleStyle
-                            .copyWith(fontSize: 20.sp),
-                      ),
-                    ),
-                    Tab(
-                      child: Text(
-                        'Questions',
-                        style: Mystyles.listtileTitleStyle
-                            .copyWith(fontSize: 20.sp),
-                      ),
-                    ),
-                  ]),
-                ),
-                body: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // this is for chat tab
-                    Container(
-                      color: AppColors.DTbackGroundColor,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Obx(
-                              () => ListView.builder(
-                                // reverse: true,
+                  //onback
 
-                                itemCount: chatMessages.length,
-
-                                itemBuilder: (context, index) {
-                                  bool insertDate = false;
-
-                                  if (index == 0) {
-                                    insertDate = true;
-                                  } else if (currentDate !=
-                                      DateFormat.jm().format(DateTime.parse(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                                  chatMessages[index]
-                                                      ['timestamp'] as int)
-                                              .toString()))) {
-                                    insertDate = true;
-                                  }
-
-                                  currentDate = DateFormat.jm().format(
-                                      DateTime.parse(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                                  chatMessages[index]
-                                                      ['timestamp'] as int)
-                                              .toString()));
-
-                                  return Column(
-                                    children: [
-                                      Gap(10.h),
-                                      insertDate
-                                          ? Text(
-                                              DateFormat.jm().format(
-                                                  DateTime.parse(DateTime
-                                                          .fromMillisecondsSinceEpoch(
-                                                              chatMessages[
-                                                                          index]
-                                                                      [
-                                                                      'timestamp']
-                                                                  as int)
-                                                      .toString())),
-                                              style: Mystyles
-                                                  .listtileSubtitleStyle
-                                                  .copyWith(
-                                                      color: Colors.grey[400]),
-                                            )
-                                          : const SizedBox(),
-                                      ListTile(
-                                        leading: CircleAvatar(
-                                          radius: 20.r,
-                                          backgroundImage: NetworkImage(
-                                              AppConstants.baseURL +
-                                                  jsonDecode(chatMessages[index]
-                                                          ['from']['metadata'])[
-                                                      'profile_image']),
-                                        ),
-                                        title: Text(
-                                          // "Name",
-                                          jsonDecode(chatMessages[index]['from']
-                                              ['metadata'])['name'],
-                                          style: Mystyles.listtileTitleStyle
-                                              .copyWith(fontSize: 20.sp)
-                                              .copyWith(color: Colors.white),
-                                        ),
-                                        subtitle: Text(
-                                          chatMessages[index]['message'],
-                                          style: Mystyles.listtileSubtitleStyle
-                                              .copyWith(
-                                                  color: Colors.grey[300],
-                                                  letterSpacing: 1,
-                                                  height: 1.5),
-                                          textAlign: TextAlign.justify,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
+                  appBar: AppBar(
+                    backgroundColor: AppColors.DTbackGroundColor,
+                    elevation: 0,
+                    toolbarHeight: 0,
+                    bottom: TabBar(
+                        controller: _tabController,
+                        indicatorColor: AppColors.LTprimaryColor,
+                        tabs: [
+                          Tab(
+                            child: Text(
+                              'Chat',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(
+                                      fontSize: 20.sp, color: Colors.white),
                             ),
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  style: Mystyles.listtileTitleStyle.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                  ),
-                                  controller: chatcontroller,
-                                  keyboardAppearance: Brightness.dark,
-                                  keyboardType: TextInputType.text,
-                                  minLines: 1,
-                                  maxLines: 3,
-                                  decoration: InputDecoration(
-                                    suffixIcon: Transform.rotate(
-                                      angle: -45 * 3 / 180,
-                                      child: IconButton(
-                                        icon: const Icon(Icons.send),
-                                        color: Colors.cyan,
-                                        onPressed: () async {
-                                          print(widget.webinarRoomId);
-                                          // print(jsonDecode(chatMessages[0]['from']
-                                          // ['metadata'])['name']);
-                                          if (chatcontroller.text.isNotEmpty) {
-                                            // widget.room.localParticipant?.publishMessage(
-                                            // chatcontroller.text,
-                                            // attributes: {'name': 'Amit'});
-                                            Map<String, dynamic> newmesage = {
-                                              "message":
-                                                  chatcontroller.text.trim(),
-                                              "from": {
-                                                "identity": widget.room
-                                                    .localParticipant!.identity,
-                                                "metadata": widget.room
-                                                    .localParticipant!.metadata,
-                                              },
-                                              "timestamp": DateTime.now()
-                                                  .millisecondsSinceEpoch,
-                                            };
-                                            Map<String, dynamic> message = {
-                                              'message':
-                                                  chatcontroller.text.trim(),
-                                              'from': jsonDecode(widget
-                                                  .room
-                                                  .localParticipant!
-                                                  .metadata!)['name'],
-                                              'profile_image': jsonDecode(widget
-                                                  .room
-                                                  .localParticipant!
-                                                  .metadata!)['profile_image'],
-                                              'accountType': jsonDecode(widget
-                                                  .room
-                                                  .localParticipant!
-                                                  .metadata!)['role'],
-                                              'time': DateTime.now().toString()
-                                            };
+                          Tab(
+                            child: Text(
+                              'Questions',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(
+                                      fontSize: 20.sp, color: Colors.white),
+                            ),
+                          ),
+                        ]),
+                  ),
+                  body: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      // this is for chat tab
+                      Container(
+                        color: AppColors.DTbackGroundColor,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Obx(
+                                () => ListView.builder(
+                                  // reverse: true,
 
-                                            await Get.find<
-                                                    WebinarStreamController>()
-                                                .sendMessageToRoomChat(
-                                                    widget.webinarRoomId,
-                                                    newmesage);
+                                  itemCount: chatMessages.length,
 
-                                            chatcontroller.clear();
+                                  itemBuilder: (context, index) {
+                                    bool insertDate = false;
 
-                                            //close keyboard
-                                            // print(chatMessages);
-                                            FocusScope.of(context).unfocus();
-                                          }
-                                        },
+                                    if (index == 0) {
+                                      insertDate = true;
+                                    } else if (currentDate !=
+                                        DateFormat.jm().format(DateTime.parse(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                    chatMessages[index]
+                                                        ['timestamp'] as int)
+                                                .toString()))) {
+                                      insertDate = true;
+                                    }
+
+                                    currentDate = DateFormat.jm().format(
+                                        DateTime.parse(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                    chatMessages[index]
+                                                        ['timestamp'] as int)
+                                                .toString()));
+
+                                    return Column(
+                                      children: [
+                                        Gap(10.h),
+                                        insertDate
+                                            ? Text(
+                                                DateFormat.jm().format(DateTime.parse(
+                                                    DateTime.fromMillisecondsSinceEpoch(
+                                                            chatMessages[index][
+                                                                    'timestamp']
+                                                                as int)
+                                                        .toString())),
+                                                style: listtileSubtitleStyle
+                                                    .copyWith(
+                                                        color:
+                                                            Colors.grey[400]),
+                                              )
+                                            : const SizedBox(),
+                                        ListTile(
+                                          leading: CircleAvatar(
+                                            radius: 20.r,
+                                            backgroundImage: NetworkImage(
+                                                AppConstants.baseURL +
+                                                    jsonDecode(
+                                                            chatMessages[index]
+                                                                    ['from']
+                                                                ['metadata'])[
+                                                        'profile_image']),
+                                          ),
+                                          title: Text(
+                                            // "Name",
+                                            jsonDecode(chatMessages[index]
+                                                ['from']['metadata'])['name'],
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .displayMedium!
+                                                .copyWith(fontSize: 20.sp)
+                                                .copyWith(color: Colors.white),
+                                          ),
+                                          subtitle: Text(
+                                            chatMessages[index]['message'],
+                                            style:
+                                                listtileSubtitleStyle.copyWith(
+                                                    color: Colors.grey[300],
+                                                    letterSpacing: 1,
+                                                    height: 1.5),
+                                            textAlign: TextAlign.justify,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayMedium!
+                                        .copyWith(
+                                          color: Colors.white,
+                                          fontSize: 14.sp,
+                                        ),
+                                    controller: chatcontroller,
+                                    keyboardAppearance: Brightness.dark,
+                                    keyboardType: TextInputType.text,
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    decoration: InputDecoration(
+                                      suffixIcon: Transform.rotate(
+                                        angle: -45 * 3 / 180,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.send),
+                                          color: Colors.cyan,
+                                          onPressed: () async {
+                                            print(widget.webinarRoomId);
+                                            // print(jsonDecode(chatMessages[0]['from']
+                                            // ['metadata'])['name']);
+                                            if (chatcontroller
+                                                .text.isNotEmpty) {
+                                              // widget.room.localParticipant?.publishMessage(
+                                              // chatcontroller.text,
+                                              // attributes: {'name': 'Amit'});
+                                              Map<String, dynamic> newmesage = {
+                                                "message":
+                                                    chatcontroller.text.trim(),
+                                                "from": {
+                                                  "identity": widget
+                                                      .room
+                                                      .localParticipant!
+                                                      .identity,
+                                                  "metadata": widget
+                                                      .room
+                                                      .localParticipant!
+                                                      .metadata,
+                                                },
+                                                "timestamp": DateTime.now()
+                                                    .millisecondsSinceEpoch,
+                                              };
+                                              Map<String, dynamic> message = {
+                                                'message':
+                                                    chatcontroller.text.trim(),
+                                                'from': jsonDecode(widget
+                                                    .room
+                                                    .localParticipant!
+                                                    .metadata!)['name'],
+                                                'profile_image': jsonDecode(
+                                                        widget
+                                                            .room
+                                                            .localParticipant!
+                                                            .metadata!)[
+                                                    'profile_image'],
+                                                'accountType': jsonDecode(widget
+                                                    .room
+                                                    .localParticipant!
+                                                    .metadata!)['role'],
+                                                'time':
+                                                    DateTime.now().toString()
+                                              };
+
+                                              await Get.find<
+                                                      WebinarStreamController>()
+                                                  .sendMessageToRoomChat(
+                                                      widget.webinarRoomId,
+                                                      newmesage);
+
+                                              chatcontroller.clear();
+
+                                              //close keyboard
+                                              // print(chatMessages);
+                                              FocusScope.of(context).unfocus();
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                    fillColor: const Color(0xff262626),
-                                    filled: true,
-                                    hintText: "Type a message",
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey[400],
-                                      fontSize: 14,
+                                      fillColor: const Color(0xff262626),
+                                      filled: true,
+                                      hintText: "Type a message",
+                                      hintStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    // this is for question tab
-                    Container(
-                      color: AppColors.DTbackGroundColor,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Obx(
-                              () => ListView.builder(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                controller: _scrollController,
-                                itemCount: questionMessages.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: EdgeInsets.only(
-                                      top: 20.h,
-                                      left: 5.w,
-                                      right: 5.w,
-                                    ),
-                                    decoration: MyBoxDecorations
-                                        .listtileDecoration
-                                        .copyWith(
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.grey.withOpacity(0.1),
-                                            offset: const Offset(0, -1),
-                                            blurRadius: 3,
-                                            spreadRadius: 2),
-                                        BoxShadow(
-                                            color: Colors.grey.withOpacity(0.1),
-                                            offset: const Offset(0, 1),
-                                            blurRadius: 3,
-                                            spreadRadius: 2),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ListTile(
-                                          title: Text(
-                                            questionMessages[index].question!,
-                                            style: Mystyles.listtileTitleStyle
-                                                .copyWith(
-                                                    height: 1.5,
-                                                    color: Colors.white,
-                                                    fontSize: 20.sp),
-                                            textAlign: TextAlign.justify,
-                                          ),
-                                          trailing: Text(
-                                              DateFormat.jm().format(
-                                                  DateTime.parse(DateTime
-                                                          .fromMillisecondsSinceEpoch(
-                                                              questionMessages[
-                                                                      index]
-                                                                  .timestamp!
-                                                                  .toInt())
-                                                      .toString())),
-                                              style: Mystyles
-                                                  .listtileSubtitleStyle
+                      // this is for question tab
+                      Container(
+                        color: AppColors.DTbackGroundColor,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Obx(
+                                () => ListView.builder(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  controller: _scrollController,
+                                  itemCount: questionMessages.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                        top: 20.h,
+                                        left: 10.w,
+                                        right: 10.w,
+                                      ),
+                                      decoration: listtileDecoration.copyWith(
+                                        color: Colors.black54,
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1),
+                                              // offset: const Offset(0, -1),
+                                              blurRadius: 5,
+                                              spreadRadius: 2),
+                                          // BoxShadow(
+                                          //     color: Colors.grey.withOpacity(0.1),
+                                          //     // offset: const Offset(0, 1),
+                                          //     blurRadius: 10,
+                                          //     spreadRadius: 1),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ListTile(
+                                            title: Text(
+                                              questionMessages[index].question!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .displayMedium!
                                                   .copyWith(
-                                                      color: Colors.grey)),
-                                        ),
-                                        jsonDecode(widget.room.localParticipant!
-                                                    .metadata!)['role'] ==
-                                                'organizer'
-                                            ? Container(
-                                                margin: EdgeInsets.only(
-                                                    left: 10.w,
-                                                    right: 10.w,
-                                                    top: 10.h,
-                                                    bottom: 10.h),
-                                                height: 50.h,
-                                                child: TextFormField(
-                                                  controller:
-                                                      answersControllers[index],
-                                                  style: Mystyles
-                                                      .listtileSubtitleStyle,
-                                                  maxLines: 1,
-                                                  keyboardAppearance:
-                                                      Brightness.dark,
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  decoration: InputDecoration(
-                                                    hintText:
-                                                        "type answer here",
-                                                    hintStyle: Mystyles
-                                                        .listtileTitleStyle
+                                                      height: 1.5,
+                                                      color: Colors.white,
+                                                      fontSize: 20.sp),
+                                              textAlign: TextAlign.justify,
+                                            ),
+                                            trailing: Text(
+                                                DateFormat.jm().format(
+                                                    DateTime.parse(DateTime
+                                                            .fromMillisecondsSinceEpoch(
+                                                                questionMessages[
+                                                                        index]
+                                                                    .timestamp!
+                                                                    .toInt())
+                                                        .toString())),
+                                                style: listtileSubtitleStyle
+                                                    .copyWith(
+                                                        color: Colors.grey)),
+                                          ),
+                                          jsonDecode(widget
+                                                      .room
+                                                      .localParticipant!
+                                                      .metadata!)['role'] ==
+                                                  'organizer'
+                                              ? Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: 10.w,
+                                                      right: 10.w,
+                                                      top: 10.h,
+                                                      bottom: 10.h),
+                                                  height: 50.h,
+                                                  child: TextFormField(
+                                                    controller:
+                                                        answersControllers[
+                                                            index],
+                                                    style: listtileSubtitleStyle
                                                         .copyWith(
-                                                            color: Colors
-                                                                .grey[400]),
-                                                    border: OutlineInputBorder(
+                                                            color:
+                                                                Colors.white),
+                                                    maxLines: 1,
+                                                    keyboardAppearance:
+                                                        Brightness.dark,
+                                                    keyboardType:
+                                                        TextInputType.text,
+                                                    decoration: InputDecoration(
+                                                      enabled: true,
+                                                      fillColor:
+                                                          Colors.grey[800],
+                                                      filled: true,
+                                                      hintText:
+                                                          "type answer here",
+                                                      hintStyle: Theme.of(
+                                                              context)
+                                                          .textTheme
+                                                          .displayMedium!
+                                                          .copyWith(
+                                                              color: Colors
+                                                                  .grey[400]),
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderSide:
+                                                            const BorderSide(
+                                                                color: Colors
+                                                                    .white),
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(7.r)),
-                                                    suffixIcon: IconButton(
-                                                        icon: const Icon(
-                                                            Icons.send),
-                                                        color: AppColors
-                                                            .LTsecondaryColor,
-                                                        onPressed: () async {
-                                                          if (answersControllers[
-                                                                  index]
-                                                              .text
-                                                              .isNotEmpty) {
-                                                            Map<String, dynamic>
-                                                                answer = {
-                                                              "questionId":
-                                                                  questionMessages[
-                                                                          index]
-                                                                      .id,
-                                                              "answer":
-                                                                  answersControllers[
+                                                                .circular(7.r),
+                                                      ),
+                                                      suffixIcon:
+                                                          Transform.rotate(
+                                                        angle: -45 * 3 / 180,
+                                                        child: IconButton(
+                                                            icon: const Icon(
+                                                                Icons.send),
+                                                            color: AppColors
+                                                                .LTsecondaryColor,
+                                                            onPressed:
+                                                                () async {
+                                                              if (answersControllers[
+                                                                      index]
+                                                                  .text
+                                                                  .isNotEmpty) {
+                                                                Map<String,
+                                                                        dynamic>
+                                                                    answer = {
+                                                                  "questionId":
+                                                                      questionMessages[
+                                                                              index]
+                                                                          .id,
+                                                                  "answer": answersControllers[
                                                                           index]
                                                                       .text
                                                                       .trim(),
-                                                              "from": {
-                                                                "identity": widget
-                                                                    .room
-                                                                    .localParticipant!
-                                                                    .identity,
-                                                                "metadata": widget
-                                                                    .room
-                                                                    .localParticipant!
-                                                                    .metadata,
-                                                              },
-                                                              "timestamp": DateTime
-                                                                      .now()
-                                                                  .millisecondsSinceEpoch,
-                                                            };
+                                                                  "from": {
+                                                                    "identity": widget
+                                                                        .room
+                                                                        .localParticipant!
+                                                                        .identity,
+                                                                    "metadata": widget
+                                                                        .room
+                                                                        .localParticipant!
+                                                                        .metadata,
+                                                                  },
+                                                                  "timestamp": DateTime
+                                                                          .now()
+                                                                      .millisecondsSinceEpoch,
+                                                                };
 
-                                                            await Get.find<
-                                                                    WebinarStreamController>()
-                                                                .postAnswerToQuestion(
-                                                                    widget
-                                                                        .webinarRoomId,
-                                                                    answer);
-                                                            answersControllers[
-                                                                    index]
-                                                                .clear();
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .unfocus();
-                                                          }
-                                                        }),
-                                                  ),
-                                                ),
-                                              )
-                                            : const SizedBox(),
-                                        questionMessages[index].answers!.isEmpty
-                                            ? Container()
-                                            : ListView.builder(
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount:
-                                                    questionMessages[index]
-                                                        .answers!
-                                                        .length,
-                                                itemBuilder: (context, index2) {
-                                                  return Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 20.w,
-                                                        right: 20.w,
-                                                        top: 10.h,
-                                                        bottom: 10.h),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        ExpandableText(
-                                                          expandText: '',
-                                                          collapseOnTextTap:
-                                                              true,
-                                                          questionMessages[
-                                                                  index]
-                                                              .answers![index2]
-                                                              .answer!,
-                                                          expandOnTextTap: true,
-                                                          maxLines: 4,
-                                                          style: Mystyles
-                                                              .listtileSubtitleStyle
-                                                              .copyWith(
-                                                                  fontSize:
-                                                                      16.sp,
-                                                                  height: 1.5,
-                                                                  letterSpacing:
-                                                                      1,
-                                                                  color: Colors
-                                                                      .white
-                                                                      .withOpacity(
-                                                                          0.8)),
-                                                          textAlign:
-                                                              TextAlign.justify,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5.h,
-                                                        ),
-                                                        Wrap(
-                                                          crossAxisAlignment:
-                                                              WrapCrossAlignment
-                                                                  .end,
-                                                          children: [
-                                                            Text(
-                                                              questionMessages[
-                                                                      index]
-                                                                  .answers![
-                                                                      index2]
-                                                                  .from!
-                                                                  .metadata!
-                                                                  .name!,
-                                                              style: Mystyles
-                                                                  .listtileTitleStyle
-                                                                  .copyWith(
-                                                                      letterSpacing:
-                                                                          1,
-                                                                      height: 2,
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          600]),
-                                                            ),
-                                                            Text(
-                                                              ' (${DateFormat.jm().format(DateTime.parse(DateTime.fromMillisecondsSinceEpoch(questionMessages[index].answers![index2].timestamp!.toInt()).toString()))})',
-                                                              style: Mystyles
-                                                                  .listtileTitleStyle
-                                                                  .copyWith(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          600]),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const Divider(
-                                                          color: Colors.grey,
-                                                        ),
-                                                      ],
+                                                                await Get.find<
+                                                                        WebinarStreamController>()
+                                                                    .postAnswerToQuestion(
+                                                                        widget
+                                                                            .webinarRoomId,
+                                                                        answer);
+                                                                answersControllers[
+                                                                        index]
+                                                                    .clear();
+                                                                FocusScope.of(
+                                                                        context)
+                                                                    .unfocus();
+                                                              }
+                                                            }),
+                                                      ),
                                                     ),
-                                                  );
-                                                },
-                                              )
-                                      ],
-                                    ),
-                                  );
-                                },
+                                                  ),
+                                                )
+                                              : const SizedBox(),
+                                          questionMessages[index]
+                                                  .answers!
+                                                  .isEmpty
+                                              ? Container()
+                                              : ListView.builder(
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount:
+                                                      questionMessages[index]
+                                                          .answers!
+                                                          .length,
+                                                  itemBuilder:
+                                                      (context, index2) {
+                                                    return Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 20.w,
+                                                          right: 20.w,
+                                                          top: 10.h,
+                                                          bottom: 10.h),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          ExpandableText(
+                                                            expandText: '',
+                                                            collapseOnTextTap:
+                                                                true,
+                                                            questionMessages[
+                                                                    index]
+                                                                .answers![
+                                                                    index2]
+                                                                .answer!,
+                                                            expandOnTextTap:
+                                                                true,
+                                                            maxLines: 4,
+                                                            style: listtileSubtitleStyle
+                                                                .copyWith(
+                                                                    fontSize:
+                                                                        16.sp,
+                                                                    height: 1.5,
+                                                                    letterSpacing:
+                                                                        1,
+                                                                    color: Colors
+                                                                        .white
+                                                                        .withOpacity(
+                                                                            1)),
+                                                            textAlign: TextAlign
+                                                                .justify,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 5.h,
+                                                          ),
+                                                          Wrap(
+                                                            crossAxisAlignment:
+                                                                WrapCrossAlignment
+                                                                    .end,
+                                                            children: [
+                                                              Text(
+                                                                questionMessages[
+                                                                        index]
+                                                                    .answers![
+                                                                        index2]
+                                                                    .from!
+                                                                    .metadata!
+                                                                    .name!,
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .displayMedium!
+                                                                    .copyWith(
+                                                                        letterSpacing:
+                                                                            1,
+                                                                        height:
+                                                                            2,
+                                                                        color: Colors
+                                                                            .grey[600]),
+                                                              ),
+                                                              Text(
+                                                                ' (${DateFormat.jm().format(DateTime.parse(DateTime.fromMillisecondsSinceEpoch(questionMessages[index].answers![index2].timestamp!.toInt()).toString()))})',
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .displayMedium!
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .grey[600]),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  style: Mystyles.listtileTitleStyle.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                  ),
-                                  controller: questionsController,
-                                  keyboardAppearance: Brightness.dark,
-                                  keyboardType: TextInputType.text,
-                                  minLines: 1,
-                                  maxLines: 3,
-                                  decoration: InputDecoration(
-                                    suffixIcon: Transform.rotate(
-                                      angle: -45 * 3 / 180,
-                                      child: IconButton(
-                                        icon: const Icon(Icons.send),
-                                        color: Colors.cyan,
-                                        onPressed: () async {
-                                          print('questions filed');
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayMedium!
+                                        .copyWith(
+                                          color: Colors.white,
+                                          fontSize: 14.sp,
+                                        ),
+                                    controller: questionsController,
+                                    keyboardAppearance: Brightness.dark,
+                                    keyboardType: TextInputType.text,
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    decoration: InputDecoration(
+                                      suffixIcon: Transform.rotate(
+                                        angle: -45 * 3 / 180,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.send),
+                                          color: Colors.cyan,
+                                          onPressed: () async {
+                                            print('questions filed');
 
-                                          if (questionsController
-                                              .text.isNotEmpty) {
-                                            print(questionsController.text
-                                                .trim());
-                                            String uuid = const Uuid().v4();
-                                            Map<String, dynamic> question = {
-                                              "id": uuid,
-                                              "question": questionsController
-                                                  .text
-                                                  .trim(),
-                                              "from": {
-                                                "identity": jsonDecode(widget
-                                                    .room
-                                                    .localParticipant!
-                                                    .metadata!)['_id'],
-                                                "metadata": widget.room
-                                                    .localParticipant!.metadata!
-                                              },
-                                              "timestamp": DateTime.now()
-                                                  .millisecondsSinceEpoch,
-                                              "answers": []
-                                            };
-                                            await WebinarStreamController()
-                                                .postQuestionToWebinarStream(
-                                                    widget.webinarRoomId,
-                                                    question);
-                                            print(question);
-                                            questionsController.clear();
+                                            if (questionsController
+                                                .text.isNotEmpty) {
+                                              print(questionsController.text
+                                                  .trim());
+                                              String uuid = const Uuid().v4();
+                                              Map<String, dynamic> question = {
+                                                "id": uuid,
+                                                "question": questionsController
+                                                    .text
+                                                    .trim(),
+                                                "from": {
+                                                  "identity": jsonDecode(widget
+                                                      .room
+                                                      .localParticipant!
+                                                      .metadata!)['_id'],
+                                                  "metadata": widget
+                                                      .room
+                                                      .localParticipant!
+                                                      .metadata!
+                                                },
+                                                "timestamp": DateTime.now()
+                                                    .millisecondsSinceEpoch,
+                                                "answers": []
+                                              };
+                                              await WebinarStreamController()
+                                                  .postQuestionToWebinarStream(
+                                                      widget.webinarRoomId,
+                                                      question);
+                                              print(question);
+                                              questionsController.clear();
 
-                                            FocusScope.of(context).unfocus();
-                                          }
-                                        },
+                                              FocusScope.of(context).unfocus();
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                    fillColor: const Color(0xff262626),
-                                    filled: true,
-                                    hintText: "Type a Question",
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey[400],
-                                      fontSize: 17.sp,
+                                      fillColor: const Color(0xff262626),
+                                      filled: true,
+                                      hintText: "Type a Question",
+                                      hintStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontSize: 17.sp,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                )),
+                    ],
+                  )),
+            ),
           ),
-        ),
-        key: scaffoldKey,
-        backgroundColor: AppColors.DTbackGroundColor,
-        body: Column(
-          children: [
-            Expanded(
-                child: participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(participantTracks.first)
-                    : Center(
-                        child: GestureDetector(
-                        onTap: () {
-                          print(widget.room.localParticipant!.isSpeaking);
-                          print(widget.room.sid);
-                          // var newval = jsonDecode(
-                          //     widget.room.participants.values.first.metadata!);
-                          // print(newval['name']);
+          key: scaffoldKey,
+          backgroundColor: AppColors.DTbackGroundColor,
+          body: Column(
+            children: [
+              Expanded(
+                  child: participantTracks.isNotEmpty
+                      ? ParticipantWidget.widgetFor(participantTracks.first)
+                      : Center(
+                          child: GestureDetector(
+                          onTap: () {
+                            print(widget.room.localParticipant!.isSpeaking);
+                            print(widget.room.sid);
+                            // var newval = jsonDecode(
+                            //     widget.room.participants.values.first.metadata!);
+                            // print(newval['name']);
 
-                          // pri
-                          // print(jsonDecode(
-                          //     widget.room.localParticipant!.metadata!)['name']);
-                        },
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                          ),
-                          itemCount: widget.room.participants.length + 1,
-                          itemBuilder: (BuildContext context, int index) {
-                            return index == widget.room.participants.length
-                                ? Container(
-                                    // this container is for the local participant
-                                    margin: EdgeInsets.all(2.w),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6.r),
-                                      border: Border.all(
-                                        color: widget.room.localParticipant!
-                                                .isSpeaking
-                                            ? Colors.green
-                                            : Colors.grey,
-                                        width: 1,
+                            // pri
+                            // print(jsonDecode(
+                            //     widget.room.localParticipant!.metadata!)['name']);
+                          },
+                          child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                            ),
+                            itemCount: widget.room.participants.length + 1,
+                            itemBuilder: (BuildContext context, int index) {
+                              return index == widget.room.participants.length
+                                  ? Container(
+                                      // this container is for the local participant
+                                      margin: EdgeInsets.all(2.w),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(6.r),
+                                        border: Border.all(
+                                          color: widget.room.localParticipant!
+                                                  .isSpeaking
+                                              ? Colors.green
+                                              : Colors.grey,
+                                          width: 1,
+                                        ),
                                       ),
-                                    ),
 
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: CircleAvatar(
-                                              radius: 50.r,
-                                              backgroundImage: NetworkImage(
-                                                  AppConstants.baseURL +
-                                                      jsonDecode(widget
-                                                              .room
-                                                              .localParticipant!
-                                                              .metadata!)[
-                                                          'profile_image'])),
-                                        ),
-                                        Center(
-                                          child: Text(
-                                            jsonDecode(widget
-                                                    .room
-                                                    .localParticipant!
-                                                    .metadata!)['name'] +
-                                                "(You)",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                        Gap(10.h),
-                                        widget.room.localParticipant!.isMuted
-                                            ? const Icon(
-                                                Icons.mic_off,
-                                                color: Colors.red,
-                                              )
-                                            : const Icon(
-                                                Icons.mic,
-                                                color: Colors.green,
-                                              ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    margin: EdgeInsets.all(2.w),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6.r),
-                                      border: Border.all(
-                                        color: widget.room.participants.values
-                                                .elementAt(index)
-                                                .isSpeaking
-                                            ? Colors.green
-                                            : Colors.grey,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: CircleAvatar(
-                                              radius: 50.r,
-                                              backgroundImage: NetworkImage(
-                                                  AppConstants.baseURL +
-                                                      jsonDecode(
-                                                        widget.room.participants
-                                                            .values
-                                                            .elementAt(index)
-                                                            .metadata!,
-                                                      )['profile_image']),
-                                            )),
-                                        Center(
-                                          child: Text(
-                                            jsonDecode(
-                                              widget.room.participants.values
-                                                  .elementAt(index)
-                                                  .metadata!,
-                                            )['name'],
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20.sp,
-                                              overflow: TextOverflow.ellipsis,
+                                                radius: 50.r,
+                                                backgroundImage: NetworkImage(
+                                                    AppConstants.baseURL +
+                                                        jsonDecode(widget
+                                                                .room
+                                                                .localParticipant!
+                                                                .metadata!)[
+                                                            'profile_image'])),
+                                          ),
+                                          Center(
+                                            child: Text(
+                                              jsonDecode(widget
+                                                      .room
+                                                      .localParticipant!
+                                                      .metadata!)['name'] +
+                                                  "(You)",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           ),
+                                          Gap(10.h),
+                                          widget.room.localParticipant!.isMuted
+                                              ? const Icon(
+                                                  Icons.mic_off,
+                                                  color: Colors.red,
+                                                )
+                                              : const Icon(
+                                                  Icons.mic,
+                                                  color: Colors.green,
+                                                ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.all(2.w),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(6.r),
+                                        border: Border.all(
+                                          color: widget.room.participants.values
+                                                  .elementAt(index)
+                                                  .isSpeaking
+                                              ? Colors.green
+                                              : Colors.grey,
+                                          width: 1,
                                         ),
-                                        Gap(10.h),
-                                        widget.room.participants.values
-                                                .elementAt(index)
-                                                .isMuted
-                                            ? const Icon(
-                                                Icons.mic_off,
-                                                color: Colors.red,
-                                              )
-                                            : const Icon(
-                                                Icons.mic,
-                                                color: Colors.green,
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: CircleAvatar(
+                                                radius: 50.r,
+                                                backgroundImage: NetworkImage(
+                                                    AppConstants.baseURL +
+                                                        jsonDecode(
+                                                          widget
+                                                              .room
+                                                              .participants
+                                                              .values
+                                                              .elementAt(index)
+                                                              .metadata!,
+                                                        )['profile_image']),
+                                              )),
+                                          Center(
+                                            child: Text(
+                                              jsonDecode(
+                                                widget.room.participants.values
+                                                    .elementAt(index)
+                                                    .metadata!,
+                                              )['name'],
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20.sp,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                      ],
-                                    ),
-                                  );
-                          },
-                        ), // child: const Text('click here',
-                        //     style: TextStyle(
-                        //         color: Colors.white, fontSize: 20)),
-                      ))),
-            SizedBox(
-              height: 100.h,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: math.max(0, participantTracks.length - 1),
-                itemBuilder: (BuildContext context, int index) => SizedBox(
-                  width: 100.h,
-                  height: 100.h,
-                  child: GestureDetector(
-                      onTap: () {
-                        // print(
-                        // participantTracks[index + 1].participant.identity);
-                        // print("index value of participant is  $index");
+                                            ),
+                                          ),
+                                          Gap(10.h),
+                                          widget.room.participants.values
+                                                  .elementAt(index)
+                                                  .isMuted
+                                              ? const Icon(
+                                                  Icons.mic_off,
+                                                  color: Colors.red,
+                                                )
+                                              : const Icon(
+                                                  Icons.mic,
+                                                  color: Colors.green,
+                                                ),
+                                        ],
+                                      ),
+                                    );
+                            },
+                          ), // child: const Text('click here',
+                          //     style: TextStyle(
+                          //         color: Colors.white, fontSize: 20)),
+                        ))),
+              SizedBox(
+                height: 100.h,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: math.max(0, participantTracks.length - 1),
+                  itemBuilder: (BuildContext context, int index) => SizedBox(
+                    width: 100.h,
+                    height: 100.h,
+                    child: GestureDetector(
+                        onTap: () {
+                          // print(
+                          // participantTracks[index + 1].participant.identity);
+                          // print("index value of participant is  $index");
 
-                        // ======================this logic is for switching the screen sharing=========================
-                        var newshare = participantTracks[index + 1];
-                        var oldshare = participantTracks[0];
-                        participantTracks[0] = newshare;
-                        participantTracks[index + 1] = oldshare;
-                        setState(() {});
-                      },
-                      child: ParticipantWidget.widgetFor(
-                          participantTracks[index + 1])),
+                          // ======================this logic is for switching the screen sharing=========================
+                          var newshare = participantTracks[index + 1];
+                          var oldshare = participantTracks[0];
+                          participantTracks[0] = newshare;
+                          participantTracks[index + 1] = oldshare;
+                          setState(() {});
+                        },
+                        child: ParticipantWidget.widgetFor(
+                            participantTracks[index + 1])),
+                  ),
                 ),
               ),
-            ),
-            if (widget.room.localParticipant != null)
-              SafeArea(
-                top: false,
-                child: ControlsWidget(
-                    scaffoldKey, widget.room, widget.room.localParticipant!),
-              ),
-          ],
+              if (widget.room.localParticipant != null)
+                SafeArea(
+                  top: false,
+                  child: ControlsWidget(
+                      scaffoldKey, widget.room, widget.room.localParticipant!),
+                ),
+            ],
+          ),
         ),
       );
 }

@@ -60,7 +60,7 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
             margin: EdgeInsets.symmetric(
                 vertical: AppLayout.getHeight(20),
                 horizontal: AppLayout.getWidth(20)),
-            decoration: MyBoxDecorations.listtileDecoration,
+            decoration: listtileDecoration,
             child: Container(
               padding: EdgeInsets.symmetric(
                   horizontal: AppLayout.getWidth(20),
@@ -70,15 +70,14 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                 child: Column(
                   children: [
                     Text("Create New Webinar",
-                        style: Mystyles.onpageheadingsyle
-                            .copyWith(fontSize: 20.h)),
+                        style: onpageheadingsyle.copyWith(fontSize: 20.h)),
                     SizedBox(
                       height: AppLayout.getHeight(50),
                     ),
                     Container(
                       width: 200.h,
                       height: 200.h,
-                      decoration: MyBoxDecorations.listtileDecoration.copyWith(
+                      decoration: listtileDecoration.copyWith(
                         image: imagebyte != null
                             ? DecorationImage(
                                 image: MemoryImage(imagebyte!),
@@ -107,8 +106,9 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                       height: AppLayout.getHeight(20),
                     ),
                     TextFormField(
-                      style: Mystyles.onpageheadingsyle
-                          .copyWith(color: Mystyles.bigTitleStyle.color),
+                      style: onpageheadingsyle.copyWith(
+                          color:
+                              Theme.of(context).textTheme.displayLarge!.color),
                       controller: titleController,
                       decoration: const InputDecoration(
                         border: UnderlineInputBorder(),
@@ -134,8 +134,9 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                     ),
                     DateTimePicker(
                       // initialValue: DateTime.now().toString(),
-                      style: Mystyles.onpageheadingsyle
-                          .copyWith(color: Mystyles.bigTitleStyle.color),
+                      style: onpageheadingsyle.copyWith(
+                          color:
+                              Theme.of(context).textTheme.displayLarge!.color),
                       decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
                           suffixIcon: Icon(Icons.calendar_month_outlined),
@@ -160,8 +161,9 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                       height: AppLayout.getHeight(20),
                     ),
                     TextFormField(
-                      style: Mystyles.onpageheadingsyle
-                          .copyWith(color: Mystyles.bigTitleStyle.color),
+                      style: onpageheadingsyle.copyWith(
+                          color:
+                              Theme.of(context).textTheme.displayLarge!.color),
                       controller:
                           timeinput, //editing controller of this TextField
                       decoration: const InputDecoration(
@@ -204,8 +206,9 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                       height: AppLayout.getHeight(20),
                     ),
                     TextFormField(
-                      style: Mystyles.onpageheadingsyle
-                          .copyWith(color: Mystyles.bigTitleStyle.color),
+                      style: onpageheadingsyle.copyWith(
+                          color:
+                              Theme.of(context).textTheme.displayLarge!.color),
                       keyboardType: TextInputType.number,
                       controller: durationController,
                       decoration: const InputDecoration(
@@ -226,8 +229,9 @@ class _AddWebinarScreen1State extends State<AddWebinarScreen1> {
                       height: AppLayout.getHeight(20),
                     ),
                     TextFormField(
-                      style: Mystyles.onpageheadingsyle
-                          .copyWith(color: Mystyles.bigTitleStyle.color),
+                      style: onpageheadingsyle.copyWith(
+                          color:
+                              Theme.of(context).textTheme.displayLarge!.color),
                       keyboardType: TextInputType.number,
                       controller: priceController,
                       decoration: const InputDecoration(

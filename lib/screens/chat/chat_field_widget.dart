@@ -26,9 +26,9 @@ class _ChatFieldWidgetState extends State<ChatFieldWidget> {
       children: [
         Expanded(
           child: TextFormField(
-            style: Mystyles.listtileTitleStyle.copyWith(
-              fontSize: 14.sp,
-            ),
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  fontSize: 14.sp,
+                ),
             keyboardAppearance: Brightness.dark,
             keyboardType: TextInputType.text,
             minLines: 1,

@@ -677,6 +677,7 @@ class WebinarManagementController extends GetxController {
       await getwebinarById(id);
       await Get.find<WebinarStreamController>().webianrStreamStatus(id);
       update();
+      Get.find<WebinarManagementController>().update();
     } catch (e) {
       print(e);
     }

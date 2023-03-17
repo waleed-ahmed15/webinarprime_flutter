@@ -24,7 +24,7 @@ class BannedChats extends StatelessWidget {
         elevation: 0,
         title: Text(
           "Banned Chats",
-          style: Mystyles.mediumHeadingStyle.copyWith(
+          style: mediumHeadingStyle.copyWith(
             color: Get.isDarkMode ? Colors.white : Colors.black,
           ),
         ),
@@ -39,7 +39,7 @@ class BannedChats extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   margin: EdgeInsets.only(bottom: 10.h),
-                  decoration: MyBoxDecorations.listtileDecoration.copyWith(
+                  decoration: listtileDecoration.copyWith(
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.1),
@@ -58,11 +58,11 @@ class BannedChats extends StatelessWidget {
                     ),
                     title: Text(
                       AuthController.bannedChats[index]['name'],
-                      style: Mystyles.listtileTitleStyle,
+                      style: Theme.of(context).textTheme.displayMedium!,
                     ),
                     subtitle: Text(
                       AuthController.bannedChats[index]['email'],
-                      style: Mystyles.listtileTitleStyle,
+                      style: Theme.of(context).textTheme.displayMedium!,
                     ),
                     trailing: IconButton(
                       icon: const Icon(

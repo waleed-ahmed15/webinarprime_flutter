@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/routes/routes.dart';
 import 'package:webinarprime/utils/themes.dart';
@@ -12,10 +11,16 @@ void main() async {
   FlutterBackgroundService();
   WidgetsFlutterBinding.ensureInitialized();
   await dep.innit();
-  Stripe.publishableKey =
-      'pk_test_51M8Q6lG4Misz9p7QWf1WC2sn5TGgl7fJT2WmkRJQ0ecSxj5Kj3SapRQuqV7ANpIt5XlKtxc69NWbIYQAFPb1LgT500fwPV1oqD';
+  // Stripe.publishableKey =
+  //     'pk_test_51M8Q6lG4Misz9p7QWf1WC2sn5TGgl7fJT2WmkRJQ0ecSxj5Kj3SapRQuqV7ANpIt5XlKtxc69NWbIYQAFPb1LgT500fwPV1oqD';
 
   runApp(const MyApp());
+  // runApp(
+  //   ChangeNotifierProvider(
+  //     create: (_) => ThemeProvider(),
+  //     child: const MyApp(),
+  //   ),
+  // );
 }
 
 class MyApp extends StatelessWidget {
@@ -38,9 +43,12 @@ class MyApp extends StatelessWidget {
             getPages: RoutesHelper.routes,
             theme: lightTheme,
             darkTheme: darkTheme,
+
             // themeMode: ThemeMode.system,
-            // themeMode: ThemeMode.light,
-            themeMode: ThemeMode.dark,
+            themeMode: ThemeMode.light,
+            // themeMode: ThemeMode.dark,
+
+            // themeMode: context.watch<ThemeProvider>().themeMode,
           );
         },
         designSize: const Size(392.7, 803));

@@ -32,7 +32,7 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
               margin: const EdgeInsets.all(10),
               height: 150.h,
               width: 150.h,
-              decoration: MyBoxDecorations.listtileDecoration.copyWith(
+              decoration: listtileDecoration.copyWith(
                   borderRadius: BorderRadius.circular(300.r),
                   image: DecorationImage(
                       image: NetworkImage(
@@ -75,7 +75,9 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                       leading: const Icon(Icons.person),
                       title: Text(
                         'Profile',
-                        style: Mystyles.listtileTitleStyle
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
                             .copyWith(height: 1.5.h, fontSize: 18.sp),
                       ),
                     ),
@@ -83,7 +85,9 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                       leading: const Icon(Icons.insert_invitation),
                       title: Text(
                         'Invitations',
-                        style: Mystyles.listtileTitleStyle
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
                             .copyWith(height: 1.5, fontSize: 18.sp),
                       ),
                       onTap: () {
@@ -94,7 +98,9 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                     ListTile(
                       leading: const Icon(Icons.settings),
                       title: Text('Settings',
-                          style: Mystyles.listtileTitleStyle
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
                               .copyWith(height: 1.5, fontSize: 18.sp)),
                       onTap: () {
                         // Update the state of the app.
@@ -105,7 +111,9 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                     ListTile(
                       leading: const Icon(Icons.logout),
                       title: Text('Logout',
-                          style: Mystyles.listtileTitleStyle
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
                               .copyWith(height: 1.5, fontSize: 18.sp)),
                       onTap: () {
                         // Update the state of the app.

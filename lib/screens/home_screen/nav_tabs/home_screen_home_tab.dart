@@ -5,6 +5,7 @@ import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/screens/home_screen/widgets/carasoul_slider_home.dart';
 import 'package:webinarprime/screens/home_screen/widgets/discover_organizers_widget.dart';
 import 'package:webinarprime/screens/home_screen/widgets/webinar_dynamic_tile.dart';
+import 'package:webinarprime/screens/home_screen/widgets/webinar_info_card.dart';
 import 'package:webinarprime/utils/styles.dart';
 
 class HomeScreenHomeTab extends StatefulWidget {
@@ -24,6 +25,31 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
         children: [
           Gap(10.h),
           const CaresoulSliderHome(),
+          Gap(10.h),
+          Padding(
+            padding: EdgeInsets.only(left: 10.w),
+            child: Text(
+              'Discover Webinars',
+              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+          ),
+          Gap(10.h),
+          Container(
+            child: SizedBox(
+              height: 300,
+              child: ListView.builder(
+                itemCount: WebinarManagementController.webinarsList.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext context, int index) {
+                  return WebinarInfoCardItem(
+                      webinar: WebinarManagementController.webinarsList[index]);
+                },
+              ),
+            ),
+          ),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -55,8 +81,12 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
                         children: [
                           Text(
                             'See What\'s Treanding',
-                            style: Mystyles.listtileTitleStyle.copyWith(
-                                fontSize: 18.sp, fontWeight: FontWeight.w400),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w400),
                           ),
                           Icon(
                             Icons.trending_up,

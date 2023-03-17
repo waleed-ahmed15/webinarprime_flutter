@@ -24,7 +24,7 @@ class IconLabelRow extends StatelessWidget {
           style: TextStyle(
             letterSpacing: 1,
             fontSize: 20.sp,
-            color: Mycolors.iconColor,
+            color: iconColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'JosefinSans Bold',
           ),
@@ -37,7 +37,7 @@ class IconLabelRow extends StatelessWidget {
             onPressed: () {
               callbackAction!();
             },
-            icon: Icon(color: Mycolors.iconColor, icon)),
+            icon: Icon(color: iconColor, icon)),
       ],
     );
   }

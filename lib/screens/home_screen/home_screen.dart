@@ -17,6 +17,7 @@ import 'package:webinarprime/utils/app_constants.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
+import 'package:webinarprime/utils/themes.dart';
 
 class HomeScreen extends StatefulWidget {
   int? currIndex;
@@ -97,19 +98,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           return false;
         },
         child: Scaffold(
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
           floatingActionButton: widget.currIndex == 0
               ? Get.find<AuthController>().currentUser['accountType'] ==
                       'organizer'
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 50.h),
+                      margin: EdgeInsets.only(bottom: 60.h),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           FloatingActionButton(
-                            backgroundColor: Get.isDarkMode
-                                ? Mycolors.myappbarcolor
+                            backgroundColor: Get.theme == darkTheme
+                                ? myappbarcolor
                                 : AppColors.LTprimaryColor,
                             heroTag: null,
                             onPressed: () {
@@ -142,11 +142,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 minHeight: 60.h,
               ),
               decoration: BoxDecoration(
-                color: Mycolors.myappbarcolor,
+                color: myappbarcolor,
               ),
               child: GNav(
-                backgroundColor:
-                    Get.isDarkMode ? Mycolors.myappbarcolor : Colors.white,
+                backgroundColor: Get.isDarkMode ? myappbarcolor : Colors.white,
                 // curve: Curves.ease,
                 curve: Curves.easeInOut,
 

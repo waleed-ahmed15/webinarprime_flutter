@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'package:expandable_text/expandable_text.dart';
@@ -135,7 +134,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   Text(
                     'Are you sure you want to delete this conversation?',
-                    style: Mystyles.listtileTitleStyle,
+                    style: Theme.of(context).textTheme.displayMedium!,
                   ),
                   const SizedBox(
                     height: 20,
@@ -163,16 +162,15 @@ class _ChatScreenState extends State<ChatScreen> {
                         },
                         child: Text(
                           'Delete',
-                          style: Mystyles.listtileSubtitleStyle
-                              .copyWith(color: Colors.red),
+                          style:
+                              listtileSubtitleStyle.copyWith(color: Colors.red),
                         ),
                       ),
                       SimpleDialogOption(
                         onPressed: () {
                           Get.back();
                         },
-                        child: Text('Cancel',
-                            style: Mystyles.listtileSubtitleStyle),
+                        child: Text('Cancel', style: listtileSubtitleStyle),
                       ),
                     ],
                   ),
@@ -241,10 +239,13 @@ class _ChatScreenState extends State<ChatScreen> {
             automaticallyImplyLeading: true,
             title: Text(
               widget.receiever['name'],
-              style: Mystyles.listtileTitleStyle.copyWith(fontSize: 20.sp),
+              style: Theme.of(context)
+                  .textTheme
+                  .displayMedium!
+                  .copyWith(fontSize: 20.sp),
             ),
             centerTitle: false,
-            // backgroundColor: Mycolors.myappbarcolor,
+            // backgroundColor:  myappbarcolor,
             backgroundColor:
                 Get.isDarkMode ? Colors.black : const Color(0xffffffff),
             elevation: 0,
@@ -366,7 +367,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ),
                                   child: Center(
                                       child: Text(formmattedDateTime,
-                                          style: Mystyles.popupHeadingStyle)),
+                                          style: popupHeadingStyle)),
                                 )
                               : const SizedBox(),
                           Row(
@@ -444,14 +445,18 @@ class _ChatScreenState extends State<ChatScreen> {
                                                       widget.ConversationId]
                                                       [index]['text']
                                                   .toString(),
-                                              style: Mystyles.listtileTitleStyle
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .displayMedium!
                                                   .copyWith(
-                                                color: issender //sender
-                                                    ? Colors.white
-                                                    : Mystyles
-                                                        .bigTitleStyle.color,
-                                                fontSize: 16.sp,
-                                              ),
+                                                    color: issender //sender
+                                                        ? Colors.white
+                                                        : Theme.of(context)
+                                                            .textTheme
+                                                            .displayLarge!
+                                                            .color,
+                                                    fontSize: 16.sp,
+                                                  ),
                                               textAlign: TextAlign.start,
                                             ),
                                           ),

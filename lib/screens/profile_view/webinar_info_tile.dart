@@ -21,7 +21,7 @@ class WebinarInfoTile extends StatelessWidget {
         left: 10.w,
         right: 10.w,
       ),
-      decoration: MyBoxDecorations.listtileDecoration.copyWith(
+      decoration: listtileDecoration.copyWith(
           color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
@@ -71,7 +71,7 @@ class WebinarInfoTile extends StatelessWidget {
                               [index]['name']
                           : AuthController.otherUserProfile[webinarListType]
                               [index]['webinar']['name'],
-                      style: Mystyles.bigTitleStyle.copyWith(
+                      style: Theme.of(context).textTheme.displayLarge!.copyWith(
                           fontSize: 20.sp, overflow: TextOverflow.ellipsis),
                       maxLines: 2,
                     ),
@@ -84,8 +84,11 @@ class WebinarInfoTile extends StatelessWidget {
                           : AuthController.otherUserProfile[webinarListType]
                                   [index]['webinar']['tags']
                               .toString(),
-                      style: Mystyles.listtileTitleStyle.copyWith(
-                          fontWeight: FontWeight.w300, fontSize: 14.sp),
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayMedium!
+                          .copyWith(
+                              fontWeight: FontWeight.w300, fontSize: 14.sp),
                     ),
                     Gap(25.h),
                     Row(
@@ -95,18 +98,23 @@ class WebinarInfoTile extends StatelessWidget {
                           webinarListType == 'created_webinars'
                               ? "${AuthController.otherUserProfile['created_webinars'][index]['duration']} mins"
                               : "${AuthController.otherUserProfile[webinarListType][index]['webinar']['duration']} mins",
-                          style:
-                              Mystyles.bigTitleStyle.copyWith(fontSize: 16.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayLarge!
+                              .copyWith(fontSize: 16.sp),
                         ),
                         AutoSizeText(
                             webinarListType == 'created_webinars'
                                 ? '${AuthController.otherUserProfile['created_webinars'][index]['price']} \$'
                                 : "${AuthController.otherUserProfile[webinarListType][index]['webinar']['price']} \$",
-                            style: Mystyles.bigTitleStyle.copyWith(
-                                color: Get.isDarkMode
-                                    ? AppColors.LTsecondaryColor
-                                    : AppColors.LTprimaryColor,
-                                fontSize: 16.sp)),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayLarge!
+                                .copyWith(
+                                    color: Get.isDarkMode
+                                        ? AppColors.LTsecondaryColor
+                                        : AppColors.LTprimaryColor,
+                                    fontSize: 16.sp)),
                       ],
                     ),
                   ],
@@ -129,7 +137,9 @@ class WebinarInfoTile extends StatelessWidget {
                       : AuthController.otherUserProfile[webinarListType][index]
                               ['webinar']['datetime']
                           .toString(),
-                  style: Mystyles.listtileTitleStyle
+                  style: Theme.of(context)
+                      .textTheme
+                      .displayMedium!
                       .copyWith(fontSize: 10.sp, fontWeight: FontWeight.w300),
                 ),
                 // RatingBar.builder(
@@ -159,8 +169,10 @@ class WebinarInfoTile extends StatelessWidget {
                   children: [
                     Text(
                       'Created by',
-                      style:
-                          Mystyles.listtileTitleStyle.copyWith(fontSize: 14.sp),
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayMedium!
+                          .copyWith(fontSize: 14.sp),
                     ),
                     Gap(5.w),
                     CircleAvatar(

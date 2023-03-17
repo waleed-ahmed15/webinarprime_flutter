@@ -42,10 +42,10 @@ class MyFileMessage extends StatelessWidget {
         child: Text(
           fileName,
           overflow: TextOverflow.visible,
-          style: Mystyles.listtileTitleStyle.copyWith(
-            color: Colors.white,
-            fontSize: 16.sp,
-          ),
+          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                color: Colors.white,
+                fontSize: 16.sp,
+              ),
         ),
       ),
     );

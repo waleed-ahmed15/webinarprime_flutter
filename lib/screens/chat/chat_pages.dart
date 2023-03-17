@@ -64,9 +64,8 @@ class _ChatPagesState extends State<ChatPages> with TickerProviderStateMixin {
               Bubble(
                 title: "Banned Chats",
                 iconColor: Colors.white,
-                bubbleColor: Get.isDarkMode
-                    ? Mycolors.myappbarcolor
-                    : AppColors.LTprimaryColor,
+                bubbleColor:
+                    Get.isDarkMode ? myappbarcolor : AppColors.LTprimaryColor,
                 icon: Icons.person_off_rounded,
                 titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
                 onPress: () async {
@@ -82,9 +81,8 @@ class _ChatPagesState extends State<ChatPages> with TickerProviderStateMixin {
               Bubble(
                 title: "New",
                 iconColor: Colors.white,
-                bubbleColor: Get.isDarkMode
-                    ? Mycolors.myappbarcolor
-                    : AppColors.LTprimaryColor,
+                bubbleColor:
+                    Get.isDarkMode ? myappbarcolor : AppColors.LTprimaryColor,
                 icon: Icons.add,
                 titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
                 onPress: () async {
@@ -113,9 +111,8 @@ class _ChatPagesState extends State<ChatPages> with TickerProviderStateMixin {
             animatedIconData: AnimatedIcons.menu_close,
 
             // iconData: Icons.edit,
-            backGroundColor: Get.isDarkMode
-                ? Mycolors.myappbarcolor
-                : AppColors.LTprimaryColor),
+            backGroundColor:
+                Get.isDarkMode ? myappbarcolor : AppColors.LTprimaryColor),
         body: PageView(
           physics: const NeverScrollableScrollPhysics(),
           onPageChanged: (index) async {

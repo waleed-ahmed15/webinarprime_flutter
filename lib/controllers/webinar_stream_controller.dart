@@ -66,7 +66,7 @@ class WebinarStreamController extends GetxController {
       if (Response.statusCode == 200) {
         print('Webinar-Stream Joined');
         getBlockedusersForWebinar(WebinarId);
-
+        update();
         await connectToRoom(context, livekitToken, WebinarId);
       } else {
         print('Webinar-Stream joining Failed');

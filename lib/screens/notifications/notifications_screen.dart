@@ -36,28 +36,28 @@ class _NotificationScreenState extends State<NotificationScreen>
         appBar: AppBar(
           toolbarHeight: 0,
           elevation: 0,
-          backgroundColor: Mycolors.myappbarcolor,
+          backgroundColor: myappbarcolor,
           bottom: TabBar(
               indicatorColor: AppColors.LTprimaryColor,
               controller: _tabController,
-              // labelStyle: Mystyles.tabTextstyle,
+              // labelStyle:  tabTextstyle,
               tabs: [
                 Tab(
                   child: Text(
                     'Notifications',
-                    style: Mystyles.tabTextstyle,
+                    style: tabTextstyle,
                   ),
                 ),
                 Tab(
                   child: Text(
                     'Invitations',
-                    style: Mystyles.tabTextstyle,
+                    style: tabTextstyle,
                   ),
                 ),
                 Tab(
                   child: Text(
                     '3rd tab',
-                    style: Mystyles.tabTextstyle,
+                    style: tabTextstyle,
                   ),
                 ),
               ]),
@@ -74,21 +74,21 @@ class _NotificationScreenState extends State<NotificationScreen>
                   children: controller.currentUserInvitations
                       .map((e) => Container(
                             margin: const EdgeInsets.all(10),
-                            decoration: MyBoxDecorations.listtileDecoration,
+                            decoration: listtileDecoration,
                             child: Column(
                               children: [
                                 ListTile(
                                   title: Text(
                                     e['webinar']['name'] + '',
-                                    style: Mystyles.listtileSubtitleStyle,
+                                    style: listtileSubtitleStyle,
                                   ),
                                   subtitle: Text(
                                     "Role: " + e['role'],
-                                    style: Mystyles.listtileSubtitleStyle,
+                                    style: listtileSubtitleStyle,
                                   ),
                                   trailing: Text(
                                     e['status'],
-                                    style: Mystyles.listtileSubtitleStyle,
+                                    style: listtileSubtitleStyle,
                                   ),
                                 ),
                                 Gap(AppLayout.getHeight(10)),

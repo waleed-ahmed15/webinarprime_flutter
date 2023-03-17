@@ -55,7 +55,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
           child: const Icon(Icons.close),
         ),
         appBar: AppBar(
-          backgroundColor: Mycolors.myappbarcolor,
+          backgroundColor: myappbarcolor,
           elevation: 0,
           automaticallyImplyLeading: false,
           title: Padding(
@@ -65,7 +65,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search_sharp),
-                  color: Mycolors.iconColor,
+                  color: iconColor,
                   iconSize: AppLayout.getHeight(30),
                   onPressed: () {
                     if (serachcontroller.text.trim().isEmpty) {
@@ -79,7 +79,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                   },
                 ),
                 hintText: 'Search. . .',
-                hintStyle: Mystyles.myhintTextstyle,
+                hintStyle: myhintTextstyle,
                 border: InputBorder.none,
               ),
               // style: const TextStyle(color: Colors.white),
@@ -98,14 +98,14 @@ class _UserSearchScreenState extends State<UserSearchScreen>
               Tab(
                 child: Text(
                   'Results',
-                  style: Mystyles.tabTextstyle,
+                  style: tabTextstyle,
                 ),
               ),
               Tab(
-                child: Text('Pending', style: Mystyles.tabTextstyle),
+                child: Text('Pending', style: tabTextstyle),
               ),
               Tab(
-                child: Text('Joined', style: Mystyles.tabTextstyle),
+                child: Text('Joined', style: tabTextstyle),
               ),
             ],
             controller: _tabController,
@@ -129,7 +129,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                       return Container(
                         margin:
                             EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-                        decoration: MyBoxDecorations.listtileDecoration,
+                        decoration: listtileDecoration,
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(AppConstants.baseURL +
@@ -301,15 +301,15 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                   if (widget.usersType == 1) {
                     return Center(
                         child: Text("No pending Organizers Found",
-                            style: Mystyles.myhintTextstyle));
+                            style: myhintTextstyle));
                   } else if (widget.usersType == 2) {
                     return Center(
                         child: Text("No pending  Guests Found",
-                            style: Mystyles.myhintTextstyle));
+                            style: myhintTextstyle));
                   } else {
                     return Center(
                         child: Text("No pending Attendees Found",
-                            style: Mystyles.myhintTextstyle));
+                            style: myhintTextstyle));
                   }
                 } else {
                   return ListView.builder(
@@ -319,7 +319,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                       return Container(
                         margin:
                             EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-                        decoration: MyBoxDecorations.listtileDecoration,
+                        decoration: listtileDecoration,
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(AppConstants.baseURL +
@@ -380,15 +380,15 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                   if (widget.usersType == 1) {
                     return Center(
                         child: Text("No Organizers Joined yet",
-                            style: Mystyles.myhintTextstyle));
+                            style: myhintTextstyle));
                   } else if (widget.usersType == 2) {
                     return Center(
                         child: Text("No Guests Joined yet",
-                            style: Mystyles.myhintTextstyle));
+                            style: myhintTextstyle));
                   } else {
                     return Center(
                         child: Text("No Attendees Joined yet",
-                            style: Mystyles.myhintTextstyle));
+                            style: myhintTextstyle));
                   }
                 } else {
                   return ListView.builder(
@@ -398,7 +398,7 @@ class _UserSearchScreenState extends State<UserSearchScreen>
                       return Container(
                         margin:
                             EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-                        decoration: MyBoxDecorations.listtileDecoration,
+                        decoration: listtileDecoration,
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(AppConstants.baseURL +

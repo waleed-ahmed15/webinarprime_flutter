@@ -28,7 +28,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         centerTitle: true,
         title: Text(
           "Change Password",
-          style: Mystyles.mediumHeadingStyle,
+          style: mediumHeadingStyle,
         ),
       ),
       body: Container(
@@ -64,7 +64,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       controller: oldpass,
                       decoration: InputDecoration(
                           hintText: "Old Password",
-                          hintStyle: Mystyles.listtileSubtitleStyle,
+                          hintStyle: listtileSubtitleStyle,
                           enabledBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(
                               color: Color.fromARGB(255, 134, 163, 160),
@@ -78,7 +78,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           border: const UnderlineInputBorder(),
                           suffixIcon: Icon(
                             Icons.lock_outline,
-                            color: Mycolors.iconColor,
+                            color: iconColor,
                           )),
                       validator: (value) {
                         if (value!.isEmpty || value.length <= 7) {
@@ -93,7 +93,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       obscureText: true,
                       decoration: InputDecoration(
                           hintText: "New Password",
-                          hintStyle: Mystyles.listtileSubtitleStyle,
+                          hintStyle: listtileSubtitleStyle,
                           enabledBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(
                               color: Color.fromARGB(255, 134, 163, 160),
@@ -107,7 +107,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           border: const UnderlineInputBorder(),
                           suffixIcon: Icon(
                             Icons.lock_outline,
-                            color: Mycolors.iconColor,
+                            color: iconColor,
                           )),
                       validator: (value) {
                         if (value!.isEmpty || value.length <= 7) {
@@ -124,7 +124,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       controller: confirmpass,
                       decoration: InputDecoration(
                           hintText: "Confirm Password",
-                          hintStyle: Mystyles.listtileSubtitleStyle,
+                          hintStyle: listtileSubtitleStyle,
                           enabledBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(
                               color: Color.fromARGB(255, 134, 163, 160),
@@ -138,7 +138,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           border: const UnderlineInputBorder(),
                           suffixIcon: Icon(
                             Icons.lock_outline,
-                            color: Mycolors.iconColor,
+                            color: iconColor,
                           )),
                       validator: (value) {
                         if (value!.isEmpty || value.length <= 7) {
@@ -181,8 +181,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               child: Text(
                 'Change Password',
-                style:
-                    Mystyles.listtileTitleStyle.copyWith(color: Colors.white),
+                style: Theme.of(context)
+                    .textTheme
+                    .displayMedium!
+                    .copyWith(color: Colors.white),
               ),
             ),
           ],

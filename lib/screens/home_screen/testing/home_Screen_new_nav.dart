@@ -84,7 +84,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
         items: _navbarItems(),
         controller: controller,
         navBarStyle: NavBarStyle.style16,
-        backgroundColor: Mycolors.myappbarcolor,
+        backgroundColor: myappbarcolor,
 
         handleAndroidBackButtonPress: true,
 

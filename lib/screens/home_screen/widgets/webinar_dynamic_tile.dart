@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -8,6 +7,7 @@ import 'package:webinarprime/screens/webinar_management/view_webinar_screen/webi
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
+import 'package:flutter/material.dart';
 
 class WebinarDynamicInfoTile extends StatelessWidget {
   Map<String, dynamic> webinar;
@@ -26,7 +26,7 @@ class WebinarDynamicInfoTile extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-        decoration: MyBoxDecorations.listtileDecoration.copyWith(
+        decoration: listtileDecoration.copyWith(
             color: Theme.of(context).scaffoldBackgroundColor,
             boxShadow: [
               BoxShadow(
@@ -65,15 +65,22 @@ class WebinarDynamicInfoTile extends StatelessWidget {
                     children: [
                       AutoSizeText(
                         webinar['name'],
-                        style: Mystyles.bigTitleStyle.copyWith(
-                            fontSize: 20.sp, overflow: TextOverflow.ellipsis),
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayLarge!
+                            .copyWith(
+                                fontSize: 20.sp,
+                                overflow: TextOverflow.ellipsis),
                         maxLines: 2,
                       ),
                       Gap(10.h),
                       AutoSizeText(
                         webinar['tags'].toString(),
-                        style: Mystyles.listtileTitleStyle.copyWith(
-                            fontWeight: FontWeight.w300, fontSize: 14.sp),
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(
+                                fontWeight: FontWeight.w300, fontSize: 14.sp),
                       ),
                       Gap(25.h),
                       Row(
@@ -81,12 +88,16 @@ class WebinarDynamicInfoTile extends StatelessWidget {
                         children: [
                           AutoSizeText(
                             webinar['duration'] + ' mins',
-                            style: Mystyles.bigTitleStyle
-                                .copyWith(fontSize: 16.sp),
+                            style: bigTitleStyle.copyWith(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayLarge!
+                                    .color,
+                                fontSize: 16.sp),
                           ),
                           AutoSizeText(
                               webinar['price'].toString() + ' \$'.toString(),
-                              style: Mystyles.bigTitleStyle.copyWith(
+                              style: bigTitleStyle.copyWith(
                                   color: Get.isDarkMode
                                       ? AppColors.LTsecondaryColor
                                       : AppColors.LTprimaryColor,
@@ -107,16 +118,25 @@ class WebinarDynamicInfoTile extends StatelessWidget {
                 children: [
                   AutoSizeText(
                     webinar['datetime'].toString(),
-                    style: Mystyles.listtileTitleStyle
-                        .copyWith(fontSize: 10.sp, fontWeight: FontWeight.w300),
+                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                        color: Theme.of(context).textTheme.displaySmall!.color,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w300),
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         'Created by',
-                        style: Mystyles.listtileTitleStyle
-                            .copyWith(fontSize: 14.sp),
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .color,
+                                fontSize: 14.sp),
                       ),
                       Gap(5.w),
                       CircleAvatar(
