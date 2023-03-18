@@ -217,8 +217,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.receiever);
-    print(widget.ConversationId);
+    // print(widget.receiever);
+    // print(widget.ConversationId);
     return WillPopScope(
       onWillPop: () async {
         Get.find<PagesNav>().updateChat(0);

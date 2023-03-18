@@ -52,15 +52,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // .otherUserProfileDetails(Get.find<AuthController>().currentUser['_id']);
 
     // print(Get.find<AuthController>().currentUser);
-    await Get.find<ChatStreamController>()
-        .getConversations(Get.find<AuthController>().currentUser['_id']);
-    socket.onConnect((data) => print(' socket stream chat connected'));
-    print('current user is=-------------------------------------------');
-    print(Get.find<AuthController>().currentUser);
-    // print(Get.find<AuthController>().currentUser['_id']);s
     socket.emit('join', {
       Get.find<AuthController>().currentUser['_id'],
     });
+    socket.on('conversationChatMessage', (data) {
+      // ShowCustomSnackBar(
+      //     title: 'New Message', 'You have a new message', isError: false);
+      // print('conversationChatMessage:=>>>>>>>>>>>>>>> $data');
+    });
+    socket.on(
+        'notification', (data) => print('notification:=>>>>>>>>>>>>>>> $data'));
+
+    await Get.find<ChatStreamController>()
+        .getConversations(Get.find<AuthController>().currentUser['_id']);
+    // socket.onConnect((data) => print(' socket stream chat connected'));
+    // print('current user is=-------------------------------------------');
+    // print(Get.find<AuthController>().currentUser);
+    // print(Get.find<AuthController>().currentUser['_id']);s
   }
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -86,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // const ChatListScreen(),
     const ChatPages(),
     const UserProfileView(),
+    const SizedBox(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -133,6 +142,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           body: Center(
             child: _widgetOptions.elementAt(widget.currIndex!),
           ),
+          // bottomNavigationBar: Container(
+          //   height: 60.h,
+          //   decoration: BoxDecoration(
+          //     color: Theme.of(context).appBarTheme.backgroundColor!,
+          //     borderRadius: BorderRadius.only(
+          //         topLeft: Radius.circular(15.r),
+          //         topRight: Radius.circular(15.r)),
+          //   ),
+          //   child: Row(children: const [
+          //     Badge(
+          //       textColor: Colors.white,
+          //       child: Icon(Icons.home),
+          //     ),
+          //   ]),
+          // ),
           bottomNavigationBar: ClipRRect(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(15.r),
@@ -147,19 +171,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
               child: GNav(
                 backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
-                // curve: Curves.ease,
                 curve: Curves.easeInOut,
-
-                // rippleColor: Colors.grey[300]!,
                 gap: 1,
                 activeColor:
                     Get.isDarkMode ? Colors.cyan : AppColors.LTprimaryColor,
-                iconSize: 24,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                // iconSize: 25,
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 1),
                 duration: const Duration(microseconds: 1),
-                // tabBackgroundColor: Colors.grey[100]!,
-                // color: Colors.black,
                 tabs: [
                   GButton(
                     icon: widget.currIndex == 0
@@ -205,6 +223,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     icon: widget.currIndex == 4
                         ? Icons.person
                         : Icons.person_2_outlined,
+                    iconSize: 30.h,
+                    text: '',
+                  ),
+                  GButton(
+                    onPressed: () {
+                      print('object');
+                    },
+                    icon: widget.currIndex == 5
+                        ? Icons.notifications
+                        : Icons.notifications_outlined,
                     iconSize: 30.h,
                     text: '',
                   ),

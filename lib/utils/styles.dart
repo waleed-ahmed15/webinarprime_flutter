@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:webinarprime/utils/dimension.dart';
 
 // class Mystyles {
+
+  
 TextStyle tabTextstyle = TextStyle(
   letterSpacing: 1,
   height: 1.5,
@@ -38,7 +40,7 @@ TextStyle listtileSubtitleStyle = TextStyle(
   fontFamily: 'JosefinSans Medium',
 );
 
-TextStyle bigTitleStyle = TextStyle(
+var bigTitleStyle = TextStyle(
   fontSize: 40.sp,
   fontFamily: 'JosefinSans Bold',
   fontWeight: FontWeight.w700,

@@ -641,11 +641,12 @@ class WebinarManagementController extends GetxController {
     }
   }
 
+
   // post notification of webinar=========================================================================
   Future<void> postNotification(String id, String title, String body) async {
     print('post notification called');
     try {
-      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$id/notification");
+      Uri url = Uri.parse("${AppConstants.baseURL}/notification/webinar/$id");
       final response = await http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
