@@ -20,7 +20,7 @@ class _NotificationScreenState extends State<NotificationScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -36,7 +36,7 @@ class _NotificationScreenState extends State<NotificationScreen>
         appBar: AppBar(
           toolbarHeight: 0,
           elevation: 0,
-          backgroundColor: myappbarcolor,
+          backgroundColor: Colors.transparent,
           bottom: TabBar(
               indicatorColor: AppColors.LTprimaryColor,
               controller: _tabController,
@@ -45,19 +45,13 @@ class _NotificationScreenState extends State<NotificationScreen>
                 Tab(
                   child: Text(
                     'Notifications',
-                    style: tabTextstyle,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
                 Tab(
                   child: Text(
                     'Invitations',
-                    style: tabTextstyle,
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    '3rd tab',
-                    style: tabTextstyle,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
               ]),
@@ -146,7 +140,6 @@ class _NotificationScreenState extends State<NotificationScreen>
                 ),
               );
             }),
-            const Center(child: Text('3rd tab')),
           ],
         ),
       ),

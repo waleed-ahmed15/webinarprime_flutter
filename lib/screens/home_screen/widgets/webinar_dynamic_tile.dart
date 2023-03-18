@@ -141,8 +141,10 @@ class WebinarDynamicInfoTile extends StatelessWidget {
                       Gap(5.w),
                       CircleAvatar(
                         radius: 10.r,
-                        backgroundImage: const NetworkImage(
-                            'https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80'),
+                        backgroundImage: NetworkImage(
+                          AppConstants.baseURL +
+                              webinar['createdBy']['profile_image'],
+                        ),
                       ),
                     ],
                   )

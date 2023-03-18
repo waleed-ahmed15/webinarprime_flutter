@@ -64,7 +64,7 @@ ThemeData darkTheme = ThemeData(
       fontFamily: 'JosefinSans Regular',
     ),
     displaySmall: listtileSubtitleStyle, //
-    headlineMedium: TextStyle(
+    headlineMedium: TextStyle( 
         // tabTextstyle
         letterSpacing: 1,
         height: 1.5,

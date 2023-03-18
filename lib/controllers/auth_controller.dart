@@ -137,7 +137,7 @@ class AuthController extends GetxController {
 
   Future<void> getUserById(String id) async {
     final response =
-        await http.get(Uri.parse('${AppConstants.baseURL}/user/$id'));
+        await http.get(Uri.parse('${AppConstants.baseURL}/user/details/$id'));
     if (response.statusCode == 200) {
       final data = await jsonDecode(response.body);
       print(data);
@@ -274,7 +274,6 @@ class AuthController extends GetxController {
     // currentUser = null;
     print('token removed and logging out');
     print(sharedPreferences.getString('token'));
-
     Get.offAllNamed('/sign-in');
   }
 
@@ -433,7 +432,7 @@ class AuthController extends GetxController {
 
   Future<bool> otherUserProfileDetails(String userId) async {
     try {
-      Uri url = Uri.parse("${AppConstants.baseURL}/user/$userId");
+      Uri url = Uri.parse("${AppConstants.baseURL}/user/details/$userId");
 
       var response = await http.get(
         url,
