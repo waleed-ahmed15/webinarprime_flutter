@@ -785,7 +785,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                 backgroundColor: Get.isDarkMode
                     ? const Color(0xff191919)
                     : const Color(0xffF7F8F8),
-                expandedHeight: AppLayout.getHeight(480),
+                expandedHeight: AppLayout.getHeight(490),
                 flexibleSpace: FlexibleSpaceBar(
                   title: _showTitle
                       ? Padding(
@@ -892,7 +892,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         ),
                       ),
                       Positioned(
-                        bottom: AppLayout.getHeight(170.0),
+                        bottom: AppLayout.getHeight(180.0),
                         left: AppLayout.getWidth(50),
                         child: SizedBox(
                           width: AppLayout.getWidth(300),
@@ -901,10 +901,11 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+                                Gap(8.h),
                                 Text(
                                   '${WebinarManagementController.currentWebinar['datetime']} - ${WebinarManagementController.currentWebinar['duration']} Mins',
                                   style: TextStyle(
-                                    fontSize: AppLayout.getHeight(20),
+                                    fontSize: AppLayout.getHeight(16),
                                     fontFamily: 'JosefinSans Bold',
                                     letterSpacing: 0.2,
                                     fontWeight: FontWeight.w500,
@@ -912,22 +913,26 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                         const Color.fromRGBO(122, 121, 121, 1),
                                   ),
                                 ),
+                                Gap(6.h),
                               ],
                             ),
                           ),
                         ),
                       ),
                       Positioned(
-                          bottom: AppLayout.getHeight(80),
-                          child: SizedBox(
+                          bottom: AppLayout.getHeight(60),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: AppLayout.getWidth(20)),
                             // color: Colors.red,
-                            height: AppLayout.getHeight(100),
+                            height: AppLayout.getHeight(120),
                             width: AppLayout.getWidth(400),
                             child: AutoSizeText(
                               '${WebinarManagementController.currentWebinar['name']}',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 30.sp,
+                                height: 1.2,
+                                fontSize: 25.sp,
                                 fontFamily: 'JosefinSans Bold',
                                 fontWeight: FontWeight.w700,
                                 color: Get.isDarkMode
@@ -938,7 +943,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             ),
                           )),
                       Positioned(
-                        bottom: AppLayout.getHeight(50),
+                        bottom: AppLayout.getHeight(60),
                         child: SizedBox(
                           width: AppLayout.getScreenWidth(),
                           // color: Colors.yellow,

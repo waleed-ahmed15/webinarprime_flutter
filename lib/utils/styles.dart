@@ -6,7 +6,6 @@ import 'package:webinarprime/utils/dimension.dart';
 
 // class Mystyles {
 
-  
 TextStyle tabTextstyle = TextStyle(
   letterSpacing: 1,
   height: 1.5,

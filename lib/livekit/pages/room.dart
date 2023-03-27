@@ -8,11 +8,9 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/models/question_model.dart';
 import 'package:webinarprime/models/room_chat_answerModel.dart';
-import 'package:webinarprime/screens/webinar_management/view_webinar_screen/webinar_details_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
@@ -254,8 +252,8 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
           scaffoldKey.currentState!.closeEndDrawer();
           scaffoldKey.currentState!.closeDrawer();
           // print('geeerr');
-          Get.off(() => WebinarDetailsScreen(
-              webinarDetails: WebinarManagementController.currentWebinar));
+          // Get.off(() => WebinarDetailsScreen(
+          // webinarDetails: WebinarManagementController.currentWebinar));
 
           return false;
         },
@@ -322,170 +320,162 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                       child: ListView.builder(
                         itemCount: widget.room.participants.length + 1,
                         itemBuilder: (BuildContext context, int index) {
-                          return index == widget.room.participants.length
-                              ? Padding(
-                                  padding: EdgeInsets.only(bottom: 2.h),
-                                  child: ListTile(
-                                      subtitle: Text(
-                                        jsonDecode(widget.room.localParticipant!
-                                            .metadata!)['role'],
-                                        style: listtileSubtitleStyle.copyWith(
-                                            color: Colors.white),
-                                      ),
-                                      title: Text(
-                                        jsonDecode(widget.room.localParticipant!
-                                            .metadata!)['name'],
-                                        style: TextStyle(
-                                          color: widget.room.localParticipant!
-                                                  .isSpeaking
-                                              ? Colors.green
-                                              : Colors.white,
-                                          fontSize: 20,
-                                          overflow: TextOverflow.ellipsis,
+                          if (index == widget.room.participants.length) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 2.h),
+                              child: ListTile(
+                                  subtitle: Text(
+                                    jsonDecode(widget.room.localParticipant!
+                                        .metadata!)['role'],
+                                    style: listtileSubtitleStyle.copyWith(
+                                        color: Colors.white),
+                                  ),
+                                  title: Text(
+                                    jsonDecode(widget.room.localParticipant!
+                                        .metadata!)['name'],
+                                    style: TextStyle(
+                                      color: widget
+                                              .room.localParticipant!.isSpeaking
+                                          ? Colors.green
+                                          : Colors.white,
+                                      fontSize: 20,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  leading: CircleAvatar(
+                                    radius: 20.r,
+                                    backgroundImage: NetworkImage(
+                                        AppConstants.baseURL +
+                                            jsonDecode(widget
+                                                .room
+                                                .localParticipant!
+                                                .metadata!)['profile_image']),
+                                  ),
+                                  trailing: SizedBox(
+                                    width: 100.h,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: widget.room.localParticipant!
+                                                  .isMuted
+                                              ? const Icon(
+                                                  Icons.mic_off,
+                                                  color: Colors.red,
+                                                )
+                                              : const Icon(
+                                                  Icons.mic,
+                                                  color: Colors.green,
+                                                ),
                                         ),
-                                      ),
-                                      leading: CircleAvatar(
-                                        radius: 20.r,
-                                        backgroundImage: NetworkImage(
-                                            AppConstants.baseURL +
-                                                jsonDecode(widget
-                                                        .room
-                                                        .localParticipant!
-                                                        .metadata!)[
-                                                    'profile_image']),
-                                      ),
-                                      trailing: SizedBox(
-                                        width: 100.h,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            IconButton(
-                                              onPressed: () {},
-                                              icon: widget.room
-                                                      .localParticipant!.isMuted
-                                                  ? const Icon(
-                                                      Icons.mic_off,
-                                                      color: Colors.red,
-                                                    )
-                                                  : const Icon(
-                                                      Icons.mic,
-                                                      color: Colors.green,
-                                                    ),
-                                            ),
-                                          ],
-                                        ),
-                                      )),
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.only(bottom: 2.h),
-                                  child: ListTile(
-                                      subtitle: Text(
-                                        jsonDecode(widget
-                                            .room.participants.values
-                                            .elementAt(index)
-                                            .metadata!)['role'],
-                                        style: listtileSubtitleStyle.copyWith(
-                                            color: Colors.white),
-                                      ),
-                                      title: Text(
-                                        jsonDecode(widget
-                                            .room.participants.values
-                                            .elementAt(index)
-                                            .metadata!)['name'],
-                                        style: TextStyle(
-                                          color: widget.room.participants.values
-                                                  .elementAt(index)
-                                                  .isSpeaking
-                                              ? Colors.green
-                                              : Colors.white,
-                                          fontSize: 20.sp,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      leading: CircleAvatar(
-                                        radius: 20.r,
-                                        backgroundImage: NetworkImage(
-                                            AppConstants.baseURL +
-                                                jsonDecode(
-                                                        widget.room.participants
-                                                            .values
-                                                            .elementAt(index)
-                                                            .metadata!)[
-                                                    'profile_image']),
-                                      ),
-                                      trailing: SizedBox(
-                                        width: 100.h,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            IconButton(
-                                              onPressed: () {
-                                                // mute participant
+                                      ],
+                                    ),
+                                  )),
+                            );
+                          } else {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 2.h),
+                              child: ListTile(
+                                  subtitle: Text(
+                                    jsonDecode(widget.room.participants.values
+                                        .elementAt(index)
+                                        .metadata!)['role'],
+                                    style: listtileSubtitleStyle.copyWith(
+                                        color: Colors.white),
+                                  ),
+                                  title: Text(
+                                    jsonDecode(widget.room.participants.values
+                                        .elementAt(index)
+                                        .metadata!)['name'],
+                                    style: TextStyle(
+                                      color: widget.room.participants.values
+                                              .elementAt(index)
+                                              .isSpeaking
+                                          ? Colors.green
+                                          : Colors.white,
+                                      fontSize: 20.sp,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  leading: CircleAvatar(
+                                    radius: 20.r,
+                                    backgroundImage: NetworkImage(
+                                        AppConstants.baseURL +
+                                            jsonDecode(widget
+                                                .room.participants.values
+                                                .elementAt(index)
+                                                .metadata!)['profile_image']),
+                                  ),
+                                  trailing: SizedBox(
+                                    width: 150.w,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            // mute participant
 
-                                                print(widget.room.participants
-                                                    .values.first.isMuted);
-                                                print(widget.room
-                                                    .participants[0]!.isMuted);
-                                              },
-                                              icon: widget
+                                            print(widget.room.participants
+                                                .values.first.isMuted);
+                                            print(widget
+                                                .room.participants[0]!.isMuted);
+                                          },
+                                          icon: widget.room.participants.values
+                                                  .elementAt(index)
+                                                  .isMuted
+                                              ? const Icon(
+                                                  Icons.mic_off,
+                                                  color: Colors.red,
+                                                )
+                                              : const Icon(
+                                                  Icons.mic,
+                                                  color: Colors.green,
+                                                ),
+                                        ),
+                                        if (jsonDecode(widget
+                                                    .room
+                                                    .localParticipant!
+                                                    .metadata!)['role'] ==
+                                                'organizer' &&
+                                            jsonDecode(widget
+                                                    .room.participants.values
+                                                    .elementAt(index)
+                                                    .metadata!)['role'] ==
+                                                'attendee')
+                                          IconButton(
+                                            onPressed: () async {
+                                              String kickedparticipantId =
+                                                  jsonDecode(widget
                                                       .room.participants.values
                                                       .elementAt(index)
-                                                      .isMuted
-                                                  ? const Icon(
-                                                      Icons.mic_off,
-                                                      color: Colors.red,
-                                                    )
-                                                  : const Icon(
-                                                      Icons.mic,
-                                                      color: Colors.green,
-                                                    ),
-                                            ),
-                                            jsonDecode(widget
-                                                        .room
-                                                        .localParticipant!
-                                                        .metadata!)['role'] ==
-                                                    'organizer'
-                                                ? IconButton(
-                                                    onPressed: () async {
-                                                      String
-                                                          kickedparticipantId =
-                                                          jsonDecode(widget
-                                                              .room
-                                                              .participants
-                                                              .values
-                                                              .elementAt(index)
-                                                              .metadata!)['_id'];
-                                                      print(jsonDecode(widget
-                                                          .room
-                                                          .participants
-                                                          .values
-                                                          .elementAt(index)
-                                                          .metadata!));
-                                                      print(
-                                                          'person kicked from roster');
-                                                      print(
-                                                          kickedparticipantId);
-                                                      print(
-                                                          widget.webinarRoomId);
+                                                      .metadata!)['_id'];
+                                              print(jsonDecode(widget
+                                                  .room.participants.values
+                                                  .elementAt(index)
+                                                  .metadata!));
+                                              print(
+                                                  'person kicked from roster');
+                                              print(kickedparticipantId);
+                                              print(widget.webinarRoomId);
 
-                                                      await Get.find<
-                                                              WebinarStreamController>()
-                                                          .kickparticipantFromWebinar(
-                                                              kickedparticipantId,
-                                                              widget
-                                                                  .webinarRoomId);
-                                                    },
-                                                    icon: const Icon(
-                                                        Icons.person_remove),
-                                                    color: Colors.red,
-                                                  )
-                                                : const SizedBox(),
-                                          ],
-                                        ),
-                                      )),
-                                );
+                                              await Get.find<
+                                                      WebinarStreamController>()
+                                                  .kickparticipantFromWebinar(
+                                                      kickedparticipantId,
+                                                      widget.webinarRoomId);
+                                            },
+                                            icon:
+                                                const Icon(Icons.person_remove),
+                                            color: Colors.red,
+                                          )
+                                        else
+                                          const SizedBox(),
+                                      ],
+                                    ),
+                                  )),
+                            );
+                          }
                         },
                       ),
                     ),

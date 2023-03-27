@@ -139,9 +139,10 @@ class _UploadProfileScreenState extends State<UploadProfileScreen> {
                         child: Text(
                           "Upload picture",
                           style: TextStyle(
-                              fontFamily: 'Montserrat-Regular',
+                              fontFamily: 'josefinSans',
                               fontWeight: FontWeight.w400,
-                              color: Theme.of(context).colorScheme.secondary,
+                              color:
+                                  Get.isDarkMode ? Colors.white : Colors.black,
                               fontSize: AppLayout.getHeight(20)),
                         ),
                       ),
@@ -159,11 +160,15 @@ class _UploadProfileScreenState extends State<UploadProfileScreen> {
                         DateTimePicker(
                           // initialValue: DateTime.now().toString(),
                           decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
                               suffixIcon: Icon(Icons.calendar_month_outlined),
                               hintText: "Select Birthday"),
                           firstDate: DateTime(1900),
                           initialDate: DateTime(1990, 1),
-                          lastDate: DateTime.now(),
+
+                          lastDate: DateTime(2003, 1),
+                          cursorColor: Colors.red,
+                          calendarTitle: "Select your Birthday",
                           dateLabelText: 'Select your Birthday',
                           controller: dateController,
                           // initialValue: "qqq",

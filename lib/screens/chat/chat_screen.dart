@@ -13,12 +13,14 @@ import 'package:intl/intl.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/chat_controlller.dart';
 import 'package:webinarprime/controllers/pages_nav_controller.dart';
+import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/screens/chat/chat_field_widget.dart';
 import 'package:webinarprime/screens/chat/file_message_view_widget.dart';
 import 'package:webinarprime/screens/chat/image_Viewer_widget.dart';
 import 'package:webinarprime/screens/home_screen/home_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
+import 'package:webinarprime/widgets/snackbar.dart';
 
 class ChatScreen extends StatefulWidget {
   final Map<String, dynamic> receiever;
@@ -33,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   late String? currentDate;
   bool fullScreen = false;
-  final IO.Socket socket = Get.find();
+  // final IO.Socket socket = Get.find<IO.Socket>();
 
   List<Map<String, dynamic>> messages = [
     {
@@ -190,9 +192,14 @@ class _ChatScreenState extends State<ChatScreen> {
         curve: Curves.easeOut,
       );
     });
-    socket.on('conversationChatMessage', (data) {
-      // this method is called when a new message
-      //is received and scrolls all the way down
+    Get.find<IO.Socket>().on('conversationChatMessage', (data) async {
+      if (data['conversation']['_id'] != widget.ConversationId) {
+        ShowCustomSnackBar(widget.ConversationId,
+            title: data['conversation']['_id'], isError: true);
+        await Get.find<WebinarStreamController>()
+            .showMessageNotifications(data, widget.ConversationId);
+      }
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
@@ -202,8 +209,6 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     });
 
-    // Get.find<ChatStreamController>().GetmessagesForAconversation(
-    // widget.ConversationId, widget.receiever['_id']);
     // TODO: implement initState
     super.initState();
   }
@@ -211,7 +216,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     // TODO: implement dispose
+    // socket.dispose();
     _scrollController.dispose();
+    Get.find<IO.Socket>().off('conversationChatMessage');
     super.dispose();
   }
 
@@ -222,8 +229,9 @@ class _ChatScreenState extends State<ChatScreen> {
     return WillPopScope(
       onWillPop: () async {
         Get.find<PagesNav>().updateChat(0);
+
         // PersistentNavBarNavigator.pushNewScreen(context, screen: HomeScreen)
-        Get.to(() => HomeScreen(
+        Get.offAll(() => HomeScreen(
               currIndex: 3,
             ));
         // Get.back();
@@ -291,9 +299,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 }
                 return IconButton(
                   onPressed: () async {
-                    print('ban user');
-                    print(widget.receiever['_id']);
-                    print(widget.receiever['name']);
+                    // print('ban user');
+                    // print(widget.receiever['_id']);
+                    // print(widget.receiever['name']);
                     await Get.find<ChatStreamController>().banUser(
                       widget.receiever['_id'],
                     );
@@ -329,17 +337,17 @@ class _ChatScreenState extends State<ChatScreen> {
                         ['createdAt']);
                     String formmattedDateTime =
                         DateFormat('dd/MM/yy, hh:mm').format(date);
-                    print(ChatStreamController
-                            .userChatmessages[widget.ConversationId][index]
-                        ['from']['_id']);
-                    print(Get.find<AuthController>().currentUser['_id']);
+                    // print(ChatStreamController
+                    //         .userChatmessages[widget.ConversationId][index]
+                    //     ['from']['_id']);
+                    // print(Get.find<AuthController>().currentUser['_id']);
                     bool issender = false;
                     if (ChatStreamController
                                 .userChatmessages[widget.ConversationId][index]
                             ['from']['_id'] ==
                         Get.find<AuthController>().currentUser['_id']) {
                       issender = true;
-                      print('sender');
+                      // print('sender');
                     }
                     if (index == 0) {
                       addDate = true;
@@ -348,9 +356,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     }
                     mycurrentDate = formmattedDateTime;
 
-                    print(formmattedDateTime);
+                    // print(formmattedDateTime);
 
-                    print(date);
+                    // print(date);
                     return Container(
                       margin: EdgeInsets.only(
                         top: 1.h,
@@ -499,8 +507,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void sendPressed(String message) async {
     if (message.isNotEmpty) {
-      print(message);
-      print(Get.find<AuthController>().currentUser['_id']);
+      // print(message);
+      // print(Get.find<AuthController>().currentUser['_id']);
       Map<String, dynamic> messageMap = {
         "message": {
           "from": Get.find<AuthController>().currentUser['_id'],

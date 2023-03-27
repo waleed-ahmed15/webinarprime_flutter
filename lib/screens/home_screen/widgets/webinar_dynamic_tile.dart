@@ -63,13 +63,13 @@ class WebinarDynamicInfoTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AutoSizeText(
+                      Text(
                         webinar['name'],
                         style: Theme.of(context)
                             .textTheme
                             .displayLarge!
                             .copyWith(
-                                fontSize: 20.sp,
+                                fontSize: 16.sp,
                                 overflow: TextOverflow.ellipsis),
                         maxLines: 2,
                       ),

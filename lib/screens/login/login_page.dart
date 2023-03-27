@@ -114,8 +114,8 @@ class _LoginPage extends State<LoginPage> {
                             color: Color.fromARGB(255, 134, 163, 160)),
                       ),
                       validator: (value) {
-                        if (value!.isEmpty || value.length <= 7) {
-                          return "enter password of lengther greater than 7";
+                        if (value!.isEmpty || value.length <= 5) {
+                          return "enter password of lengther greater than 5";
                         }
                         return null;
                       },

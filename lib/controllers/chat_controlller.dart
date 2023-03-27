@@ -65,6 +65,8 @@ class ChatStreamController extends GetxController {
   }
 
   static List userchats = [].obs;
+  static List<dynamic> chatbotconversation = [].obs;
+  static String ActiveChatId = '';
   static Map<dynamic, dynamic> userChatmessages = {}.obs;
   Future<void> getConversations(String userId) async {
     try {
@@ -239,7 +241,7 @@ class ChatStreamController extends GetxController {
       Uri url = Uri.parse(
         '${AppConstants.baseURL}/chat/delete-conversation/$conversationId',
       );
-      final response = await http.delete(
+      final response = await http.put(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -311,6 +313,61 @@ class ChatStreamController extends GetxController {
         update();
       } else {
         print('user banning Failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //chatbot
+
+  Future<void> chatbot({String query = 'create new Webinar'}) async {
+    chatbotconversation.add({
+      'text': query,
+      'type': 'user',
+      'time': DateTime.now().toString(),
+    });
+    try {
+      Uri url = Uri.parse('${AppConstants.baseURL}/chatbot/dialogflow');
+      var response = await http.post(url, body: {
+        "queryText": query,
+        "sessionId": "abcd1234",
+        "languageCode": "en"
+      });
+      // print(jsonMap.containsKey('screen'));
+      if (response.statusCode == 200) {
+        try {
+          Map<String, dynamic> jsonMap = await jsonDecode(response.body);
+          // print(jsonMap['response']);
+          // print(jsonDecode(jsonMap['response']));
+
+          // print(jsonDecode(jsonMap['response']).containsKey('screen'));
+          String screen = await jsonDecode(jsonMap['response'])['screen'];
+          // print(screen);
+          String text = await jsonDecode(jsonMap['response'])['text'];
+          // print(text);
+          chatbotconversation.add({
+            'text': text,
+            'screen': screen,
+            'type': 'chatbot',
+            'time': DateTime.now().toString(),
+          });
+        } catch (e) {
+          print('simple text received');
+          print(jsonDecode(response.body)['response']);
+          // print('error in json decode');
+          // print(e);
+          chatbotconversation.add({
+            'text': jsonDecode(response.body)['response'],
+            'type': 'chatbot',
+            'time': DateTime.now().toString(),
+          });
+        }
+
+        update();
+        print('chatbot response received');
+      } else {
+        print('error in chatbot');
       }
     } catch (e) {
       print(e);

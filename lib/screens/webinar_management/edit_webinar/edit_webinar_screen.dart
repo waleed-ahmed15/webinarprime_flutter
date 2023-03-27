@@ -48,12 +48,14 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
 
       if (imagetoEdit == 'coverImage') {
         String coverpath = await widget.webinarcontroller.editWebinarCoverImage(
-            widget.webinarDetails['_id'], File(image.path));
+            WebinarManagementController.currentWebinar['_id'],
+            File(image.path));
         widget.webinarDetails['coverImage'] = coverpath;
       } else {
         String thumbnailpath = await widget.webinarcontroller
             .editWebinarBannerImage(
-                widget.webinarDetails['_id'], File(image.path));
+                WebinarManagementController.currentWebinar['_id'],
+                File(image.path));
         widget.webinarDetails['bannerImage'] = thumbnailpath;
       }
 
@@ -364,10 +366,12 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
       // widget.editingController.text = DateFormat('yyyy-MM-dd')
       // .format(DateTime.parse(widget.webinarDetails['datetime']));
     } else if (title == 'time') {
-      widget.editingController.text = DateFormat('HH:mm:ss')
-          .format(DateTime.parse(widget.webinarDetails['datetime']));
+      widget.editingController.text = DateFormat('HH:mm:ss').format(
+          DateTime.parse(
+              WebinarManagementController.currentWebinar['datetime']));
     } else {
-      widget.editingController.text = widget.webinarDetails[title].toString();
+      widget.editingController.text =
+          WebinarManagementController.currentWebinar[title].toString();
     }
 
     showDialog(
@@ -435,50 +439,67 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                             // Do something with the edited text
                             if (widget.formKey2.currentState!.validate()) {
                               if (title == 'name') {
-                                widget.webinarDetails['name'] =
+                                WebinarManagementController
+                                        .currentWebinar['name'] =
                                     widget.editingController.text;
 
                                 widget.webinarcontroller.editWebinarName(
-                                    widget.webinarDetails['_id'],
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
                                     widget.editingController.text);
                               } else if (title == 'tagline') {
                                 widget.webinarcontroller.editWebinarTagline(
-                                    widget.webinarDetails['_id'],
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
                                     widget.editingController.text);
-                                widget.webinarDetails['tagline'] =
+                                WebinarManagementController
+                                        .currentWebinar['tagline'] =
                                     widget.editingController.text;
                               } else if (title == 'description') {
-                                widget.webinarDetails['description'] =
+                                WebinarManagementController
+                                        .currentWebinar['description'] =
                                     widget.editingController.text;
                                 widget.webinarcontroller.editWebinarDescription(
-                                    widget.webinarDetails['_id'],
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
                                     widget.editingController.text);
                               } else if (title == 'tags') {
                                 widget._controller.clearTags();
-                                widget.webinarDetails['tags'] = tagsList;
+                                WebinarManagementController
+                                    .currentWebinar['tags'] = tagsList;
                                 print(tagsList);
 
                                 widget.webinarcontroller.editWebinarTags(
-                                    widget.webinarDetails['_id'], tagsList);
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
+                                    tagsList);
                               } else if (title == 'duration') {
-                                widget.webinarDetails['duration'] =
+                                WebinarManagementController
+                                        .currentWebinar['duration'] =
                                     widget.editingController.text;
                                 widget.webinarcontroller.editWebinarDuration(
-                                    widget.webinarDetails['_id'],
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
                                     widget.editingController.text);
                               } else if (title == 'date') {
                                 String newdatetime =
-                                    "${widget.editingController.text} ${widget.webinarDetails['datetime'].toString().split('T')[1]}";
-                                widget.webinarDetails['datetime'] = newdatetime;
+                                    "${widget.editingController.text} ${WebinarManagementController.currentWebinar['datetime'].toString().split('T')[1]}";
+                                WebinarManagementController
+                                    .currentWebinar['datetime'] = newdatetime;
                                 widget.webinarcontroller.editWebinarDateTime(
-                                    widget.webinarDetails['_id'], newdatetime);
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
+                                    newdatetime);
                                 setState(() {});
                               } else if (title == 'time') {
                                 String newdatetime =
-                                    "${widget.webinarDetails['datetime'].toString().split(' ')[0]} ${widget.editingController.text}";
-                                widget.webinarDetails['datetime'] = newdatetime;
+                                    "${WebinarManagementController.currentWebinar['datetime'].toString().split(' ')[0]} ${widget.editingController.text}";
+                                WebinarManagementController
+                                    .currentWebinar['datetime'] = newdatetime;
                                 widget.webinarcontroller.editWebinarDateTime(
-                                    widget.webinarDetails['_id'], newdatetime);
+                                    WebinarManagementController
+                                        .currentWebinar['_id'],
+                                    newdatetime);
                                 setState(() {});
                               }
 
@@ -532,7 +553,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
 
   @override
   Widget build(BuildContext context) {
-    print('webinarDetails: ${widget.webinarDetails}');
+    print('webinarDetails: ${WebinarManagementController.currentWebinar}');
     return Scaffold(
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () {
@@ -573,7 +594,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         padding:
                             EdgeInsets.only(bottom: AppLayout.getHeight(40)),
                         child: Text(
-                          '${widget.webinarDetails['name']}',
+                          WebinarManagementController.currentWebinar['name'],
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -599,7 +620,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                           image: DecorationImage(
                             image: NetworkImage(
                               AppConstants.baseURL +
-                                  widget.webinarDetails['bannerImage'],
+                                  WebinarManagementController
+                                      .currentWebinar['coverImage'],
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -630,8 +652,9 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                             IconButton(
                                 padding: const EdgeInsets.only(bottom: 6),
                                 onPressed: () {
-                                  _pickBase64Image('bannerImage');
-                                  widget.webinarDetails['bannerImage'];
+                                  _pickBase64Image('coverImage');
+                                  widget.webinarDetails['coverImage'] =
+                                      _imagefile;
                                   print(_imagefile);
 
                                   // setState(() {});
@@ -680,7 +703,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                           image: DecorationImage(
                             image: NetworkImage(
                               AppConstants.baseURL +
-                                  widget.webinarDetails['coverImage'],
+                                  WebinarManagementController
+                                      .currentWebinar['bannerImage'],
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -688,8 +712,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         child: IconButton(
                             padding: const EdgeInsets.only(bottom: 6),
                             onPressed: () {
-                              _pickBase64Image('coverImage');
-                              widget.webinarDetails['coverImage'];
+                              _pickBase64Image('bannerImage');
+                              widget.webinarDetails['bannerImage'];
                               print(_imagefile);
 
                               // setState(() {});
@@ -711,7 +735,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         // color: Colors.yellow,
                         child: Center(
                           child: Text(
-                            '${widget.webinarDetails['attendees'].length} people attending',
+                            "${WebinarManagementController.currentWebinar['attendees'].length} people attending",
+                            // '${widget.webinarDetails['attendees'].length} people attending',
                             style: TextStyle(
                               fontSize: AppLayout.getHeight(16),
                               fontFamily: 'JosefinSans Bold',
@@ -857,10 +882,10 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                 ),
 
                 AutoSizeText(
-                  '${widget.webinarDetails['name']}',
+                  WebinarManagementController.currentWebinar['name'],
                   textAlign: TextAlign.start,
                   style: TextStyle(
-                    fontSize: AppLayout.getHeight(40),
+                    fontSize: AppLayout.getHeight(25),
                     fontFamily: 'JosefinSans Bold',
                     fontWeight: FontWeight.w700,
                     color: Get.isDarkMode
@@ -904,7 +929,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                   ],
                 ),
                 Text(
-                  widget.webinarDetails['tagline'],
+                  WebinarManagementController.currentWebinar['tagline'],
                   textAlign: TextAlign.start,
                   style: TextStyle(
                       height: 1.5,
@@ -956,7 +981,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                           ],
                         ),
                         Text(
-                          widget.webinarDetails['datetime']
+                          WebinarManagementController.currentWebinar['datetime']
                               .toString()
                               .split('T')[0],
                           textAlign: TextAlign.start,
@@ -1005,7 +1030,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                           ],
                         ),
                         Text(
-                          widget.webinarDetails['datetime']
+                          WebinarManagementController.currentWebinar['datetime']
                               .toString()
                               .split('T')[1],
                           textAlign: TextAlign.start,
@@ -1071,7 +1096,9 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         SizedBox(
                           width: AppLayout.getWidth(100),
                           child: AutoSizeText(
-                            widget.webinarDetails['duration'] + " Mins",
+                            WebinarManagementController
+                                    .currentWebinar['duration'] +
+                                " Mins",
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             style: TextStyle(
@@ -1122,7 +1149,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         SizedBox(
                           width: AppLayout.getWidth(100),
                           child: AutoSizeText(
-                            "\$ ${widget.webinarDetails['price']}",
+                            "${WebinarManagementController.currentWebinar['price']} \$",
                             maxLines: 1,
                             textAlign: TextAlign.end,
                             style: TextStyle(
@@ -1234,9 +1261,10 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         onPressed: () {
                           print('object');
                           Get.to(() => EditCategories(
-                                webinarId: widget.webinarDetails['_id'],
-                                webinarCategories:
-                                    widget.webinarDetails['categories'],
+                                webinarId: WebinarManagementController
+                                    .currentWebinar['_id'],
+                                webinarCategories: WebinarManagementController
+                                    .currentWebinar['categories'],
                               ));
                         },
                         icon: Icon(
@@ -1348,7 +1376,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                 // Text(widget.webinarDetails['description']),
                 // ExpandableText(text: widget.webinarDetails['description']),
                 ExpandableText(
-                  widget.webinarDetails['description'],
+                  WebinarManagementController.currentWebinar['description'],
                   expandText: 'Show more',
                   collapseText: 'Show less',
                   maxLines: 5,
@@ -1386,7 +1414,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                         onPressed: () {
                           print('object');
                           _onEditIconPressed('tags');
-                          widget.webinarDetails['tags'] = tagsList;
+                          WebinarManagementController.currentWebinar['tags'] =
+                              tagsList;
                           // te(() {});setSta
 
                           // Get.to(() => const MyHomePage11());
@@ -1408,7 +1437,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                           spacing: 10,
                           runSpacing: 15,
                           children: List.generate(
-                              widget.webinarDetails['tags'].length, (index) {
+                              WebinarManagementController
+                                  .currentWebinar['tags'].length, (index) {
                             return Container(
                               width: 90,
                               height: 50,
@@ -1441,7 +1471,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                               ),
                               child: Center(
                                 child: AutoSizeText(
-                                  widget.webinarDetails['tags'][index],
+                                  WebinarManagementController
+                                      .currentWebinar['tags'][index],
                                   maxLines: 1,
                                   style: TextStyle(
                                       fontFamily: 'JosefinSans Bold',
@@ -1466,7 +1497,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
               padding: EdgeInsets.symmetric(horizontal: AppLayout.getWidth(20)),
               physics: const NeverScrollableScrollPhysics(),
               children: List.generate(
-                widget.webinarDetails['organizers'].length,
+                WebinarManagementController.currentWebinar['organizers'].length,
                 (index) => Container(
                   margin:
                       EdgeInsets.symmetric(vertical: AppLayout.getHeight(20)),
@@ -1497,11 +1528,13 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                     leading: CircleAvatar(
                       radius: AppLayout.getHeight(30),
                       backgroundImage: NetworkImage(AppConstants.baseURL +
-                          widget.webinarDetails['organizers'][index]
+                          WebinarManagementController
+                                  .currentWebinar['organizers'][index]
                               ['profile_image']),
                     ),
                     title: Text(
-                      widget.webinarDetails['organizers'][index]['name'],
+                      WebinarManagementController.currentWebinar['organizers']
+                          [index]['name'],
                       style: TextStyle(
                         fontSize: AppLayout.getHeight(16),
                         color: Get.isDarkMode
@@ -1513,7 +1546,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                       ),
                     ),
                     subtitle: Text(
-                      widget.webinarDetails['organizers'][index]['email'],
+                      WebinarManagementController.currentWebinar['organizers']
+                          [index]['email'],
                       style: TextStyle(
                         letterSpacing: 1,
                         fontSize: AppLayout.getHeight(14),
@@ -1530,7 +1564,7 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
               padding: EdgeInsets.symmetric(horizontal: AppLayout.getWidth(20)),
               physics: const NeverScrollableScrollPhysics(),
               children: List.generate(
-                widget.webinarDetails['guests'].length,
+                WebinarManagementController.currentWebinar['guests'].length,
                 (index) => Container(
                   margin:
                       EdgeInsets.symmetric(vertical: AppLayout.getHeight(20)),
@@ -1561,11 +1595,12 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                     leading: CircleAvatar(
                       radius: AppLayout.getHeight(30),
                       backgroundImage: NetworkImage(AppConstants.baseURL +
-                          widget.webinarDetails['guests'][index]
-                              ['profile_image']),
+                          WebinarManagementController.currentWebinar['guests']
+                              [index]['profile_image']),
                     ),
                     title: Text(
-                      widget.webinarDetails['guests'][index]['name'],
+                      WebinarManagementController.currentWebinar['guests']
+                          [index]['name'],
                       style: TextStyle(
                         fontSize: AppLayout.getHeight(16),
                         color: Get.isDarkMode
@@ -1577,7 +1612,8 @@ class _EditWebinarScreenState extends State<EditWebinarScreen>
                       ),
                     ),
                     subtitle: Text(
-                      widget.webinarDetails['guests'][index]['email'],
+                      WebinarManagementController.currentWebinar['guests']
+                          [index]['email'],
                       style: TextStyle(
                         letterSpacing: 1,
                         fontSize: AppLayout.getHeight(14),

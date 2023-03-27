@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/livekit/pages/room.dart';
+import 'package:webinarprime/main.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:http/http.dart' as http;
 
@@ -292,6 +295,68 @@ class WebinarStreamController extends GetxController {
     } catch (e) {
       print(e);
       return false;
+    }
+  }
+
+  // this is for handling notifications
+  Future<void> showMessageNotifications(
+      Map<String, dynamic> data, String currConvoId) async {
+    try {
+      // print('----------------------------------');
+
+      print(data['conversation']);
+      String conversationId = data['conversation']['_id'];
+      var senderId = data['conversation']['messages'][0]['from'];
+
+      // print("from is" + data['conversation']);
+      // print(data['conversation']);
+      print('sener id is $senderId');
+      bool sender = false;
+      AndroidNotificationDetails androidPlatformChannelSpecifics =
+          const AndroidNotificationDetails(
+        '',
+        'your channel name',
+        // 'your channel description',
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker',
+      );
+      DarwinNotificationDetails darwinPlatformChannelSpecifics =
+          const DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      );
+      NotificationDetails notificDetails = NotificationDetails(
+          android: androidPlatformChannelSpecifics,
+          iOS: darwinPlatformChannelSpecifics);
+      // socket.on
+
+      // ChatStreamController
+      // .userChatmessages[widget.ConversationId][index]
+      // ['from']['_id'] ==
+      // Get.find<AuthController>().currentUser['_id']
+
+      if (senderId != Get.find<AuthController>().currentUser['_id'] &&
+          currConvoId != conversationId) {
+        print(currConvoId);
+        print(conversationId);
+        print('not same convo');
+        await notificationsPlugin.show(
+          0,
+          data['conversation']['messages'][0]['from']['name'],
+          // 'new message',
+          data['conversation']['messages'][0]['text'],
+          notificDetails,
+
+          payload:
+              '{"conversationId": "$conversationId", "type": "message", "senderId": "$senderId"}',
+        );
+      }
+
+      // final IO.Socket socket = await Get.find();
+    } catch (e) {
+      print(e);
     }
   }
 }

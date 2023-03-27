@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/screens/login/login_page.dart';
+import 'package:webinarprime/utils/colors.dart';
 import '../../utils/dimension.dart';
 import 'package:flutter/material.dart';
 
@@ -178,7 +179,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                       style: TextButton.styleFrom(
                         shape: const StadiumBorder(),
-                        backgroundColor: Theme.of(context).primaryColor,
+                        backgroundColor: Get.isDarkMode
+                            ? AppColors.LTsecondaryColor
+                            : AppColors.LTprimaryColor,
                       ),
                       child: SizedBox(
                         width: double.maxFinite,
@@ -186,7 +189,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           "Sign Up",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontFamily: 'Montserrat',
+                            fontFamily: 'josfinSans bold',
                             color: Colors.white,
                             fontSize: AppLayout.getHeight(25),
                           ),
@@ -200,23 +203,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     RichText(
                       text: TextSpan(
-                        text: "Already have account? ",
+                        text: "Already have account ?  ",
                         style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.8),
+                          fontFamily: 'josefinSans',
+                          color: Get.isDarkMode
+                              ? Colors.white
+                              : Colors.black.withOpacity(0.7),
                           fontSize: AppLayout.getHeight(20),
                         ),
                         children: [
                           TextSpan(
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () => Get.offAll(() => LoginPage()),
+                              ..onTap =
+                                  () => Get.offAll(() => const LoginPage()),
                             text: 'Sign In',
                             style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontFamily: 'Montserrat-Bold',
+                              fontFamily: 'josefinSans Bold',
                               color: Theme.of(context).primaryColor,
                               fontSize: AppLayout.getHeight(20),
                             ),

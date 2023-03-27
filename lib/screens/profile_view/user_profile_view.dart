@@ -49,18 +49,21 @@ class _UserProfileViewState extends State<UserProfileView>
     return SafeArea(
       child: Scaffold(
         //  floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-        floatingActionButton: FloatingActionButton(
-          heroTag: null,
-          backgroundColor:
-              Get.isDarkMode ? myappbarcolor : AppColors.LTprimaryColor,
-          onPressed: () {
-            Get.to(() => const EditProfileScreen());
-          },
-          child: const Icon(
-            Icons.edit,
-            color: Colors.white,
-          ),
-        ),
+        floatingActionButton: Get.find<AuthController>().currentUser['_id'] ==
+                AuthController.otherUserProfile['_id']
+            ? FloatingActionButton(
+                heroTag: null,
+                backgroundColor:
+                    Get.isDarkMode ? myappbarcolor : AppColors.LTprimaryColor,
+                onPressed: () {
+                  Get.to(() => const EditProfileScreen());
+                },
+                child: const Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                ),
+              )
+            : null,
         body: NestedScrollView(
           physics: const BouncingScrollPhysics(),
           controller: _scrollController,

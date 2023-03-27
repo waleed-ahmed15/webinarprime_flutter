@@ -65,7 +65,7 @@ class WebinarInfoTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AutoSizeText(
+                    Text(
                       webinarListType == 'created_webinars'
                           ? AuthController.otherUserProfile['created_webinars']
                               [index]['name']
@@ -73,7 +73,7 @@ class WebinarInfoTile extends StatelessWidget {
                               [index]['webinar']['name'],
                       style: Theme.of(context).textTheme.displayLarge!.copyWith(
                           fontSize: 20.sp, overflow: TextOverflow.ellipsis),
-                      maxLines: 2,
+                      maxLines: 3,
                     ),
                     Gap(10.h),
                     AutoSizeText(

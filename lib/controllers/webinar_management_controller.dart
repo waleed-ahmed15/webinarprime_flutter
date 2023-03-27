@@ -27,6 +27,7 @@ class WebinarManagementController extends GetxController {
   static Map<String, dynamic> currentWebinar = {};
   static List<dynamic> currentwebinarPendingMembers = [];
   static List<dynamic> currentwebinarAcceptedMembers = [];
+  static List webinaranalytics = [];
   Future<void> AddWebinardata(Map<String, dynamic> webinardata) async {
     print('add webinar data called');
     print(webinardata);
@@ -97,7 +98,7 @@ class WebinarManagementController extends GetxController {
     }
   }
 
-  Future<void> getAllwebinars() async {
+  Future<bool> getAllwebinars() async {
     print('get webinar called');
     webinarsList.clear();
 
@@ -112,8 +113,10 @@ class WebinarManagementController extends GetxController {
       print(data['webinars']);
       webinarsList.addAll(data['webinars']);
       update();
+      return true;
     } catch (e) {
       print(e);
+      return false;
     }
   }
 
@@ -161,7 +164,7 @@ class WebinarManagementController extends GetxController {
     try {
       Uri url =
           Uri.parse("${AppConstants.baseURL}/webinar/$id/guests/$guestId");
-      final response = await http.delete(url, headers: {
+      final response = await http.put(url, headers: {
         'Content-Type': 'application/json',
       });
       var data = jsonDecode(response.body);
@@ -205,7 +208,7 @@ class WebinarManagementController extends GetxController {
     try {
       Uri url = Uri.parse(
           "${AppConstants.baseURL}/webinar/$id/organizers/$organizerId");
-      final response = await http.delete(url, headers: {
+      final response = await http.put(url, headers: {
         'Content-Type': 'application/json',
       });
       var data = jsonDecode(response.body);
@@ -244,7 +247,7 @@ class WebinarManagementController extends GetxController {
     try {
       Uri url = Uri.parse(
           "${AppConstants.baseURL}/webinar/$id/attendees/$attendeeId");
-      final response = await http.delete(url, headers: {
+      final response = await http.put(url, headers: {
         'Content-Type': 'application/json',
       });
       var data = jsonDecode(response.body);
@@ -395,7 +398,7 @@ class WebinarManagementController extends GetxController {
   Future<bool> removeWebinarMember({required String memeberId}) async {
     try {
       Uri url = Uri.parse("${AppConstants.baseURL}/webinar/member/$memeberId");
-      http.Response response = await http.delete(url, headers: {
+      http.Response response = await http.put(url, headers: {
         'Content-Type': 'application/json',
       });
       print(response.statusCode);
@@ -641,7 +644,6 @@ class WebinarManagementController extends GetxController {
     }
   }
 
-
   // post notification of webinar=========================================================================
   Future<void> postNotification(String id, String title, String body) async {
     print('post notification called');
@@ -778,6 +780,33 @@ class WebinarManagementController extends GetxController {
     } catch (e) {
       print('error in registering for webinar');
       print(e);
+      print(e);
+    }
+  }
+
+  // analytics and tickets and revenue=========================================================================
+
+  // get webinar analytics
+  Future<void> getUserWebinarAnalytics() async {
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/webinar//analysis/ticketsandrevenue");
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+      });
+      webinaranalytics.clear();
+      if (response.statusCode == 200) {
+        webinaranalytics = jsonDecode(response.body)['data'];
+        print('----------------analytics fetched----------------');
+        // log(data[0].toString());
+        print(webinaranalytics[0]['_id'][0]['name']);
+        print('-----------------analytics fetched---------------');
+      } else {
+        print('could not fetch analytics');
+      }
+    } catch (e) {
+      print('error in fetching analytics');
       print(e);
     }
   }

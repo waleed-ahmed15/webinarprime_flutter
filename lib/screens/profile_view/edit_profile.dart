@@ -495,7 +495,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Notification',
+                              Text('Notifications',
                                   style: TextStyle(
                                     letterSpacing: 1,
                                     fontSize: 20.sp,

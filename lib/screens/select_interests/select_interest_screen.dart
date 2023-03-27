@@ -1,4 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/categoryController.dart';
@@ -30,53 +32,53 @@ class _SelectInterstScreenState extends State<SelectInterstScreen> {
           backgroundColor: Colors.green,
           onPressed: () async {
             await Get.find<AuthController>().addInterests(pickedIntersts);
+            await Get.find<AuthController>().getUserById(Get.find<AuthController>().currentUser['_id']);
             Get.offAllNamed(RoutesHelper.homeScreenRoute);
           },
           child: const Icon(Icons.done),
         ),
-        body: SingleChildScrollView(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SizedBox(
-              height: AppLayout.getHeight(40),
+        body: ListView(physics: const BouncingScrollPhysics(), children: [
+          SizedBox(
+            height: AppLayout.getHeight(40),
+          ),
+          Text("Select Your Interests",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  letterSpacing: 2,
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 23.sp,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'josefinsans')),
+          GridView.builder(
+            physics: const BouncingScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
             ),
-            Text("Select Your Interests",
-                style: TextStyle(
-                    letterSpacing: 2,
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Montserrat-Regular')),
-            GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-              ),
-              itemCount: interestList1.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  child: Item(
-                    category: interestList1[index],
-                    onselected: (bool value) {
-                      if (value) {
-                        setState(() {
-                          print('1value');
-                          pickedIntersts
-                              .add(interestList1[index].id.toString());
-                          print(pickedIntersts);
-                        });
-                      } else {
-                        setState(() {
-                          print('value');
-                          pickedIntersts.remove(interestList1[index].id);
-                        });
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
-          ]),
-        ),
+            itemCount: interestList1.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                child: Item(
+                  category: interestList1[index],
+                  onselected: (bool value) {
+                    if (value) {
+                      setState(() {
+                        print('1value');
+                        pickedIntersts.add(interestList1[index].id.toString());
+                        print(pickedIntersts);
+                      });
+                    } else {
+                      setState(() {
+                        print('value');
+                        pickedIntersts.remove(interestList1[index].id);
+                      });
+                    }
+                  },
+                ),
+              );
+            },
+          ),
+        ]),
       ),
     );
   }
@@ -114,9 +116,10 @@ class _ItemState extends State<Item> {
         child: Stack(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(
-                  vertical: AppLayout.getHeight(60),
-                  horizontal: AppLayout.getWidth(60)),
+              padding: const EdgeInsets.symmetric(
+                  // vertical: AppLayout.getHeight(10),
+                  // horizontal: AppLayout.getWidth(60)
+                  ),
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(widget.category.image!, scale: 0.7),
@@ -125,28 +128,42 @@ class _ItemState extends State<Item> {
                 shape: BoxShape.circle,
                 border: isSelected
                     ? Border.all(
-                        width: 3,
+                        width: 1,
                         color: Colors.green,
                       )
-                    : Border.all(width: 3, color: Colors.orange.shade300),
+                    : Border.all(width: 1, color: Colors.orange.shade300),
               ),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: AppLayout.getHeight(4),
-                  horizontal: AppLayout.getWidth(4),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: FittedBox(
-                  child: Text(
+              child: Center(
+                child: Container(
+                  // width: double.maxFinite,
+                  width: 150.w,
+                  padding: EdgeInsets.symmetric(
+                    vertical: AppLayout.getHeight(4),
+                    horizontal: AppLayout.getWidth(4),
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        transform: GradientRotation(0.5),
+                        colors: [
+                          Colors.black38,
+                          Colors.black26,
+                          // Color(0xff2A5470),
+                          // Color.fromARGB(255, 86, 92, 207),
+                          // Color(0xff4C4177),
+                        ]),
+                    // color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: AutoSizeText(
                     widget.category.name!,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
-                      fontFamily: 'Montserrat-Regular',
+                      fontFamily: 'josefinsans',
                     ),
                   ),
                 ),

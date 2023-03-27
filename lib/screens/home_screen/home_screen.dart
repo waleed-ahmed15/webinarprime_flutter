@@ -6,8 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/chat_controlller.dart';
 import 'package:webinarprime/controllers/pages_nav_controller.dart';
+import 'package:webinarprime/controllers/webinar_management_controller.dart';
+import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/screens/chat/chat_pages.dart';
 import 'package:webinarprime/screens/chat/chatpage_c.dart';
+import 'package:webinarprime/screens/chatbot/chatbot_screen.dart';
 import 'package:webinarprime/screens/home_screen/nav_tabs/home_screen_home_tab.dart';
 import 'package:webinarprime/screens/home_screen/widgets/home_screen_drawer_widget.dart';
 import 'package:webinarprime/screens/profile_view/favourites_screen.dart';
@@ -29,7 +32,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final IO.Socket _socket = IO.io(AppConstants.baseURL,
       IO.OptionBuilder().setTransports(['websocket']).build());
-  final IO.Socket socket = Get.find();
+  // final IO.Socket socket = Get.find();
   bool loading = false;
   // working on presistent navbar item
 
@@ -38,37 +41,44 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // TODO: implement initState
     // connecteSocket();
     //get fav list
-    preload();
+    WebinarManagementController().getAllwebinars();
+    preload().then((value) => setState(() {
+          Get.find<IO.Socket>().emit('join', {
+            Get.find<AuthController>().currentUser['_id'],
+          });
+        }));
     super.initState();
     // print("height: ${AppLayout.getScreenHeight()}");
     // print('width :${AppLayout.getScreenWidth()}');
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   Future preload() async {
     // print('=-------------------------------------------');
     // await Get.find<WebinarManagementController>().getAllwebinars();
     // await Get.find<AuthController>().getFavoriteWebinars();
-    // await Get.find<AuthController>()
-    // .otherUserProfileDetails(Get.find<AuthController>().currentUser['_id']);
+    await Get.find<AuthController>()
+        .otherUserProfileDetails(Get.find<AuthController>().currentUser['_id']);
 
-    // print(Get.find<AuthController>().currentUser);
-    socket.emit('join', {
+    print(Get.find<AuthController>().currentUser);
+    Get.find<IO.Socket>().emit('join', {
       Get.find<AuthController>().currentUser['_id'],
     });
-    socket.on('conversationChatMessage', (data) {
-      // ShowCustomSnackBar(
-      //     title: 'New Message', 'You have a new message', isError: false);
-      // print('conversationChatMessage:=>>>>>>>>>>>>>>> $data');
+    Get.find<IO.Socket>().on('conversationChatMessage', (data) {
+      if (Get.currentRoute != '/ChatScreen') {
+        WebinarStreamController().showMessageNotifications(data, '');
+      }
     });
-    socket.on(
+    Get.find<IO.Socket>().on(
         'notification', (data) => print('notification:=>>>>>>>>>>>>>>> $data'));
 
     await Get.find<ChatStreamController>()
         .getConversations(Get.find<AuthController>().currentUser['_id']);
-    // socket.onConnect((data) => print(' socket stream chat connected'));
-    // print('current user is=-------------------------------------------');
-    // print(Get.find<AuthController>().currentUser);
-    // print(Get.find<AuthController>().currentUser['_id']);s
   }
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -117,14 +127,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => const ChatBotScreen(),
+                                  transition: Transition.rightToLeft);
+                            },
+                            child: Container(
+                              width: 50.w,
+                              height: 50.h,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                // color: Get.isDarkMode
+                                // ? myappbarcolor
+                                // : AppColors.LTprimaryColor,
+                                image: const DecorationImage(
+                                  image:
+                                      AssetImage('assets/image/chatbot4.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              margin: EdgeInsets.only(left: 40.w),
+                            ),
+                          ),
+                          const Spacer(),
                           FloatingActionButton(
                             backgroundColor: Get.isDarkMode
                                 ? myappbarcolor
                                 : AppColors.LTprimaryColor,
                             heroTag: null,
                             onPressed: () {
-                              // Get.toNamed('/create_webinar');
-                              // Get.to(() => const HomeScreenNew());
                               Get.to(() => const AddWebinarScreen1());
                             },
                             child: const Icon(
@@ -135,7 +166,36 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     )
-                  : null
+                  : Container(
+                      margin: EdgeInsets.only(bottom: 60.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => const ChatBotScreen(),
+                                  transition: Transition.rightToLeft);
+                            },
+                            child: Container(
+                              width: 50.w,
+                              height: 50.h,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                // color: Get.isDarkMode
+                                // ? myappbarcolor
+                                // : AppColors.LTprimaryColor,
+                                image: const DecorationImage(
+                                  image:
+                                      AssetImage('assets/image/chatbot4.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              margin: EdgeInsets.only(left: 40.w),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
               : null,
           key: scaffoldKey,
           drawer: const HomeScreenDrawer(),

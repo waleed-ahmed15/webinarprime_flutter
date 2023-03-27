@@ -136,11 +136,15 @@ class AuthController extends GetxController {
   }
 
   Future<void> getUserById(String id) async {
-    final response =
-        await http.get(Uri.parse('${AppConstants.baseURL}/user/details/$id'));
+    final response = await http
+        .get(Uri.parse('${AppConstants.baseURL}/user/details/$id'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+    });
     if (response.statusCode == 200) {
       final data = await jsonDecode(response.body);
       print(data);
+      currentUser.clear();
       currentUser = data['user'];
       print(currentUser);
     }
@@ -762,7 +766,7 @@ class AuthController extends GetxController {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        // print(data);
+        print(data);
         print('notification toggled');
         update(['updateNotification']);
 

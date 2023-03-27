@@ -66,11 +66,12 @@ class WebinarInfoCardItem extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                AutoSizeText(
+                Text(
                   webinar['name'],
+                  textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayMedium!.copyWith(
                       decorationColor: Colors.white,
-                      wordSpacing: 5,
+                      wordSpacing: 1,
                       shadows: [
                         Shadow(
                           offset: const Offset(3, 3),
@@ -83,7 +84,7 @@ class WebinarInfoCardItem extends StatelessWidget {
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       overflow: TextOverflow.ellipsis),
-                  maxLines: 1,
+                  maxLines: 2,
                 ),
                 Gap(10.h),
                 Row(

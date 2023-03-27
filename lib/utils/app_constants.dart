@@ -5,7 +5,10 @@ import 'package:get/get.dart';
 class AppConstants {
   // static String baseURL = 'http://10.113.30.19:5000';
   static const String baseURL = 'http://10.0.2.2:5000';
+  // static const String baseURL =
+  // 'https://webinarprimebackend-production.up.railway.app';
   static const String liveKitUrl = 'ws://10.0.2.2:7880';
+  // static const String liveKitUrl = "wss://webinarprime.livekit.cloud";
   static TextStyle popmenuitemStyle = TextStyle(
       fontFamily: 'Montserrats',
       fontWeight: FontWeight.w300,

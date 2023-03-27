@@ -63,14 +63,14 @@ class CaresoulItem extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        AutoSizeText(
+                        Text(
                           webinar['name'],
                           style: Theme.of(context)
                               .textTheme
                               .displayMedium!
                               .copyWith(
                                   decorationColor: Colors.white,
-                                  wordSpacing: 5,
+                                  wordSpacing: 1,
                                   shadows: [
                                     Shadow(
                                       offset: const Offset(3, 3),
@@ -79,11 +79,11 @@ class CaresoulItem extends StatelessWidget {
                                     ),
                                   ],
                                   height: 1,
-                                  fontSize: 18.sp,
+                                  fontSize: 16.sp,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
                                   overflow: TextOverflow.ellipsis),
-                          maxLines: 1,
+                          maxLines: 2,
                         ),
                         Gap(10.h),
                         Row(

@@ -3,8 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/routes/routes.dart';
+import 'package:webinarprime/screens/analytics_screen/bar_charts.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
+import 'package:webinarprime/screens/webinar_marketing/created_webinars_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
 
@@ -95,16 +98,41 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                         Get.toNamed(RoutesHelper.notificationScreenRoute);
                       },
                     ),
+                    // if (Get.find<AuthController>().currentUser['accountType'] ==
+                    //     'organizer')
+                    ListTile(
+                      leading: const Icon(Icons.analytics),
+                      title: Text(
+                        'Analytics And Reports',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(height: 1.5, fontSize: 18.sp),
+                      ),
+                      onTap: () async {
+                        print(Get.find<AuthController>().currentUser);
+                        // Update the state of the app.
+                        await Get.find<WebinarManagementController>()
+                            .getUserWebinarAnalytics();
+                        // Get.to(const BarChartSample2());
+                        Get.to(() => WebinarStats());
+                      },
+                    ),
                     ListTile(
                       leading: const Icon(Icons.settings),
-                      title: Text('Settings',
+                      title: Text('Webinar Marketing',
                           style: Theme.of(context)
                               .textTheme
                               .displayMedium!
                               .copyWith(height: 1.5, fontSize: 18.sp)),
-                      onTap: () {
+                      onTap: () async {
                         // Update the state of the app.
-                        print('setting');
+                        // await ChatStreamController().chatbot();
+                        await Get.find<AuthController>()
+                            .otherUserProfileDetails(
+                                Get.find<AuthController>().currentUser['_id']);
+                        Get.to(() => const CreatedWebinarList());
+                        print('Webinar Marketing');
                         // ...
                       },
                     ),
