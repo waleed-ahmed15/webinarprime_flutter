@@ -24,37 +24,38 @@ class _CreateNewChatState extends State<CreateNewChat> {
       backgroundColor:
           Get.isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white,
       appBar: AppBar(
-          backgroundColor:
-              Get.isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: serachcontroller,
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search_sharp),
-                  color: Get.isDarkMode ? Colors.white : Colors.black,
-                  iconSize: 30.h,
-                  onPressed: () async {
-                    if (serachcontroller.text.trim().isEmpty) {
-                      return;
-                    }
-                    Get.find<AuthController>().searchedUsers.clear();
-                    await Get.find<AuthController>()
-                        .searchUserAll(serachcontroller.text.trim());
-                    // serachcontroller.clear();
-                  },
-                ),
-                hintText: 'Search. . .',
-                hintStyle: myhintTextstyle.copyWith(
-                    color: Get.isDarkMode ? Colors.white : Colors.black),
-                border: InputBorder.none,
+        backgroundColor:
+            Get.isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: serachcontroller,
+            decoration: InputDecoration(
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.search_sharp),
+                color: Get.isDarkMode ? Colors.white : Colors.black,
+                iconSize: 30.h,
+                onPressed: () async {
+                  if (serachcontroller.text.trim().isEmpty) {
+                    return;
+                  }
+                  Get.find<AuthController>().searchedUsers.clear();
+                  await Get.find<AuthController>()
+                      .searchUserAll(serachcontroller.text.trim());
+                  // serachcontroller.clear();
+                },
               ),
-              // style: const TextStyle(color: Colors.white),
+              hintText: 'Search. . .',
+              hintStyle: myhintTextstyle.copyWith(
+                  color: Get.isDarkMode ? Colors.white : Colors.black),
+              border: InputBorder.none,
             ),
-          )),
+            // style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
       body: GetBuilder<AuthController>(
           assignId: true,
           id: 'searchedUsers',

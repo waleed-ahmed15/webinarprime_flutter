@@ -100,8 +100,8 @@ class MyApp extends StatelessWidget {
             darkTheme: darkTheme,
 
             // themeMode: ThemeMode.system,
-            // themeMode: ThemeMode.light,
-            themeMode: ThemeMode.dark,
+            themeMode: ThemeMode.light,
+            // themeMode: ThemeMode.dark,
 
             // themeMode: context.watch<ThemeProvider>().themeMode,
           );

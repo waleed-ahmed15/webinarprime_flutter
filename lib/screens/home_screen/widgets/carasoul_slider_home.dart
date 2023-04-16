@@ -23,14 +23,14 @@ class _CaresoulSliderHomeState extends State<CaresoulSliderHome> {
     return Column(
       children: [
         CarouselSlider(
-          items: List.generate(5, (index) => index).map((e) {
+          items: List.generate(3, (index) => index).map((e) {
             return Container(
                 decoration: BoxDecoration(
                   color: Get.isDarkMode ? Colors.black : Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: CaresoulItem(
-                  webinar: WebinarManagementController.webinarsList[e],
+                  webinar: WebinarManagementController.coverWebinars[e],
                 ));
           }).toList(),
           // [
@@ -69,7 +69,7 @@ class _CaresoulSliderHomeState extends State<CaresoulSliderHome> {
         GetBuilder<AuthController>(
           builder: (popularproduct) {
             return DotsIndicator(
-              dotsCount: 5,
+              dotsCount: 3,
               // dotsCount: popularproduct.popularProductList.isEmpty
               //     ? 1
               //     : popularproduct.popularProductList.length,

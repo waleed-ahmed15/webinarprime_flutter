@@ -94,19 +94,19 @@ class _FavoriteWebinarsState extends State<FavoriteWebinars> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                AutoSizeText(
+                                Text(
                                   AuthController.favoriteWebinars[index]
                                       ['name'],
                                   style: Theme.of(context)
                                       .textTheme
                                       .displayLarge!
                                       .copyWith(
-                                          fontSize: 20.sp,
+                                          fontSize: 16.sp,
                                           overflow: TextOverflow.ellipsis),
                                   maxLines: 2,
                                 ),
                                 Gap(10.h),
-                                AutoSizeText(
+                                Text(
                                   AuthController.favoriteWebinars[index]['tags']
                                       .toString(),
                                   style: Theme.of(context)

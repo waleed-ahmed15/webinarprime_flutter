@@ -1117,6 +1117,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
             ),
           ),
           key: scaffoldKey,
+          
           backgroundColor: AppColors.DTbackGroundColor,
           body: Column(
             children: [

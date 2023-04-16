@@ -6,6 +6,7 @@ import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/routes/routes.dart';
 import 'package:webinarprime/screens/analytics_screen/bar_charts.dart';
+import 'package:webinarprime/screens/create_banner_screens/select_banner_screen.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
 import 'package:webinarprime/screens/webinar_marketing/created_webinars_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
@@ -136,6 +137,25 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                         // ...
                       },
                     ),
+                    if (Get.find<AuthController>().currentUser['accountType'] ==
+                        'organizer')
+                      ListTile(
+                        leading: const Icon(Icons.create),
+                        title: Text('Create Banner',
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(height: 1.5, fontSize: 18.sp)),
+                        onTap: () async {
+                          await Get.find<AuthController>()
+                              .otherUserProfileDetails(
+                                  Get.find<AuthController>()
+                                      .currentUser['_id']);
+                          Get.to(() => const SelectWebinarForBanner());
+
+                          // Get.to(() => const BannerTemplates());
+                        },
+                      ),
                     ListTile(
                       leading: const Icon(Icons.logout),
                       title: Text('Logout',

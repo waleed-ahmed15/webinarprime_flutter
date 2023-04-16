@@ -28,6 +28,8 @@ class WebinarManagementController extends GetxController {
   static List<dynamic> currentwebinarPendingMembers = [];
   static List<dynamic> currentwebinarAcceptedMembers = [];
   static List webinaranalytics = [];
+  static List coverWebinars = [];
+  static List recommendedWebinars = [];
   Future<void> AddWebinardata(Map<String, dynamic> webinardata) async {
     print('add webinar data called');
     print(webinardata);
@@ -807,6 +809,51 @@ class WebinarManagementController extends GetxController {
       }
     } catch (e) {
       print('error in fetching analytics');
+      print(e);
+    }
+  }
+
+  // get cover webinars for slider
+  Future<void> getCoverWebinars() async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/get/cover");
+      var response = await http.get(url);
+      // print(response.statusCode);
+      if (response.statusCode == 200) {
+        coverWebinars = jsonDecode(response.body)['webinars'];
+        print(
+            '----------------cover webinars for slider  fetched----------------');
+        // log(data[0].toString());
+        // print(coverWebinars[0]['name']);
+        // print('-----------------cover webinars fetched---------------');
+      } else {
+        print('could not fetch cover webinars');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // get recommendations for user
+  Future<void> getRecommnedations() async {
+    try {
+      String userId = Get.find<AuthController>().currentUser['_id'];
+
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/recommendation/collaborative-recommendations/$userId");
+      var response = await http.get(url);
+      // print(response.statusCode);
+      if (response.statusCode == 200) {
+        recommendedWebinars = jsonDecode(response.body)['webinars'];
+        print(
+            '----------------recommendations for user fetched----------------');
+        // log(data[0].toString());
+        // print(recommendations[0]['name']);
+        // print('-----------------recommendations fetched---------------');
+      } else {
+        print('could not fetch recommendations');
+      }
+    } catch (e) {
       print(e);
     }
   }

@@ -47,7 +47,7 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
                 Padding(
                   padding: EdgeInsets.only(left: 10.w),
                   child: Text(
-                    'Discover Webinars',
+                    'Recommendations for you',
                     style: Theme.of(context).textTheme.displayMedium!.copyWith(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w500,
@@ -59,13 +59,13 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
                   child: SizedBox(
                     height: 300,
                     child: ListView.builder(
-                      itemCount:
-                          WebinarManagementController.webinarsList.length,
+                      itemCount: WebinarManagementController
+                          .recommendedWebinars.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (BuildContext context, int index) {
                         return WebinarInfoCardItem(
                             webinar: WebinarManagementController
-                                .webinarsList[index]);
+                                .recommendedWebinars[index]);
                       },
                     ),
                   ),

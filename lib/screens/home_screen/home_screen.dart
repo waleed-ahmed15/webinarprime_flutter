@@ -15,6 +15,7 @@ import 'package:webinarprime/screens/home_screen/nav_tabs/home_screen_home_tab.d
 import 'package:webinarprime/screens/home_screen/widgets/home_screen_drawer_widget.dart';
 import 'package:webinarprime/screens/profile_view/favourites_screen.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
+import 'package:webinarprime/screens/search_screen/search_screen_tab.dart';
 import 'package:webinarprime/screens/webinar_management/add_webinar_screens/add_webinar_screen1.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -33,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final IO.Socket _socket = IO.io(AppConstants.baseURL,
       IO.OptionBuilder().setTransports(['websocket']).build());
   // final IO.Socket socket = Get.find();
-  bool loading = false;
+  bool loading = true;
   // working on presistent navbar item
 
   @override
@@ -62,8 +63,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // print('=-------------------------------------------');
     // await Get.find<WebinarManagementController>().getAllwebinars();
     // await Get.find<AuthController>().getFavoriteWebinars();
+    print('preloading data===============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     await Get.find<AuthController>()
         .otherUserProfileDetails(Get.find<AuthController>().currentUser['_id']);
+    await Get.find<WebinarManagementController>().getRecommnedations();
 
     print(Get.find<AuthController>().currentUser);
     Get.find<IO.Socket>().emit('join', {
@@ -79,6 +82,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     await Get.find<ChatStreamController>()
         .getConversations(Get.find<AuthController>().currentUser['_id']);
+    await Get.find<WebinarManagementController>().getCoverWebinars();
+    loading = false;
+    // setState(() {});
   }
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -96,10 +102,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   static final List<Widget> _widgetOptions = <Widget>[
     // const View_my_Webinar_Screen(),
     const HomeScreenHomeTab(),
-    const Text(
-      'Likes',
-      style: optionStyle,
-    ),
+    const SearchScreenTab(),
     const FavoriteWebinars(),
     // const ChatListScreen(),
     const ChatPages(),
@@ -112,211 +115,222 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     AuthController authController = Get.find();
 
     return SafeArea(
-      child: WillPopScope(
-        onWillPop: () async {
-          print('homescreen');
-          return false;
-        },
-        child: Scaffold(
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-          floatingActionButton: widget.currIndex == 0
-              ? Get.find<AuthController>().currentUser['accountType'] ==
-                      'organizer'
-                  ? Container(
-                      margin: EdgeInsets.only(bottom: 60.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.to(() => const ChatBotScreen(),
-                                  transition: Transition.rightToLeft);
-                            },
-                            child: Container(
-                              width: 50.w,
-                              height: 50.h,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                // color: Get.isDarkMode
-                                // ? myappbarcolor
-                                // : AppColors.LTprimaryColor,
-                                image: const DecorationImage(
-                                  image:
-                                      AssetImage('assets/image/chatbot4.png'),
-                                  fit: BoxFit.cover,
+      child: loading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : WillPopScope(
+              onWillPop: () async {
+                print('homescreen');
+                return false;
+              },
+              child: Scaffold(
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.endDocked,
+                floatingActionButton: widget.currIndex == 0
+                    ? Get.find<AuthController>().currentUser['accountType'] ==
+                            'organizer'
+                        ? Container(
+                            margin: EdgeInsets.only(bottom: 60.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.to(() => const ChatBotScreen(),
+                                        transition: Transition.rightToLeft);
+                                  },
+                                  child: Container(
+                                    width: 50.w,
+                                    height: 50.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      // color: Get.isDarkMode
+                                      // ? myappbarcolor
+                                      // : AppColors.LTprimaryColor,
+                                      image: const DecorationImage(
+                                        image: AssetImage(
+                                            'assets/image/chatbot4.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    margin: EdgeInsets.only(left: 40.w),
+                                  ),
                                 ),
-                              ),
-                              margin: EdgeInsets.only(left: 40.w),
-                            ),
-                          ),
-                          const Spacer(),
-                          FloatingActionButton(
-                            backgroundColor: Get.isDarkMode
-                                ? myappbarcolor
-                                : AppColors.LTprimaryColor,
-                            heroTag: null,
-                            onPressed: () {
-                              Get.to(() => const AddWebinarScreen1());
-                            },
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Container(
-                      margin: EdgeInsets.only(bottom: 60.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.to(() => const ChatBotScreen(),
-                                  transition: Transition.rightToLeft);
-                            },
-                            child: Container(
-                              width: 50.w,
-                              height: 50.h,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                // color: Get.isDarkMode
-                                // ? myappbarcolor
-                                // : AppColors.LTprimaryColor,
-                                image: const DecorationImage(
-                                  image:
-                                      AssetImage('assets/image/chatbot4.png'),
-                                  fit: BoxFit.cover,
+                                const Spacer(),
+                                FloatingActionButton(
+                                  backgroundColor: Get.isDarkMode
+                                      ? myappbarcolor
+                                      : AppColors.LTprimaryColor,
+                                  heroTag: null,
+                                  onPressed: () {
+                                    Get.to(() => const AddWebinarScreen1());
+                                  },
+                                  child: const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                              margin: EdgeInsets.only(left: 40.w),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-              : null,
-          key: scaffoldKey,
-          drawer: const HomeScreenDrawer(),
-          body: Center(
-            child: _widgetOptions.elementAt(widget.currIndex!),
-          ),
-          // bottomNavigationBar: Container(
-          //   height: 60.h,
-          //   decoration: BoxDecoration(
-          //     color: Theme.of(context).appBarTheme.backgroundColor!,
-          //     borderRadius: BorderRadius.only(
-          //         topLeft: Radius.circular(15.r),
-          //         topRight: Radius.circular(15.r)),
-          //   ),
-          //   child: Row(children: const [
-          //     Badge(
-          //       textColor: Colors.white,
-          //       child: Icon(Icons.home),
-          //     ),
-          //   ]),
-          // ),
-          bottomNavigationBar: ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15.r),
-                topRight: Radius.circular(15.r)),
-            child: Container(
-              constraints: BoxConstraints(
-                maxHeight: 60.h,
-                minHeight: 60.h,
-              ),
-              decoration: BoxDecoration(
-                color: myappbarcolor,
-              ),
-              child: GNav(
-                backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
-                curve: Curves.easeInOut,
-                gap: 1,
-                activeColor:
-                    Get.isDarkMode ? Colors.cyan : AppColors.LTprimaryColor,
-                // iconSize: 25,
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 1),
-                duration: const Duration(microseconds: 1),
-                tabs: [
-                  GButton(
-                    icon: widget.currIndex == 0
-                        ? Icons.home
-                        : Icons.home_outlined,
-                    iconSize: 30.h,
-                    text: '',
-                  ),
-                  GButton(
-                    icon: widget.currIndex == 2
-                        ? Icons.search
-                        : Icons.search_outlined,
-                    iconSize: 30.h,
-                    text: '',
-                  ),
-                  GButton(
-                    icon: widget.currIndex == 2
-                        ? Icons.favorite
-                        : Icons.favorite_outline,
-                    iconSize: 30.h,
-                    text: '',
-                  ),
-                  GButton(
-                    onPressed: () async {
-                      print('tapping chat');
+                          )
+                        : Container(
+                            margin: EdgeInsets.only(bottom: 60.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.to(() => const ChatBotScreen(),
+                                        transition: Transition.rightToLeft);
+                                  },
+                                  child: Container(
+                                    width: 50.w,
+                                    height: 50.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      // color: Get.isDarkMode
+                                      // ? myappbarcolor
+                                      // : AppColors.LTprimaryColor,
+                                      image: const DecorationImage(
+                                        image: AssetImage(
+                                            'assets/image/chatbot4.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    margin: EdgeInsets.only(left: 40.w),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                    : null,
+                key: scaffoldKey,
+                drawer: const HomeScreenDrawer(),
+                body: Center(
+                  child: _widgetOptions.elementAt(widget.currIndex!),
+                ),
+                // bottomNavigationBar: Container(
+                //   height: 60.h,
+                //   decoration: BoxDecoration(
+                //     color: Theme.of(context).appBarTheme.backgroundColor!,
+                //     borderRadius: BorderRadius.only(
+                //         topLeft: Radius.circular(15.r),
+                //         topRight: Radius.circular(15.r)),
+                //   ),
+                //   child: Row(children: const [
+                //     Badge(
+                //       textColor: Colors.white,
+                //       child: Icon(Icons.home),
+                //     ),
+                //   ]),
+                // ),
+                bottomNavigationBar: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15.r),
+                      topRight: Radius.circular(15.r)),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: 60.h,
+                      minHeight: 60.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: myappbarcolor,
+                    ),
+                    child: GNav(
+                      backgroundColor:
+                          Theme.of(context).appBarTheme.backgroundColor!,
+                      curve: Curves.easeInOut,
+                      gap: 1,
+                      activeColor: Get.isDarkMode
+                          ? Colors.cyan
+                          : AppColors.LTprimaryColor,
+                      // iconSize: 25,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14.w, vertical: 1),
+                      duration: const Duration(microseconds: 1),
+                      tabs: [
+                        GButton(
+                          icon: widget.currIndex == 0
+                              ? Icons.home
+                              : Icons.home_outlined,
+                          iconSize: 30.h,
+                          text: '',
+                        ),
+                        GButton(
+                          icon: widget.currIndex == 2
+                              ? Icons.search
+                              : Icons.search_outlined,
+                          iconSize: 30.h,
+                          text: '',
+                        ),
+                        GButton(
+                          icon: widget.currIndex == 2
+                              ? Icons.favorite
+                              : Icons.favorite_outline,
+                          iconSize: 30.h,
+                          text: '',
+                        ),
+                        GButton(
+                          onPressed: () async {
+                            print('tapping chat');
 
-                      if (PagesNav.chatPagesindex != 0) {
-                        await Get.find<PagesNav>().updateChat(0);
-                        globalPageControllerForchat.animateTo(
-                            globalPageControllerForchat
-                                .positions.last.minScrollExtent,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeOut);
-                      }
-                    },
-                    icon: widget.currIndex == 3
-                        ? Icons.chat_bubble
-                        : Icons.chat_bubble_outline,
-                    iconSize: 30.h,
+                            if (PagesNav.chatPagesindex != 0) {
+                              await Get.find<PagesNav>().updateChat(0);
+                              globalPageControllerForchat.animateTo(
+                                  globalPageControllerForchat
+                                      .positions.last.minScrollExtent,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeOut);
+                            }
+                          },
+                          icon: widget.currIndex == 3
+                              ? Icons.chat_bubble
+                              : Icons.chat_bubble_outline,
+                          iconSize: 30.h,
+                        ),
+                        GButton(
+                          onPressed: () async {},
+                          icon: widget.currIndex == 4
+                              ? Icons.person
+                              : Icons.person_2_outlined,
+                          iconSize: 30.h,
+                          text: '',
+                        ),
+                        GButton(
+                          onPressed: () {
+                            print('object');
+                          },
+                          icon: widget.currIndex == 5
+                              ? Icons.notifications
+                              : Icons.notifications_outlined,
+                          iconSize: 30.h,
+                          text: '',
+                        ),
+                      ],
+                      selectedIndex: widget.currIndex!,
+                      onTabChange: (index) async {
+                        if (index == 2) {
+                          await Get.find<AuthController>()
+                              .getFavoriteWebinars();
+                          widget.currIndex = index;
+                        }
+                        if (index == 4) {
+                          await Get.find<AuthController>()
+                              .otherUserProfileDetails(
+                                  Get.find<AuthController>()
+                                      .currentUser['_id']);
+                          widget.currIndex = index;
+                        }
+                        setState(() {
+                          widget.currIndex = index;
+                        });
+                      },
+                    ),
                   ),
-                  GButton(
-                    onPressed: () async {},
-                    icon: widget.currIndex == 4
-                        ? Icons.person
-                        : Icons.person_2_outlined,
-                    iconSize: 30.h,
-                    text: '',
-                  ),
-                  GButton(
-                    onPressed: () {
-                      print('object');
-                    },
-                    icon: widget.currIndex == 5
-                        ? Icons.notifications
-                        : Icons.notifications_outlined,
-                    iconSize: 30.h,
-                    text: '',
-                  ),
-                ],
-                selectedIndex: widget.currIndex!,
-                onTabChange: (index) async {
-                  if (index == 2) {
-                    await Get.find<AuthController>().getFavoriteWebinars();
-                    widget.currIndex = index;
-                  }
-                  if (index == 4) {
-                    await Get.find<AuthController>().otherUserProfileDetails(
-                        Get.find<AuthController>().currentUser['_id']);
-                    widget.currIndex = index;
-                  }
-                  setState(() {
-                    widget.currIndex = index;
-                  });
-                },
+                ),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
