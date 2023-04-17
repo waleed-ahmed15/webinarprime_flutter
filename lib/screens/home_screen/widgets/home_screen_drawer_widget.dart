@@ -7,6 +7,7 @@ import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/routes/routes.dart';
 import 'package:webinarprime/screens/analytics_screen/bar_charts.dart';
 import 'package:webinarprime/screens/create_banner_screens/select_banner_screen.dart';
+import 'package:webinarprime/screens/my_webinars/unapproved_webinar_screen.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
 import 'package:webinarprime/screens/webinar_marketing/created_webinars_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
@@ -154,6 +155,25 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                           Get.to(() => const SelectWebinarForBanner());
 
                           // Get.to(() => const BannerTemplates());
+                        },
+                      ),
+                    // pending webinars
+                    if (Get.find<AuthController>().currentUser['accountType'] ==
+                        'organizer')
+                      ListTile(
+                        leading: const Icon(Icons.pending_outlined),
+                        title: Text('Pending Webinars',
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(height: 1.5, fontSize: 18.sp)),
+                        onTap: () async {
+                          // Update the state of the app.
+                          // ...
+                          await Get.find<WebinarManagementController>()
+                              .getUnapprovedWebinars();
+                          Get.to(() => const UnApprovedWebinarsScreen());
+                          print('Pending Webinars');
                         },
                       ),
                     ListTile(

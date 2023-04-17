@@ -356,7 +356,7 @@ class _EmailMarketingTabState extends State<EmailMarketingTab> {
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
-                      .copyWith(fontSize: 20),
+                      .copyWith(fontSize: 20, color: Colors.white),
                 ),
               ),
       ],

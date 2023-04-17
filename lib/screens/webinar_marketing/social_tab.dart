@@ -212,7 +212,7 @@ class _SocialMediaMarketingTabState extends State<SocialMediaMarketingTab> {
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
-                      .copyWith(fontSize: 20),
+                      .copyWith(fontSize: 20, color: Colors.white),
                 ),
               ),
       ],

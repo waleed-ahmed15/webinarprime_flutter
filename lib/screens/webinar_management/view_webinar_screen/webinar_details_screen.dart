@@ -11,6 +11,7 @@ import 'package:webinarprime/controllers/reviews_controlller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
+import 'package:webinarprime/screens/report%20screen/report_screen.dart';
 import 'package:webinarprime/screens/user_search/user_search_screen.dart';
 import 'package:webinarprime/screens/webinar_management/edit_webinar/edit_webinar_screen.dart';
 import 'package:webinarprime/screens/webinar_management/view_webinar_screen/attendees_list_screen.dart';
@@ -274,7 +275,7 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
     if (!found) {
       WebinarManagementController.currentWebinar['attendees']
           .forEach((element) {
-        print(element);
+        // print(element);
         if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
           canStream = true;
           found = true;
@@ -1539,6 +1540,38 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                             })),
                       ),
                     ),
+                    //report button
+                    Gap(AppLayout.getHeight(28)),
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          // Get.to(() => const ReportView());
+                          Get.to(() => ReportScreen(
+                                reportType: 'webinar',
+                              ));
+                        },
+                        child: Container(
+                          width: AppLayout.getWidth(240),
+                          height: AppLayout.getHeight(40),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 0, 0, 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Report this webinar',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                      color: Colors.white, fontSize: 18.sp),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Gap(AppLayout.getHeight(28)),
                   ],
                 ),
                 // The content for the second tab goes here==========================================

@@ -19,7 +19,7 @@ class _ShowAllWebinarScreenState extends State<ShowAllWebinarScreen> {
         child: Scaffold(
       key: scaffoldKey,
       endDrawer: FilterDrawer(onSortOptionSelected: (String value) {
-        print(value);
+      
       }),
       body: Column(
         children: [

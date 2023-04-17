@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -18,6 +19,7 @@ import 'package:webinarprime/screens/chat/chat_field_widget.dart';
 import 'package:webinarprime/screens/chat/file_message_view_widget.dart';
 import 'package:webinarprime/screens/chat/image_Viewer_widget.dart';
 import 'package:webinarprime/screens/home_screen/home_screen.dart';
+import 'package:webinarprime/screens/report%20screen/report_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
 import 'package:webinarprime/widgets/snackbar.dart';
@@ -245,8 +247,8 @@ class _ChatScreenState extends State<ChatScreen> {
               Get.isDarkMode ? Colors.black : const Color(0xffffffff),
           appBar: AppBar(
             automaticallyImplyLeading: true,
-            title: Text(
-              widget.receiever['name'],
+            title: AutoSizeText(
+              widget.receiever['name'].split(' ')[0],
               style: Theme.of(context)
                   .textTheme
                   .displayMedium!
@@ -269,6 +271,23 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ),
             actions: [
+              //report user button
+              IconButton(
+                onPressed: () async {
+                  Get.to(() => ReportScreen(
+                        reportType: 'chat',
+                        reportedUserId: widget.receiever['_id'],
+                      ));
+                  // print('wanna report');
+                  // await Get.find<ChatStreamController>().reportUser(
+                  // widget.receiever['_id'],
+                  // );
+                },
+                icon: const Icon(
+                  Icons.report,
+                  color: Colors.red,
+                ),
+              ),
               IconButton(
                 onPressed: () async {
                   // print('wanna delete');

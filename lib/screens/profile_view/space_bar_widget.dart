@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
+import 'package:webinarprime/screens/report%20screen/report_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/colors.dart';
 import 'package:webinarprime/utils/styles.dart';
@@ -18,6 +19,25 @@ class SpaceBarForProfileView extends StatelessWidget {
       child: FlexibleSpaceBar(
         background: Stack(
           children: [
+            if (Get.find<AuthController>().currentUser['_id'] !=
+                AuthController.otherUserProfile['_id'])
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  hoverColor: Colors.transparent,
+                  onPressed: () async {
+                    Get.to(() => ReportScreen(
+                          reportType: 'user',
+                          reportedUserId:
+                              AuthController.otherUserProfile['_id'],
+                        ));
+                  },
+                  icon: const Icon(
+                    Icons.report,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
             Positioned(
               top: 10.h,
               left: 0.04.sw,

@@ -30,6 +30,7 @@ class WebinarManagementController extends GetxController {
   static List webinaranalytics = [];
   static List coverWebinars = [];
   static List recommendedWebinars = [];
+  static List<dynamic> unapprovedWebinars = [];
   Future<void> AddWebinardata(Map<String, dynamic> webinardata) async {
     print('add webinar data called');
     print(webinardata);
@@ -852,6 +853,26 @@ class WebinarManagementController extends GetxController {
         // print('-----------------recommendations fetched---------------');
       } else {
         print('could not fetch recommendations');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //get unapproved webinars
+  Future<void> getUnapprovedWebinars() async {
+    try {
+      Uri url =
+          Uri.parse("${AppConstants.baseURL}/webinar/get/created/unapproved");
+      var response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+      });
+      if (response.statusCode == 200) {
+        unapprovedWebinars = jsonDecode(response.body)['webinars'];
+        print('----------------unapproved webinars fetched----------------');
+      } else {
+        print('could not fetch unapproved webinars');
       }
     } catch (e) {
       print(e);
