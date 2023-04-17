@@ -6,6 +6,7 @@ import 'package:webinarprime/screens/login/login_page.dart';
 import 'package:webinarprime/screens/my_webinars/view_my_webinars_screen.dart';
 import 'package:webinarprime/screens/notifications/notifications_screen.dart';
 import 'package:webinarprime/screens/payment/paymnet_screen.dart';
+import 'package:webinarprime/screens/preview_screen/preview_screen.dart';
 import 'package:webinarprime/screens/select_interests/select_interest_screen.dart';
 import 'package:webinarprime/screens/sign_up/signup_page.dart';
 import 'package:webinarprime/screens/upload_profile_screen.dart';
@@ -30,6 +31,7 @@ class RoutesHelper {
   static const String searchUsersRoute = '/search-users';
   static const String notificationScreenRoute = '/notifications';
   static const String liveKitConnectPage = '/livekit-connect';
+  static const String preLoginScreenRoute = '/pre-login-screen';
 
   static List<GetPage> routes = [
     GetPage(name: liveKitConnectPage, page: () => const ConnectPage()),
@@ -64,6 +66,10 @@ class RoutesHelper {
     GetPage(
       name: signUpRoute,
       page: () => const SignUpScreen(),
+    ),
+    GetPage(
+      name: preLoginScreenRoute,
+      page: () => const PreLoginScreen(),
     ),
     GetPage(
       name: uploadProfileRoute,

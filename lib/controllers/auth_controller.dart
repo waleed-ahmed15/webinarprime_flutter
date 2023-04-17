@@ -34,7 +34,7 @@ class AuthController extends GetxController {
     // await authenticateUser(sharedPreferences.containsKey('token'));
     // print('on init');
     // print(currentUser);
-    await initialRoute();
+    initialRoute().then((value) => print('innit called'));
     print('innit called');
     // Timer.periodic(const Duration(seconds: 4), (timer) {
     // getInvitations(currentUser['_id'] ?? '');
@@ -262,13 +262,16 @@ class AuthController extends GetxController {
       } else if (currentUser.containsKey('birthdate')) {
         getInvitations(currentUser['_id']);
         //  a   WebinarManagementController().getAllwebinars();
+        print('going here');
         Get.toNamed(RoutesHelper.homeScreenRoute);
+        print('going here2');
       } else {
         Get.toNamed(RoutesHelper.uploadProfileRoute);
       }
     } else {
-      // Get.toNamed(RoutesHelper.signInRoute);
       print('token is null');
+      // Get.to(() => const PreLoginScreen());
+      // Get.offAllNamed(RoutesHelper.signInRoute);
     }
   }
 
