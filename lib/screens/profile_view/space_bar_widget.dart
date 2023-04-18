@@ -83,13 +83,14 @@ class SpaceBarForProfileView extends StatelessWidget {
                           color: Colors.white),
                     ),
                     Gap(10.h),
-                    AutoSizeText(
-                      AuthController.otherUserProfile['registration_number'],
-                      style: listtileSubtitleStyle.copyWith(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white),
-                    ),
+                    // AutoSizeText(
+                    //   AuthController.otherUserProfile['registration_number'],
+                    //   style: listtileSubtitleStyle.copyWith(
+                    //       fontSize: 16.sp,
+                    //       fontWeight: FontWeight.w300,
+                    //       color: Colors.white),
+                    // ),
+
                     Gap(30.h),
                     GetBuilder<AuthController>(builder: (controler) {
                       if (AuthController.otherUserProfile['_id'] ==

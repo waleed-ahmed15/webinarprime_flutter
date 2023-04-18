@@ -91,7 +91,9 @@ class _PreLoginScreenState extends State<PreLoginScreen> {
                         },
                         child: Stack(
                           children: [
-                            const CaresoulSliderHome(),
+                            CaresoulSliderHome(
+                                webinarList:
+                                    WebinarManagementController.coverWebinars),
                             GestureDetector(
                               onTap: () {
                                 print('Tapped');

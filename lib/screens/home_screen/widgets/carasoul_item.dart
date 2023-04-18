@@ -15,8 +15,11 @@ class CaresoulItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        // navigator!.pop();
         await Get.find<WebinarManagementController>()
             .getwebinarById(webinar['_id']);
+        await Get.find<WebinarManagementController>()
+            .getSimilarWebinars(webinar['_id']);
 
         Get.to(() => WebinarDetailsScreen(
               webinarDetails: webinar,

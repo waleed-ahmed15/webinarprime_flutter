@@ -423,30 +423,31 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Gap(5.h),
                           const Divider(),
                           Gap(5.h),
-                          IconLabelRow(
-                              label: "Registration No",
-                              icon: Icons.edit,
-                              callbackAction: () {
-                                _onEditIconPressed(
-                                    'registration',
-                                    Get.find<AuthController>()
-                                        .currentUser['registration_number']);
-                              }),
-                          Gap(10.h),
-                          Text(
-                            Get.find<AuthController>()
-                                .currentUser['registration_number'],
-                            style: listtileSubtitleStyle.copyWith(
-                                fontSize: 19.h,
-                                fontWeight: FontWeight.w300,
-                                fontFamily: 'JosefinSans Regular',
-                                letterSpacing: 1,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .displayMedium!
-                                    .color),
-                          ),
-                          Gap(5.h),
+                          // IconLabelRow(
+                          //     label: "Registration No",
+                          //     icon: Icons.edit,
+                          //     callbackAction: () {
+                          //       _onEditIconPressed(
+                          //           'registration',
+                          //           Get.find<AuthController>()
+                          //               .currentUser['registration_number']);
+                          //     }),
+
+                          // Gap(10.h),
+                          // Text(
+                          //   Get.find<AuthController>()
+                          //       .currentUser['registration_number'],
+                          //   style: listtileSubtitleStyle.copyWith(
+                          //       fontSize: 19.h,
+                          //       fontWeight: FontWeight.w300,
+                          //       fontFamily: 'JosefinSans Regular',
+                          //       letterSpacing: 1,
+                          //       color: Theme.of(context)
+                          //           .textTheme
+                          //           .displayMedium!
+                          //           .color),
+                          // ),
+                          // Gap(5.h),
                           const Divider(),
                           Gap(5.h),
                           IconLabelRow(

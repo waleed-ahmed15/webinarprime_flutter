@@ -176,6 +176,21 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                           print('Pending Webinars');
                         },
                       ),
+                    if (Get.find<AuthController>().currentUser['accountType'] ==
+                        'user')
+                      ListTile(
+                        leading: const Icon(Icons.email),
+                        title: Text(
+                          'apply for organizer',
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(height: 1.5, fontSize: 18.sp),
+                        ),
+                        onTap: () {
+                          Get.find<AuthController>().UpgradeAccountRequest();
+                        },
+                      ),
                     ListTile(
                       leading: const Icon(Icons.logout),
                       title: Text('Logout',

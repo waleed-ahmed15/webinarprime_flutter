@@ -22,7 +22,7 @@ Future<void> innit() async {
   Get.put(sharedPreferences, permanent: true);
   Get.put(AuthController(), permanent: true);
   Get.put(CategoryContorller());
-  Get.put(WebinarManagementController());
+  Get.put(WebinarManagementController(), permanent: true);
   Get.put(WebinarStreamController());
   Get.put(ChatStreamController(), permanent: true);
   Get.put(ReviewController(), permanent: true);

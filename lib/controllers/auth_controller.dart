@@ -105,6 +105,7 @@ class AuthController extends GetxController {
       print('authenticate user called');
 
       final sharedPreferences = Get.find<SharedPreferences>();
+      print(sharedPreferences.getString('token'));
       sharedPreferences.setString(
           'tempToken', '${sharedPreferences.getString('token')}');
 
@@ -125,7 +126,8 @@ class AuthController extends GetxController {
           sharedPreferences.remove('token');
         }
       } else {
-        print('invalid token');
+        print(response.statusCode);
+        // print('invalid token');
         // Get.offAllNamed(RoutesHelper.signInRoute);
         print(response.body.toString());
       }
@@ -819,7 +821,7 @@ class AuthController extends GetxController {
   Future<bool> getFavoriteWebinars() async {
     try {
       Uri url = Uri.parse("${AppConstants.baseURL}/user/favorites");
-      print(Get.find<SharedPreferences>().getString('tempToken')!);
+      // print(Get.find<SharedPreferences>().getString('tempToken')!);
       var response = await http.get(
         url,
         headers: {
@@ -844,6 +846,36 @@ class AuthController extends GetxController {
     } catch (e) {
       print(e);
       return false;
+    }
+  }
+
+  // upgrade account request
+  Future<void> UpgradeAccountRequest() async {
+    try {
+      String userId = Get.find<AuthController>().currentUser['_id'];
+      Uri url =
+          Uri.parse("${AppConstants.baseURL}/request/$userId/account-upgrade");
+      // print(Get.find<SharedPreferences>().getString('tempToken')!);
+      var response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print(data);
+        ShowCustomSnackBar(
+            title: 'Request sent', isError: false, 'Please wait for approval');
+      } else {
+        var data = jsonDecode(response.body);
+        print(data);
+        ShowCustomSnackBar(
+            title: 'Request not sent', isError: true, 'Please try again');
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

@@ -3,13 +3,12 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:webinarprime/controllers/auth_controller.dart';
-import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/screens/home_screen/widgets/carasoul_item.dart';
 import 'package:webinarprime/utils/colors.dart';
 
 class CaresoulSliderHome extends StatefulWidget {
-  const CaresoulSliderHome({super.key});
+  List webinarList;
+  CaresoulSliderHome({super.key, required this.webinarList});
 
   @override
   State<CaresoulSliderHome> createState() => _CaresoulSliderHomeState();
@@ -23,14 +22,15 @@ class _CaresoulSliderHomeState extends State<CaresoulSliderHome> {
     return Column(
       children: [
         CarouselSlider(
-          items: List.generate(3, (index) => index).map((e) {
+          items: List.generate(widget.webinarList.length, (index) => index)
+              .map((e) {
             return Container(
                 decoration: BoxDecoration(
                   color: Get.isDarkMode ? Colors.black : Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: CaresoulItem(
-                  webinar: WebinarManagementController.coverWebinars[e],
+                  webinar: widget.webinarList[e],
                 ));
           }).toList(),
           // [
@@ -66,27 +66,24 @@ class _CaresoulSliderHomeState extends State<CaresoulSliderHome> {
             scrollDirection: Axis.horizontal,
           ),
         ),
-        GetBuilder<AuthController>(
-          builder: (popularproduct) {
-            return DotsIndicator(
-              dotsCount: 3,
-              // dotsCount: popularproduct.popularProductList.isEmpty
-              //     ? 1
-              //     : popularproduct.popularProductList.length,
-              position: _currentpagevalue.toDouble(),
-              // position: 1,
-              decorator: DotsDecorator(
-                size: Size(9.w, 9.h),
-                activeColor: Get.isDarkMode
-                    ? AppColors.LTsecondaryColor.withOpacity(0.8)
-                    : AppColors.LTprimaryColor,
-                activeSize: Size(9.w, 9.h),
-                activeShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            );
-          },
+        DotsIndicator(
+          dotsCount: widget.webinarList.length,
+          // dotsCount: widget.webinarList.isEmpty ? 1 : widget.webinarList.length,
+          // dotsCount: popularproduct.popularProductList.isEmpty
+          //     ? 1
+          //     : popularproduct.popularProductList.length,
+          position: _currentpagevalue.toDouble(),
+          // position: 1,
+          decorator: DotsDecorator(
+            size: Size(9.w, 9.h),
+            activeColor: Get.isDarkMode
+                ? AppColors.LTsecondaryColor.withOpacity(0.8)
+                : AppColors.LTprimaryColor,
+            activeSize: Size(9.w, 9.h),
+            activeShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
       ],
     );

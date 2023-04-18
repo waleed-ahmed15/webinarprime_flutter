@@ -31,6 +31,7 @@ class WebinarManagementController extends GetxController {
   static List coverWebinars = [];
   static List recommendedWebinars = [];
   static List<dynamic> unapprovedWebinars = [];
+  static List<dynamic> similarWebinars = [];
   Future<void> AddWebinardata(Map<String, dynamic> webinardata) async {
     print('add webinar data called');
     print(webinardata);
@@ -134,6 +135,7 @@ class WebinarManagementController extends GetxController {
       currentWebinar.clear();
       currentWebinar = data['webinar'];
       await Get.find<ReviewController>().getReviewsOfCurrentWebinar(id);
+      await getSimilarWebinars(id);
       update();
     } catch (e) {
       print(e);
@@ -873,6 +875,31 @@ class WebinarManagementController extends GetxController {
         print('----------------unapproved webinars fetched----------------');
       } else {
         print('could not fetch unapproved webinars');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // get similar webinars recommendations
+  Future<void> getSimilarWebinars(String webinarId) async {
+    try {
+      print(webinarId);
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/recommendation/content-based-recommendations/$webinarId");
+      var response = await http.get(url);
+      // print(response.statusCode);
+      if (response.statusCode == 200) {
+        similarWebinars.clear();
+        similarWebinars = jsonDecode(response.body)['webinars'];
+        print(
+            '----------------similar webinars recommendations fetched----------------');
+        // log(data[0].toString());
+        // print(recommendations[0]['name']);
+        // print('-----------------recommendations fetched---------------');
+        update(['similarWebinarsUpdated']);
+      } else {
+        print('could not fetch similar webinars recommendations');
       }
     } catch (e) {
       print(e);

@@ -42,7 +42,8 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
               physics: const BouncingScrollPhysics(),
               children: [
                 Gap(10.h),
-                const CaresoulSliderHome(),
+                CaresoulSliderHome(
+                    webinarList: WebinarManagementController.coverWebinars),
                 Gap(10.h),
                 Padding(
                   padding: EdgeInsets.only(left: 10.w),
