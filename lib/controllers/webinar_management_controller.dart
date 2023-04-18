@@ -32,6 +32,10 @@ class WebinarManagementController extends GetxController {
   static List recommendedWebinars = [];
   static List<dynamic> unapprovedWebinars = [];
   static List<dynamic> similarWebinars = [];
+  static List<dynamic> searchedWebinars = [].obs;
+  // RxList<dynamic> todos = RxList<dynamic>.empty(growable: true).obs;
+  // RxList<dynamic> todos1 = RxList<dynamic>.empty(growable: true).obs;
+
   Future<void> AddWebinardata(Map<String, dynamic> webinardata) async {
     print('add webinar data called');
     print(webinardata);
@@ -900,6 +904,50 @@ class WebinarManagementController extends GetxController {
         update(['similarWebinarsUpdated']);
       } else {
         print('could not fetch similar webinars recommendations');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getsearchedWebinars(String query) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/search/$query");
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        searchedWebinars.clear();
+        searchedWebinars = jsonDecode(response.body)['webinars'];
+        print('----------------searched webinars fetched----------------');
+        // print(searchedWebinars[0]['name']);
+        // print(searchedWebinars[0]);
+        print(searchedWebinars.length);
+        print('-----------------searched webinars fetched---------------');
+        update(['searchedWebinars']);
+      } else {
+        print('could not fetch searched webinars');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // search by category
+  Future<void> searchbyCategory(String categoryId) async {
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/webinar/search/category/$categoryId");
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        searchedWebinars.clear();
+        searchedWebinars = jsonDecode(response.body)['webinars'];
+        print('----------------searched webinars fetched----------------');
+        // print(searchedWebinars[0]['name']);
+        // print(searchedWebinars[0]);
+        print(searchedWebinars.length);
+        update();
+        print('-----------------searched webinars fetched---------------');
+      } else {
+        print('could not fetch searched webinars');
       }
     } catch (e) {
       print(e);

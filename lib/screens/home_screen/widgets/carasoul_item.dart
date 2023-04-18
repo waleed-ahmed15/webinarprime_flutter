@@ -9,13 +9,22 @@ import 'package:webinarprime/utils/app_constants.dart';
 
 class CaresoulItem extends StatelessWidget {
   Map<String, dynamic> webinar;
-  CaresoulItem({required this.webinar, super.key});
+  ScrollController? scrollController;
+  bool scroll;
+  CaresoulItem(
+      {required this.webinar,
+      super.key,
+      this.scrollController,
+      required this.scroll});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
         // navigator!.pop();
+        if (scroll) {
+          scrollController!.jumpTo(0);
+        }
         await Get.find<WebinarManagementController>()
             .getwebinarById(webinar['_id']);
         await Get.find<WebinarManagementController>()

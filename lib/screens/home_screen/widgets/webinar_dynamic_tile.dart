@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 
 class WebinarDynamicInfoTile extends StatelessWidget {
   Map<String, dynamic> webinar;
-  WebinarDynamicInfoTile({required this.webinar, super.key});
+  bool Showcreatedby;
+  WebinarDynamicInfoTile(
+      {required this.webinar, super.key, this.Showcreatedby = true});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class WebinarDynamicInfoTile extends StatelessWidget {
         await Get.find<WebinarManagementController>()
             .getwebinarById(webinar['_id']);
 
-        Get.to(() => WebinarDetailsScreen(
+        await Get.to(() => WebinarDetailsScreen(
               webinarDetails: webinar,
             ));
       },
@@ -123,31 +125,32 @@ class WebinarDynamicInfoTile extends StatelessWidget {
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w300),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Created by',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayMedium!
-                            .copyWith(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .displayMedium!
-                                    .color,
-                                fontSize: 14.sp),
-                      ),
-                      Gap(5.w),
-                      CircleAvatar(
-                        radius: 10.r,
-                        backgroundImage: NetworkImage(
-                          AppConstants.baseURL +
-                              webinar['createdBy']['profile_image'],
+                  if (Showcreatedby)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Created by',
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .displayMedium!
+                                      .color,
+                                  fontSize: 14.sp),
                         ),
-                      ),
-                    ],
-                  )
+                        Gap(5.w),
+                        CircleAvatar(
+                          radius: 10.r,
+                          backgroundImage: NetworkImage(
+                            AppConstants.baseURL +
+                                webinar['createdBy']['profile_image'],
+                          ),
+                        ),
+                      ],
+                    )
                 ],
               ),
             ),

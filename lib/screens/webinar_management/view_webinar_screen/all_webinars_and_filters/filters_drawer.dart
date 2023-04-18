@@ -68,7 +68,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                 setState(() {
                   _sortOption = value.toString();
                 });
-                widget.onSortOptionSelected(value.toString());
+                widget.onSortOptionSelected(value.toString(), _isAscending);
               },
             ),
           ),
@@ -122,6 +122,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                 onChanged: (value) async {
                   setState(() {
                     _isAscending = value;
+                    widget.onSortOptionSelected(_sortOption, _isAscending);
                   });
                 },
               ),

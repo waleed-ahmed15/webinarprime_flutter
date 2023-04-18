@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/screens/home_screen/widgets/webinar_dynamic_tile.dart';
-import 'package:webinarprime/screens/webinar_management/view_webinar_screen/all_webinars_and_filters/filters_drawer.dart';
 
 class ShowAllWebinarScreen extends StatefulWidget {
   const ShowAllWebinarScreen({super.key});
@@ -18,9 +17,7 @@ class _ShowAllWebinarScreenState extends State<ShowAllWebinarScreen> {
     return SafeArea(
         child: Scaffold(
       key: scaffoldKey,
-      endDrawer: FilterDrawer(onSortOptionSelected: (String value) {
-      
-      }),
+      // endDrawer: FilterDrawer(onSortOptionSelected: (String value) {}),
       body: Column(
         children: [
           Row(

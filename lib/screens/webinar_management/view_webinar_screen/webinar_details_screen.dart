@@ -1624,7 +1624,10 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           assignId: true,
                           id: 'similarWebinarsUpdated',
                           builder: (w) {
+                            // _scrollController.jumpTo(0);
                             return CaresoulSliderHome(
+                                scroll: true,
+                                scrollController: _scrollController,
                                 webinarList: WebinarManagementController
                                     .similarWebinars);
                           }),

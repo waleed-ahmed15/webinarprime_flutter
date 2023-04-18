@@ -93,7 +93,8 @@ class _PreLoginScreenState extends State<PreLoginScreen> {
                           children: [
                             CaresoulSliderHome(
                                 webinarList:
-                                    WebinarManagementController.coverWebinars),
+                                    WebinarManagementController.coverWebinars,
+                                scrollController: ScrollController()),
                             GestureDetector(
                               onTap: () {
                                 print('Tapped');

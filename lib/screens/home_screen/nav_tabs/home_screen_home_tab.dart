@@ -43,7 +43,9 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
               children: [
                 Gap(10.h),
                 CaresoulSliderHome(
-                    webinarList: WebinarManagementController.coverWebinars),
+                  webinarList: WebinarManagementController.coverWebinars,
+                  scrollController: ScrollController(),
+                ),
                 Gap(10.h),
                 Padding(
                   padding: EdgeInsets.only(left: 10.w),

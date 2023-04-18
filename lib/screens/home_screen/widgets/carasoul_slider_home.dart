@@ -8,7 +8,13 @@ import 'package:webinarprime/utils/colors.dart';
 
 class CaresoulSliderHome extends StatefulWidget {
   List webinarList;
-  CaresoulSliderHome({super.key, required this.webinarList});
+  ScrollController scrollController;
+  bool scroll;
+  CaresoulSliderHome(
+      {super.key,
+      required this.webinarList,
+      required this.scrollController,
+      this.scroll = false});
 
   @override
   State<CaresoulSliderHome> createState() => _CaresoulSliderHomeState();
@@ -31,6 +37,8 @@ class _CaresoulSliderHomeState extends State<CaresoulSliderHome> {
                 ),
                 child: CaresoulItem(
                   webinar: widget.webinarList[e],
+                  scrollController: widget.scrollController,
+                  scroll: widget.scroll,
                 ));
           }).toList(),
           // [
