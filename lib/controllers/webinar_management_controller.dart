@@ -953,4 +953,42 @@ class WebinarManagementController extends GetxController {
       print(e);
     }
   }
+
+  // report a webinar or a user or a chat
+  Future<void> reportSomething(
+      {String webinarId = '',
+      String reportedId = '',
+      String description = '',
+      String reason = '',
+      String type = ''}) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/report/post-report");
+      var reportBody = {
+        'description': description,
+        'reporter': Get.find<AuthController>().currentUser['_id'],
+        'reason': reason,
+        'type': type
+      };
+      if (type == 'chat') {
+        reportBody.addIf(true, 'reported', reportedId);
+      } else if (type == 'webinar') {
+        reportBody.addIf(true, 'webinar', webinarId);
+      } else if (type == 'user') {
+        reportBody.addIf(true, 'reported', reportedId);
+      }
+      var response =
+          await http.post(url, body: jsonEncode(reportBody), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+      });
+      if (response.statusCode == 200) {
+        print('----------------$type reported----------------');
+        print(response.body);
+      } else {
+        print('could not report $type');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }

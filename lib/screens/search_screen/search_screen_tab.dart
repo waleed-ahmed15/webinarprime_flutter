@@ -24,7 +24,6 @@ class _SearchScreenTabState extends State<SearchScreenTab> {
 
   @override
   Widget build(BuildContext context) {
-    print('awdasdasjdasijdasdjlksadjas ');
     return Scaffold(
         appBar: AppBar(
           actions: [Container()],
@@ -61,27 +60,31 @@ class _SearchScreenTabState extends State<SearchScreenTab> {
         ),
         key: scaffoldKey,
         // endDrawer: const Drawer(),
-        endDrawerEnableOpenDragGesture: false,
+        // endDrawerEnableOpenDragGesture: false,
         endDrawer: Drawer(
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           width: 0.7.sw,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                height: 100.h,
-                child: const DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: AppColors.LTprimaryColor,
-                  ),
-                  child: Text(
-                    'Filters',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   height: 100.h,
+              //   child: const DrawerHeader(
+              //     decoration: BoxDecoration(
+              //       color: Colors.transparent,
+              //     ),
+              //     child: Center(
+              //       child: Text(
+              //         '',
+              //         style: TextStyle(
+              //           fontSize: 18,
+              //           color: Colors.white,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+
               ListTile(
                 title: const Text('A-Z'),
                 leading: Radio(

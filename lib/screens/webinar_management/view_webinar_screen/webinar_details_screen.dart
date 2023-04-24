@@ -357,88 +357,80 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                 ],
               ),
             ),
-            body: loading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Builder(builder: (context) {
-                    print(Get.isDarkMode);
-                    print(darkTheme);
-                    if (WebinarManagementController
-                        .currentWebinar['notifications'].isEmpty) {
-                      return Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Transform.rotate(
-                                angle: -70 / 180,
-                                child: const Icon(Icons.notifications_active)),
-                            Row(),
-                            Gap(10.h),
-                            Text(
-                              "No notificatione Yet",
-                              style: bigTitleStyle.copyWith(
-                                  fontSize: 20.sp,
-                                  color: Get.isDarkMode
-                                      ? Colors.white.withOpacity(1)
-                                      : Colors.grey[400]),
-                            ),
-                          ],
+            body: Builder(builder: (context) {
+              print(Get.isDarkMode);
+              print(darkTheme);
+              if (WebinarManagementController
+                  .currentWebinar['notifications'].isEmpty) {
+                return Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Transform.rotate(
+                          angle: -70 / 180,
+                          child: const Icon(Icons.notifications_active)),
+                      Row(),
+                      Gap(10.h),
+                      Text(
+                        "No notificatione Yet",
+                        style: bigTitleStyle.copyWith(
+                            fontSize: 20.sp,
+                            color: Get.isDarkMode
+                                ? Colors.white.withOpacity(1)
+                                : Colors.grey[400]),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 10.h),
+                itemCount: WebinarManagementController
+                    .currentWebinar['notifications'].length,
+                itemBuilder: (BuildContext context, int index) {
+                  String formmattedDateTime = DateFormat('dd/MM/yy, hh:mm')
+                      .format(DateTime.parse(WebinarManagementController
+                          .currentWebinar['notifications'][index]['createdAt']
+                          .toString()));
+                  return Container(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          WebinarManagementController
+                              .currentWebinar['notifications'][index]['title'],
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(fontSize: 19.sp),
                         ),
-                      );
-                    }
-                    return ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: 10.h),
-                      itemCount: WebinarManagementController
-                          .currentWebinar['notifications'].length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String formmattedDateTime =
-                            DateFormat('dd/MM/yy, hh:mm').format(DateTime.parse(
-                                WebinarManagementController
+                        ExpandableText(
+                            WebinarManagementController
                                     .currentWebinar['notifications'][index]
-                                        ['createdAt']
-                                    .toString()));
-                        return Container(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                WebinarManagementController
-                                        .currentWebinar['notifications'][index]
-                                    ['title'],
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displayMedium!
-                                    .copyWith(fontSize: 19.sp),
-                              ),
-                              ExpandableText(
-                                  WebinarManagementController
-                                          .currentWebinar['notifications']
-                                      [index]['description'],
-                                  maxLines: 4,
-                                  expandOnTextTap: true,
-                                  collapseOnTextTap: true,
-                                  textAlign: TextAlign.justify,
-                                  style:
-                                      Theme.of(context).textTheme.displaySmall,
-                                  expandText: ''),
-                              Gap(10.h),
-                              Text(
-                                formmattedDateTime,
-                                style: onelineStyle.copyWith(fontSize: 15.sp),
-                              ),
-                              const Divider(
-                                color: Colors.grey,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  }),
+                                ['description'],
+                            maxLines: 4,
+                            expandOnTextTap: true,
+                            collapseOnTextTap: true,
+                            textAlign: TextAlign.justify,
+                            style: Theme.of(context).textTheme.displaySmall,
+                            expandText: ''),
+                        Gap(10.h),
+                        Text(
+                          formmattedDateTime,
+                          style: onelineStyle.copyWith(fontSize: 15.sp),
+                        ),
+                        const Divider(
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            }),
           ),
           key: detailsscaffoldKey,
           floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
@@ -1357,11 +1349,13 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                         child: GestureDetector(
                           onTap: () async {
                             AuthController.otherUserProfile.clear();
+                            print('created by tapped');
 
                             bool fetched = await Get.find<AuthController>()
                                 .otherUserProfileDetails(
                                     WebinarManagementController
                                         .currentWebinar['createdBy']['_id']);
+
                             if (fetched) {
                               Get.to(() => const UserProfileView());
                             }
@@ -1590,6 +1584,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                           onTap: () {
                             // Get.to(() => const ReportView());
                             Get.to(() => ReportScreen(
+                                  webianrId: WebinarManagementController
+                                      .currentWebinar['_id'],
                                   reportType: 'webinar',
                                 ));
                           },

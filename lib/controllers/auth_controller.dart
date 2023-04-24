@@ -216,8 +216,10 @@ class AuthController extends GetxController {
         "password": password,
       });
       var data = jsonDecode(response.body);
+      print('response is ${response.statusCode}');
+      print(data['success']);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && data['success'] == true) {
         sharedPreferences.setString('tempToken', data['token'].split(' ')[1]);
         print(data['token']);
         // final SharedPreferences sharedPreferences = Get.find();
@@ -280,9 +282,12 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     print(sharedPreferences.getString('token'));
     await sharedPreferences.remove('token');
+    await sharedPreferences.remove('tempToken');
+
     // currentUser = null;
     print('token removed and logging out');
     print(sharedPreferences.getString('token'));
+
     Get.offAllNamed('/sign-in');
   }
 
@@ -442,6 +447,7 @@ class AuthController extends GetxController {
   Future<bool> otherUserProfileDetails(String userId) async {
     try {
       Uri url = Uri.parse("${AppConstants.baseURL}/user/details/$userId");
+      // print(Get.find<SharedPreferences>().getString('tempToken')!);
 
       var response = await http.get(
         url,
@@ -452,13 +458,19 @@ class AuthController extends GetxController {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        print(response.statusCode);
         print(data);
         otherUserProfile.clear();
         otherUserProfile = data['user'];
-        // otherUserProfile = data['user'];
+        print('============================================');
+        // print(
+        // otherUserProfile['attended_webinars'][1]['webinar']['coverImage']);
+        print('============================================');
+
         update();
         return true;
       } else {
+        print(response.body.toString());
         return false;
       }
     } catch (e) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/widgets/snackbar.dart';
 
 class ReportScreen extends StatefulWidget {
@@ -95,7 +97,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       print('validated');
                       if (widget.reportType == 'webinar') {
@@ -105,6 +107,13 @@ class _ReportScreenState extends State<ReportScreen> {
                       } else if (widget.reportType == 'chat') {
                         print('chat');
                       }
+                      await Get.find<WebinarManagementController>()
+                          .reportSomething(
+                              description: descriptionController.text,
+                              reason: reasonController.text,
+                              type: widget.reportType,
+                              reportedId: widget.reportedUserId,
+                              webinarId: widget.webianrId);
                       ShowCustomSnackBar('Reported Successfully',
                           isError: false, title: 'Reported');
                       Navigator.pop(context);

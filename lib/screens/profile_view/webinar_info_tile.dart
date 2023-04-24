@@ -15,6 +15,11 @@ class WebinarInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (webinarListType != 'created_webinars' &&
+        AuthController.otherUserProfile[webinarListType][index]['webinar'] ==
+            null) {
+      return Container();
+    }
     return Container(
       margin: EdgeInsets.only(
         top: 10.h,
