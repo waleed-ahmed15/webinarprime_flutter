@@ -56,14 +56,83 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   late String? currentDate;
 
+  void messagedialogbox(String toMetadata, String toIdentity) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Message'),
+            content: TextField(
+              controller: chatcontroller,
+              decoration: const InputDecoration(
+                hintText: 'Enter your message',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (chatcontroller.text.trim().isEmpty) {
+                    return;
+                  }
+                  Map<String, dynamic> newmesage = {
+                    "message": chatcontroller.text.trim(),
+                    "from": {
+                      "identity": widget.room.localParticipant!.identity,
+                      "metadata": widget.room.localParticipant!.metadata,
+                    },
+                    "timestamp": DateTime.now().millisecondsSinceEpoch,
+                    "to": {
+                      "identity": toIdentity,
+                      "metadata": toMetadata,
+                    }
+                  };
+                  await Get.find<WebinarStreamController>()
+                      .sendMessageToRoomChat(widget.webinarRoomId, newmesage);
+
+                  chatcontroller.clear();
+
+                  //close keyboard
+                  // print(chatMessages);
+                  FocusScope.of(context).unfocus();
+                  // socket.emit('streamRoomChatMessage', {
+                  // 'message': chatcontroller.text,
+                  // 'from': widget.room.localParticipant!.identity,
+                  // 'timestamp': DateTime.now().millisecondsSinceEpoch,
+                  // 'type': 'message'
+                  // });
+                  Navigator.pop(context);
+                },
+                child: const Text('Send'),
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   void initState() {
     super.initState();
     socket.emit("joinStreamRoom", widget.webinarRoomId);
     socket.on('streamRoomChatMessage', (data) {
       print(data.runtimeType);
-      print('=---------------------------');
-
+      print("identtity here+++++??>>>>> " + data['to']['identity']);
+      if (data['to']['identity'] == 'all') {
+        print("message received $data");
+        print('=---------------------------');
+        chatMessages.add(data);
+      } else if (data['to']['identity'] ==
+          widget.room.localParticipant!.identity) {
+        print("message received $data");
+        // data['message'] = data['from']['name'] + ' (private)';
+        print('=---------------------------');
+        chatMessages.add(data);
+      }
       print('message received $data');
       print('=---------------------------');
 
@@ -443,32 +512,170 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                                     .elementAt(index)
                                                     .metadata!)['role'] ==
                                                 'attendee')
-                                          IconButton(
-                                            onPressed: () async {
-                                              String kickedparticipantId =
-                                                  jsonDecode(widget
+                                          PopupMenuButton<String>(
+                                            icon: const Icon(
+                                              Icons.more_vert,
+                                              color: Colors
+                                                  .white, // Change the color here
+                                            ),
+                                            onSelected: (value) async {
+                                              // Perform action based on selected option
+                                              switch (value) {
+                                                case 'remove':
+                                                  print('remove');
+                                                  String kickedparticipantId =
+                                                      jsonDecode(widget.room
+                                                          .participants.values
+                                                          .elementAt(index)
+                                                          .metadata!)['_id'];
+                                                  print(jsonDecode(widget
                                                       .room.participants.values
                                                       .elementAt(index)
-                                                      .metadata!)['_id'];
-                                              print(jsonDecode(widget
-                                                  .room.participants.values
-                                                  .elementAt(index)
-                                                  .metadata!));
-                                              print(
-                                                  'person kicked from roster');
-                                              print(kickedparticipantId);
-                                              print(widget.webinarRoomId);
+                                                      .metadata!));
+                                                  print(
+                                                      'person kicked from roster');
+                                                  print(kickedparticipantId);
+                                                  print(widget.webinarRoomId);
 
-                                              await Get.find<
-                                                      WebinarStreamController>()
-                                                  .kickparticipantFromWebinar(
-                                                      kickedparticipantId,
-                                                      widget.webinarRoomId);
+                                                  await Get.find<
+                                                          WebinarStreamController>()
+                                                      .kickparticipantFromWebinar(
+                                                          kickedparticipantId,
+                                                          widget.webinarRoomId);
+                                                  // Handle "Remove Participant" option
+                                                  break;
+                                                case 'switch':
+                                                  print('switch');
+                                                  if (widget
+                                                      .room.participants.values
+                                                      .elementAt(index)
+                                                      .permissions
+                                                      .canPublish) {
+                                                    print("swtich to attendee");
+                                                    await Get.find<
+                                                            WebinarStreamController>()
+                                                        .swtichToattendee(
+                                                            widget
+                                                                .webinarRoomId,
+                                                            jsonDecode(widget
+                                                                    .room
+                                                                    .participants
+                                                                    .values
+                                                                    .elementAt(
+                                                                        index)
+                                                                    .metadata!)[
+                                                                '_id']);
+                                                  } else {
+                                                    await Get.find<
+                                                            WebinarStreamController>()
+                                                        .swtichToHost(
+                                                            widget
+                                                                .webinarRoomId,
+                                                            jsonDecode(widget
+                                                                    .room
+                                                                    .participants
+                                                                    .values
+                                                                    .elementAt(
+                                                                        index)
+                                                                    .metadata!)[
+                                                                '_id']);
+                                                  }
+                                                  // Handle "Switch to Host" option
+                                                  break;
+                                                case 'option3':
+                                                  print('option3');
+                                                  messagedialogbox(
+                                                      widget.room.participants
+                                                          .values
+                                                          .elementAt(index)
+                                                          .metadata!,
+                                                      widget.room.participants
+                                                          .values
+                                                          .elementAt(index)
+                                                          .identity);
+                                                  print(widget
+                                                      .room
+                                                      .participants
+                                                      .values
+                                                      .first
+                                                      .permissions
+                                                      .canPublish);
+                                                  break;
+                                              }
                                             },
-                                            icon:
-                                                const Icon(Icons.person_remove),
-                                            color: Colors.red,
+                                            itemBuilder:
+                                                (BuildContext context) =>
+                                                    <PopupMenuEntry<String>>[
+                                              const PopupMenuItem<String>(
+                                                value: 'remove',
+                                                child:
+                                                    Text('Remove Participant'),
+                                              ),
+                                              PopupMenuItem<String>(
+                                                value: 'switch',
+                                                child: widget.room.participants
+                                                        .values
+                                                        .elementAt(index)
+                                                        .permissions
+                                                        .canPublish
+                                                    ? const Text(
+                                                        'Switch to Attendee')
+                                                    : const Text(
+                                                        'Switch to Host'),
+                                              ),
+                                              const PopupMenuItem<String>(
+                                                value: 'option3',
+                                                child: Text('Third Option'),
+                                              ),
+                                            ],
                                           )
+                                        else if (jsonDecode(widget
+                                                .room.participants.values
+                                                .elementAt(index)
+                                                .metadata!)['role'] ==
+                                            'organizer')
+                                          IconButton(
+                                              onPressed: () {
+                                                messagedialogbox(
+                                                    widget.room.participants
+                                                        .values
+                                                        .elementAt(index)
+                                                        .metadata!,
+                                                    widget.room.participants
+                                                        .values
+                                                        .elementAt(index)
+                                                        .identity);
+                                              },
+                                              icon: const Icon(
+                                                Icons.message,
+                                                color: Colors.white,
+                                              ))
+                                        // IconButton(
+                                        //   onPressed: () async {
+                                        //     String kickedparticipantId =
+                                        //         jsonDecode(widget
+                                        //             .room.participants.values
+                                        //             .elementAt(index)
+                                        //             .metadata!)['_id'];
+                                        //     print(jsonDecode(widget
+                                        //         .room.participants.values
+                                        //         .elementAt(index)
+                                        //         .metadata!));
+                                        //     print(
+                                        //         'person kicked from roster');
+                                        //     print(kickedparticipantId);
+                                        //     print(widget.webinarRoomId);
+
+                                        //     await Get.find<
+                                        //             WebinarStreamController>()
+                                        //         .kickparticipantFromWebinar(
+                                        //             kickedparticipantId,
+                                        //             widget.webinarRoomId);
+                                        //   },
+                                        //   icon:
+                                        //       const Icon(Icons.person_remove),
+                                        //   color: Colors.red,
+                                        // )
                                         else
                                           const SizedBox(),
                                       ],
@@ -633,15 +840,76 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                                                 ['metadata'])[
                                                         'profile_image']),
                                           ),
-                                          title: Text(
-                                            // "Name",
-                                            jsonDecode(chatMessages[index]
-                                                ['from']['metadata'])['name'],
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .displayMedium!
-                                                .copyWith(fontSize: 20.sp)
-                                                .copyWith(color: Colors.white),
+                                          title: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                // "Name",
+                                                jsonDecode(chatMessages[index]
+                                                        ['from']
+                                                    ['metadata'])['name'],
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displayMedium!
+                                                    .copyWith(fontSize: 20.sp)
+                                                    .copyWith(
+                                                        color: chatMessages[index]
+                                                                        ['to'][
+                                                                    'identity'] ==
+                                                                widget
+                                                                    .room
+                                                                    .localParticipant!
+                                                                    .identity
+                                                            ? Colors.green
+                                                            : Colors.white),
+                                              ),
+                                              Text(
+                                                chatMessages[index]['from']
+                                                                ['identity'] ==
+                                                            widget
+                                                                .room
+                                                                .localParticipant!
+                                                                .identity &&
+                                                        chatMessages[index]
+                                                                    ['to']
+                                                                ['identity'] !=
+                                                            'all'
+                                                    // ? ' (You)'
+                                                    ? "${" (to " + jsonDecode(chatMessages[index]['to']['metadata'])['name']})"
+                                                    : "",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displayMedium!
+                                                    .copyWith(fontSize: 15.sp)
+                                                    .copyWith(
+                                                        color: Colors.blue),
+                                              ),
+                                              Text(
+                                                chatMessages[index]['to']
+                                                            ['identity'] ==
+                                                        widget
+                                                            .room
+                                                            .localParticipant!
+                                                            .identity
+                                                    ? ' (You only)'
+                                                    : "",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displayMedium!
+                                                    .copyWith(fontSize: 15.sp)
+                                                    .copyWith(
+                                                        color: chatMessages[index]
+                                                                        ['to'][
+                                                                    'identity'] ==
+                                                                widget
+                                                                    .room
+                                                                    .localParticipant!
+                                                                    .identity
+                                                            ? Colors.red
+                                                            : Colors.white),
+                                              ),
+                                            ],
                                           ),
                                           subtitle: Text(
                                             chatMessages[index]['message'],
@@ -705,6 +973,11 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
                                                 },
                                                 "timestamp": DateTime.now()
                                                     .millisecondsSinceEpoch,
+                                                "to": {
+                                                  "identity": 'all',
+                                                  "metadata":
+                                                      {'name': 'all'}.toString()
+                                                }
                                               };
                                               Map<String, dynamic> message = {
                                                 'message':
@@ -1117,7 +1390,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
             ),
           ),
           key: scaffoldKey,
-          
+
           backgroundColor: AppColors.DTbackGroundColor,
           body: Column(
             children: [

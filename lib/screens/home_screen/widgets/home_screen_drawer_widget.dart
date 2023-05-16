@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/routes/routes.dart';
@@ -12,6 +14,7 @@ import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
 import 'package:webinarprime/screens/webinar_marketing/created_webinars_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
+// import 'package:restart_app/restart_app.dart';
 
 class HomeScreenDrawer extends StatefulWidget {
   const HomeScreenDrawer({super.key});
@@ -191,6 +194,37 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                           Get.find<AuthController>().UpgradeAccountRequest();
                         },
                       ),
+                    // swtich theme
+                    ListTile(
+                      leading: const Icon(Icons.dark_mode),
+                      title: Text(
+                        'Dark Mode',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(height: 1.5, fontSize: 18.sp),
+                      ),
+                      trailing: Switch(
+                        value: Get.isDarkMode,
+                        activeColor: Colors.blue,
+                        onChanged: (value) {
+                          Get.changeThemeMode(
+                            value ? ThemeMode.dark : ThemeMode.light,
+                          );
+                          Get.isDarkMode
+                              ? Get.find<SharedPreferences>()
+                                  .setString("theme", "light")
+                              : Get.find<SharedPreferences>()
+                                  .setString("theme", "dark");
+                          // Get.offAll(() =>home );
+                          // Phoenix.rebirth(context);
+                          // MyThemeController().update();
+                          Restart.restartApp();
+
+                          // Restart.restartApp();
+                        },
+                      ),
+                    ),
                     ListTile(
                       leading: const Icon(Icons.logout),
                       title: Text('Logout',

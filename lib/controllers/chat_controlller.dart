@@ -321,7 +321,7 @@ class ChatStreamController extends GetxController {
 
   //chatbot
 
-  Future<void> chatbot({String query = 'create new Webinar'}) async {
+  Future<void> chatbot({String query = ''}) async {
     chatbotconversation.add({
       'text': query,
       'type': 'user',
@@ -338,7 +338,7 @@ class ChatStreamController extends GetxController {
       if (response.statusCode == 200) {
         try {
           Map<String, dynamic> jsonMap = await jsonDecode(response.body);
-          // print(jsonMap['response']);
+          print(jsonMap['response']);
           // print(jsonDecode(jsonMap['response']));
 
           // print(jsonDecode(jsonMap['response']).containsKey('screen'));

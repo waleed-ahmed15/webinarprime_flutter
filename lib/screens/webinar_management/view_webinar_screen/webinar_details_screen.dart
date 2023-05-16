@@ -13,6 +13,7 @@ import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/screens/home_screen/widgets/carasoul_slider_home.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
 import 'package:webinarprime/screens/report%20screen/report_screen.dart';
+import 'package:webinarprime/screens/schedeule_event_screens/schedule_event_screen.dart';
 import 'package:webinarprime/screens/user_search/user_search_screen.dart';
 import 'package:webinarprime/screens/webinar_management/edit_webinar/edit_webinar_screen.dart';
 import 'package:webinarprime/screens/webinar_management/view_webinar_screen/attendees_list_screen.dart';
@@ -99,6 +100,22 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
   bool alreadyRegistered() {
     bool registerd = false;
     WebinarManagementController.currentWebinar['attendees'].forEach((element) {
+      if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
+        // Get.snackbar('Already Registered',
+        // 'You have already registered for this webinar');
+        registerd = true;
+        return;
+      }
+    });
+    WebinarManagementController.currentWebinar['organizers'].forEach((element) {
+      if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
+        // Get.snackbar('Already Registered',
+        // 'You have already registered for this webinar');
+        registerd = true;
+        return;
+      }
+    });
+    WebinarManagementController.currentWebinar['guests'].forEach((element) {
       if (element['_id'] == Get.find<AuthController>().currentUser['_id']) {
         // Get.snackbar('Already Registered',
         // 'You have already registered for this webinar');
@@ -523,6 +540,24 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                               showDialogBoxForPostNotification(
                                   WebinarManagementController
                                       .currentWebinar['_id']);
+                            },
+                          ),
+                          // schedule events
+                          Bubble(
+                            title: "Schedule Events",
+                            iconColor: Colors.white,
+                            bubbleColor: Get.isDarkMode
+                                ? myappbarcolor
+                                : AppColors.LTprimaryColor,
+                            icon: Icons.schedule,
+                            titleStyle: const TextStyle(
+                                fontSize: 16, color: Colors.white),
+                            onPress: () {
+                              _animationController!.reverse();
+                              Get.to(() => ScheduleEventsScreen(
+                                    webinarid: WebinarManagementController
+                                        .currentWebinar['_id'],
+                                  ));
                             },
                           ),
                           Bubble(
@@ -1500,6 +1535,94 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
                                 ? const Color(0xffa1a1aa)
                                 : const Color(0xff475569),
                             fontSize: AppLayout.getHeight(17)),
+                      ),
+                      Gap(AppLayout.getHeight(28)),
+                      Text(
+                        'Scheduled Events',
+                        style: TextStyle(
+                          letterSpacing: 1,
+                          fontSize: AppLayout.getHeight(14),
+                          color: Get.isDarkMode
+                              ? const Color.fromRGBO(122, 121, 121, 1)
+                              : const Color.fromRGBO(176, 179, 190, 1),
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'JosefinSans Bold',
+                        ),
+                      ),
+                      Gap(AppLayout.getHeight(16)),
+                      WebinarManagementController.webinarSchedule.isEmpty
+                          ? const SizedBox()
+                          : Text(
+                              "Total Events : ${WebinarManagementController.webinarSchedule.length}",
+                              style: TextStyle(
+                                letterSpacing: 1,
+                                fontSize: AppLayout.getHeight(14),
+                                color: Get.isDarkMode
+                                    ? const Color.fromRGBO(122, 121, 121, 1)
+                                    : const Color.fromRGBO(176, 179, 190, 1),
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'JosefinSans Bold',
+                              ),
+                            ),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: AppLayout.getHeight(180),
+                          minHeight: AppLayout.getHeight(80),
+                        ),
+                        child: WebinarManagementController
+                                .webinarSchedule.isEmpty
+                            ? Text('No events schedules yet!',
+                                style: TextStyle(
+                                    height: 1.5,
+                                    fontFamily: 'JosefinSans Regular',
+                                    fontWeight: FontWeight.w500,
+                                    color: Get.isDarkMode
+                                        ? const Color(0xffa1a1aa)
+                                        : const Color(0xff475569),
+                                    fontSize: AppLayout.getHeight(17)))
+                            : ListView.builder(
+                                itemCount: WebinarManagementController
+                                    .webinarSchedule.length,
+                                // itemCount: ,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(
+                                        bottom: 10, top: 10),
+                                    decoration:
+                                        listtileDecoration.copyWith(boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        offset: const Offset(0, 2),
+                                        blurRadius: 4,
+                                        spreadRadius: 0,
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        offset: const Offset(0, -2),
+                                        blurRadius: 4,
+                                      ),
+                                    ]),
+                                    child: ListTile(
+                                      title: Text(
+                                        WebinarManagementController
+                                            .webinarSchedule[index]['title'],
+                                        style: TextStyle(
+                                            height: 1.5,
+                                            fontFamily: 'JosefinSans Regular',
+                                            fontWeight: FontWeight.w500,
+                                            color: Get.isDarkMode
+                                                ? const Color(0xffa1a1aa)
+                                                : const Color(0xff475569),
+                                            fontSize: AppLayout.getHeight(17)),
+                                      ),
+                                      subtitle: Text(WebinarManagementController
+                                                  .webinarSchedule[index]
+                                              ['duration'] +
+                                          ' mins'),
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
 
                       Gap(AppLayout.getHeight(28)),

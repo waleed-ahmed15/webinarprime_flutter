@@ -20,19 +20,13 @@ class _NotificationScreenState extends State<NotificationScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Get.find<AuthController>()
-                .getInvitations('63ea2153bb071d3c3298002d');
-          },
-        ),
         appBar: AppBar(
           toolbarHeight: 0,
           elevation: 0,
@@ -42,12 +36,12 @@ class _NotificationScreenState extends State<NotificationScreen>
               controller: _tabController,
               // labelStyle:  tabTextstyle,
               tabs: [
-                Tab(
-                  child: Text(
-                    'Notifications',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                ),
+                // Tab(
+                // child: Text(
+                // 'Notifications',
+                // style: Theme.of(context).textTheme.headlineMedium,
+                // ),
+                // ),
                 Tab(
                   child: Text(
                     'Invitations',
@@ -59,7 +53,7 @@ class _NotificationScreenState extends State<NotificationScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
-            const Center(child: Text('notifications')),
+            // const Center(child: Text('notifications')),
             GetBuilder<AuthController>(builder: (controller) {
               print('tab2');
               return SingleChildScrollView(

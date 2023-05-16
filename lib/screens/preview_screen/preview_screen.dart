@@ -63,9 +63,19 @@ class _PreLoginScreenState extends State<PreLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.to(() => const LoginPage());
+                },
+                child: const Text(
+                  "Login",
+                  style: TextStyle(),
+                )),
+          ],
           // elevation: 0,
           centerTitle: true,
-          backgroundColor: Colors.transparent,
+          // backgroundColor: Colors.transparent,
           title: Text(
             'Webinar Prime',
             style: Theme.of(context).textTheme.displayMedium!.copyWith(

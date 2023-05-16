@@ -33,6 +33,7 @@ class WebinarManagementController extends GetxController {
   static List<dynamic> unapprovedWebinars = [];
   static List<dynamic> similarWebinars = [];
   static List<dynamic> searchedWebinars = [].obs;
+  static List<dynamic> webinarSchedule = [].obs;
   // RxList<dynamic> todos = RxList<dynamic>.empty(growable: true).obs;
   // RxList<dynamic> todos1 = RxList<dynamic>.empty(growable: true).obs;
 
@@ -117,8 +118,8 @@ class WebinarManagementController extends GetxController {
       var data = jsonDecode(response.body);
 
       print('=------------------------webianrs------------------------');
-      print(data);
-      print(data['webinars']);
+      // print(data);
+      // print(data['webinars']);
       webinarsList.addAll(data['webinars']);
       update();
       return true;
@@ -140,6 +141,7 @@ class WebinarManagementController extends GetxController {
       currentWebinar = data['webinar'];
       await Get.find<ReviewController>().getReviewsOfCurrentWebinar(id);
       await getSimilarWebinars(id);
+      await getWebinarSchedules(id);
       update();
     } catch (e) {
       print(e);
@@ -406,7 +408,8 @@ class WebinarManagementController extends GetxController {
 
   Future<bool> removeWebinarMember({required String memeberId}) async {
     try {
-      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/member/$memeberId");
+      Uri url =
+          Uri.parse("${AppConstants.baseURL}/webinar/removemember/$memeberId");
       http.Response response = await http.put(url, headers: {
         'Content-Type': 'application/json',
       });
@@ -898,6 +901,7 @@ class WebinarManagementController extends GetxController {
         similarWebinars = jsonDecode(response.body)['webinars'];
         print(
             '----------------similar webinars recommendations fetched----------------');
+        // print(similarWebinars[0]);
         // log(data[0].toString());
         // print(recommendations[0]['name']);
         // print('-----------------recommendations fetched---------------');
@@ -925,6 +929,107 @@ class WebinarManagementController extends GetxController {
         update(['searchedWebinars']);
       } else {
         print('could not fetch searched webinars');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //get webinarSchedule by id.
+  Future<void> getWebinarSchedules(String webinarId) async {
+    try {
+      Uri url =
+          Uri.parse("${AppConstants.baseURL}/webinar/$webinarId/getschedules");
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        webinarSchedule.clear();
+        webinarSchedule = jsonDecode(response.body)['schedules'];
+        print('----------------webinarSchedule fetched----------------');
+        update();
+      } else {
+        print('could not fetch webinarSchedule');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> addwebinarSchedule(
+      String webinarId, String title, String duartion) async {
+    try {
+      Uri url =
+          Uri.parse("${AppConstants.baseURL}/webinar/$webinarId/addschedule");
+      var response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({
+            'title': title,
+            'duration': duartion,
+            'webinar': webinarId,
+          }));
+      if (response.statusCode == 200) {
+        print('----------------webinarSchedule added----------------');
+        // update(['webinarSchedule']);
+        getWebinarSchedules(webinarId);
+      } else {
+        print('could not add webinarSchedule');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //update webinarSchedule by id.
+  Future<void> updatewebinarSchedule(String ScheduleID, String title,
+      String duartion, String webinarId) async {
+    print(title);
+    print(duartion);
+    print(webinarId);
+    print(ScheduleID);
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/webinar/updateschedule/$ScheduleID");
+      var response = await http.put(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({
+            'title': title,
+            'duration': duartion,
+          }));
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('----------------webinarSchedule updated----------------');
+        // update(['webinarSchedule']);
+        getWebinarSchedules(webinarId);
+      } else {
+        print('could not update webinarSchedule');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //remove webinarSchedule by id.
+  Future<void> removeWebinarSchedlue(String scheduleId) async {
+    try {
+      Uri url = Uri.parse(
+          "${AppConstants.baseURL}/webinar//removeschedule/$scheduleId");
+      var response = await http.put(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Get.find<SharedPreferences>().getString('tempToken')!
+      });
+      if (response.statusCode == 200) {
+        print('----------------webinarSchedule removed----------------');
+        // update(['webinarSchedule']);
+        getWebinarSchedules(currentWebinar['_id']);
+      } else {
+        print('could not remove webinarSchedule');
       }
     } catch (e) {
       print(e);

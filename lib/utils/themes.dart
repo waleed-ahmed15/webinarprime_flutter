@@ -45,6 +45,7 @@ ThemeData darkTheme = ThemeData(
   secondaryHeaderColor: AppColors.LTsecondaryColor,
   scaffoldBackgroundColor: AppColors.DTbackGroundColor,
   cardColor: const Color(0xff262626),
+  canvasColor: const Color(0xff262626),
   textTheme: TextTheme(
     displayLarge: TextStyle(
       // bigTitleStyle
@@ -57,6 +58,7 @@ ThemeData darkTheme = ThemeData(
     displayMedium: TextStyle(
       // listtileTitleStyle
       height: 1.5,
+      
       fontSize: 16.sp,
       color: Colors.white.withOpacity(0.9),
       fontWeight: FontWeight.w500,

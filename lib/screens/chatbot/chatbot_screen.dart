@@ -3,9 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/chat_controlller.dart';
+import 'package:webinarprime/screens/analytics_screen/bar_charts.dart';
 import 'package:webinarprime/screens/chatbot/chatbot_Textfield.dart';
+import 'package:webinarprime/screens/home_screen/home_screen.dart';
+import 'package:webinarprime/screens/profile_view/edit_profile.dart';
+import 'package:webinarprime/screens/profile_view/favourites_screen.dart';
+import 'package:webinarprime/screens/webinar_management/add_webinar_screens/add_webinar_screen1.dart';
+import 'package:webinarprime/screens/webinar_marketing/created_webinars_screen.dart';
 import 'package:webinarprime/utils/colors.dart';
+import 'package:webinarprime/utils/styles.dart';
+
+import '../../controllers/webinar_management_controller.dart';
+import '../../routes/routes.dart';
+import '../my_webinars/unapproved_webinar_screen.dart';
 
 class ChatBotScreen extends StatefulWidget {
   const ChatBotScreen({super.key});
@@ -121,6 +133,126 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                               ),
                             ),
                             Gap(5.h),
+                            if (ChatStreamController.chatbotconversation[index]
+                                        ['screen'] !=
+                                    'no-screen' &&
+                                ChatStreamController.chatbotconversation[index]
+                                        ['type'] ==
+                                    'chatbot')
+                              InkWell(
+                                onTap: () async {
+                                  String screen = ChatStreamController
+                                      .chatbotconversation[index]['screen'];
+                                  print('screen is $screen');
+                                  if (screen == 'create-new-webinar') {
+                                    if (Get.find<AuthController>()
+                                            .currentUser['accountType'] ==
+                                        'organizer') {
+                                      Get.to(() => const AddWebinarScreen1());
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            'You are not authorized to create a webinar',
+                                            style: myParagraphStyle,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Get.back();
+                                              },
+                                              child: const Text('Ok'),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  } else if (screen == 'graphs-screen') {
+                                    if (Get.find<AuthController>()
+                                            .currentUser['accountType'] ==
+                                        'organizer') {
+                                      await Get.find<
+                                              WebinarManagementController>()
+                                          .getUserWebinarAnalytics();
+                                      Get.to(() => WebinarStats());
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            'You are not authorized to view webinar stats',
+                                            style: myParagraphStyle,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Get.back();
+                                              },
+                                              child: const Text('Ok'),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  } else if (screen == 'profile-screen') {
+                                    Get.to(() => const EditProfileScreen());
+                                  } else if (screen == 'invitation-screen') {
+                                    Get.toNamed(
+                                        RoutesHelper.notificationScreenRoute);
+                                  } else if (screen ==
+                                      'pendingwebinar-screen') {
+                                    if (Get.find<AuthController>()
+                                            .currentUser['accountType'] ==
+                                        'organizer') {
+                                      await Get.find<
+                                              WebinarManagementController>()
+                                          .getUnapprovedWebinars();
+                                      Get.to(() =>
+                                          const UnApprovedWebinarsScreen());
+                                    } else {
+                                      print('not authorized');
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            'You are not authorized to view pending webinars',
+                                            style: myParagraphStyle,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Get.back();
+                                              },
+                                              child: const Text('Ok'),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  } else if (screen == 'search-screen') {
+                                    Get.to(() => HomeScreen(
+                                          currIndex: 1,
+                                        ));
+                                  } else if (screen == 'marketing-screen') {
+                                    Get.to(() => const CreatedWebinarList());
+                                  } else if (screen == 'favorite-screen') {
+                                    Get.to(() => const FavoriteWebinars());
+                                  }
+                                },
+                                child: Text(
+                                  'Tap here to Navigate',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displayMedium!
+                                      .copyWith(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.blue,
+                                          decoration: TextDecoration.underline),
+                                ),
+                              ),
+                            const Gap(10),
                             if (ChatStreamController.chatbotconversation[index]
                                     ['type'] ==
                                 'chatbot')

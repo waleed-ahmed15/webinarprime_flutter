@@ -12,7 +12,7 @@ import flutter_webrtc
 import flutter_window_close
 import livekit_client
 import path_provider_foundation
-import shared_preferences_macos
+import shared_preferences_foundation
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

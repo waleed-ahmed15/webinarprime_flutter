@@ -12,6 +12,7 @@ import 'package:webinarprime/screens/chat/chat_pages.dart';
 import 'package:webinarprime/screens/chat/chatpage_c.dart';
 import 'package:webinarprime/screens/chatbot/chatbot_screen.dart';
 import 'package:webinarprime/screens/home_screen/nav_tabs/home_screen_home_tab.dart';
+import 'package:webinarprime/screens/home_screen/nav_tabs/notifications_tab.dart';
 import 'package:webinarprime/screens/home_screen/widgets/home_screen_drawer_widget.dart';
 import 'package:webinarprime/screens/profile_view/favourites_screen.dart';
 import 'package:webinarprime/screens/profile_view/user_profile_view.dart';
@@ -47,7 +48,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Get.find<IO.Socket>().emit('join', {
             Get.find<AuthController>().currentUser['_id'],
           });
+          Get.find<IO.Socket>().emit(
+            'notificationGlobal',
+          );
         }));
+    Get.find<IO.Socket>().on('notificationGlobal', (data) {
+      if (data['user'] == Get.find<AuthController>().currentUser['_id']) {
+        Get.find<AuthController>().show_user_notfications(data);
+        Get.find<AuthController>()
+            .GetuserNotifications()
+            .then((value) => print('done'));
+
+        print('notification Global:=>>>>>>>>>>>>>>> $data');
+      }
+    });
     super.initState();
     // print("height: ${AppLayout.getScreenHeight()}");
     // print('width :${AppLayout.getScreenWidth()}');
@@ -68,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         .otherUserProfileDetails(Get.find<AuthController>().currentUser['_id']);
     await Get.find<WebinarManagementController>().getRecommnedations();
 
-    print(Get.find<AuthController>().currentUser);
+    // print(Get.find<AuthController>().currentUser);
     Get.find<IO.Socket>().emit('join', {
       Get.find<AuthController>().currentUser['_id'],
     });
@@ -83,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     await Get.find<ChatStreamController>()
         .getConversations(Get.find<AuthController>().currentUser['_id']);
     await Get.find<WebinarManagementController>().getCoverWebinars();
+    await Get.find<AuthController>().GetuserNotifications();
     loading = false;
     // setState(() {});
   }
@@ -107,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // const ChatListScreen(),
     const ChatPages(),
     const UserProfileView(),
-    const SizedBox(),
+    const NotficationsTab(),
   ];
   @override
   Widget build(BuildContext context) {

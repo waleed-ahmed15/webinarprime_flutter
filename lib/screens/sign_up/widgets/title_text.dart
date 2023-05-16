@@ -11,7 +11,7 @@ class TitleText extends StatelessWidget {
       text!,
       style: TextStyle(
         fontSize: AppLayout.getHeight(30),
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).textTheme.bodyLarge!.color!,
         fontFamily: 'Montserrat-Black',
       ),
       textAlign: TextAlign.center,

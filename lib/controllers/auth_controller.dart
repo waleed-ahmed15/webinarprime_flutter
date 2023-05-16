@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:webinarprime/main.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 // import 'package:get/get.dart';
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
@@ -26,6 +28,7 @@ class AuthController extends GetxController {
   static Map<String, dynamic> otherUserProfile = {};
   static List<dynamic> bannedChats = [];
   static List<dynamic> favoriteWebinars = [];
+  static List<dynamic> userNotifications = [];
 
   @override
   void onInit() async {
@@ -395,12 +398,15 @@ class AuthController extends GetxController {
   Future<void> acceptInvitation(String invitationId) async {
     print('accept invitation called');
     try {
+      print('here');
       Uri url = Uri.parse("${AppConstants.baseURL}/user/accept-invitation");
       var response = await http.put(
+        headers: {'Content-Type': 'application/json'},
         url,
-        body: {"invitationId": invitationId},
+        body: jsonEncode({"invitationId": invitationId}),
       );
       var data = jsonDecode(response.body);
+      print(data);
       if (response.statusCode == 200) {
         print(data);
         ShowCustomSnackBar(title: "Invitation accepted", isError: false, "");
@@ -886,6 +892,70 @@ class AuthController extends GetxController {
         ShowCustomSnackBar(
             title: 'Request not sent', isError: true, 'Please try again');
       }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //get user notifications
+  Future<void> GetuserNotifications() async {
+    print('get user notification called');
+    String id = Get.find<AuthController>().currentUser['_id'];
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/notification/$id");
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+      var data = jsonDecode(response.body);
+      userNotifications.clear();
+      userNotifications = data['notifications'];
+      print('user notification');
+      print(userNotifications);
+      print('user notification');
+
+      update();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //show user Notifications
+  Future<void> show_user_notfications(Map<String, dynamic> data) async {
+    try {
+      print('show user notification called');
+      AndroidNotificationDetails androidPlatformChannelSpecifics =
+          const AndroidNotificationDetails(
+        '',
+        'webinar prime',
+        // 'your channel description',
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker',
+      );
+      DarwinNotificationDetails darwinPlatformChannelSpecifics =
+          const DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      );
+      NotificationDetails notificDetails = NotificationDetails(
+          android: androidPlatformChannelSpecifics,
+          iOS: darwinPlatformChannelSpecifics);
+      String datatype = data['type'];
+      String link = data['link'];
+      await notificationsPlugin.show(
+        0,
+        data['title'],
+        // 'new message',
+        data['description'],
+        notificDetails,
+
+        payload: '{ "type": "$datatype", "link":"$link"}',
+      );
+      // }
+
+      // final IO.Socket socket = await Get.find();
     } catch (e) {
       print(e);
     }

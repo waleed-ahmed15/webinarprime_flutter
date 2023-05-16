@@ -1,15 +1,20 @@
 import 'dart:convert';
-
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/chat_controlller.dart';
+import 'package:webinarprime/controllers/webinar_stream_controller.dart';
 import 'package:webinarprime/routes/routes.dart';
 import 'package:webinarprime/screens/home_screen/home_screen.dart';
+import 'package:webinarprime/screens/notifications/notifications_screen.dart';
+import 'package:webinarprime/screens/webinar_management/view_webinar_screen/webinar_details_screen.dart';
 import 'package:webinarprime/utils/themes.dart';
+import 'controllers/webinar_management_controller.dart';
 import 'dependencies/dependencies.dart' as dep;
 
 FlutterLocalNotificationsPlugin notificationsPlugin =
@@ -41,35 +46,38 @@ void main() async {
   bool? initialized = await notificationsPlugin.initialize(
     settings,
     onDidReceiveNotificationResponse: (details) async {
-      // print('---------------------------------------------------------');
-      // print("payload is${details.payload.runtimeType!});
-      // print(details.payload.runtimeType);
       Map<String, dynamic> map = jsonDecode(details.payload!);
-      // print(jsonDecode(details.payload!));
-      // print(map['conversationId']);
-      // print(map['senderId']);
-      // print(map['type']);
-      // print(map['senderId']);
-      // Map<String, dynamic> sender = jsonDecode(map['senderId']);
-      // print(sender['name']);
-      // final jsonMap = json.decode(map['senderId']);
-      // final myMap = Map<String, dynamic>.from(jsonMap);
-      // print(myMap['name']);
+      print('map type is ' + map['type']);
+      // print('map link is ' + map['link']);
       if (map['type'] == 'webinar') {
-        // Get.toNamed(RoutesHelper.webinarStreamRoute,
-        // arguments: map['webinarId']);
+        Get.find<WebinarManagementController>().getwebinarById(map['link']);
+        Get.to(WebinarDetailsScreen(webinarDetails: map['webinarId']));
       } else if (map['type'] == 'message') {
+        print('message notification RR');
         await Get.find<ChatStreamController>()
             .getConversations(Get.find<AuthController>().currentUser['_id']);
         Get.to(() => HomeScreen(
               currIndex: 3,
             ));
+      } else if (map['type'] == 'account-upgrade') {
+        print('account upgrade notification RR');
+        Get.to(() => HomeScreen(
+              currIndex: 5,
+            ));
+      } else if (map['type'] == 'webinar-invitation') {
+        Get.find<AuthController>()
+            .getInvitations(Get.find<AuthController>().currentUser['_id']);
+        Get.to(const NotificationScreen());
+      } else if (map['type'] == 'stream-started') {
+        Get.find<WebinarStreamController>()
+            .joinStream(map['link'], Get.context!);
       }
-      // print('---------------------------------------------------------');
     },
   );
   print('notification initialized:$initialized');
-  runApp(const MyApp());
+  runApp(
+    Phoenix(child: const MyApp()),
+  );
   // runApp(
   //   ChangeNotifierProvider(
   //     create: (_) => ThemeProvider(),
@@ -103,7 +111,10 @@ class MyApp extends StatelessWidget {
 
             // themeMode: ThemeMode.system,
             // themeMode: ThemeMode.light,
-            themeMode: ThemeMode.dark,
+            themeMode:
+                Get.find<SharedPreferences>().getString('theme') == 'light'
+                    ? ThemeMode.light
+                    : ThemeMode.dark,
 
             // themeMode: context.watch<ThemeProvider>().themeMode,
           );

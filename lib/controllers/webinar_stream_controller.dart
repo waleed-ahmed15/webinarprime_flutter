@@ -298,6 +298,54 @@ class WebinarStreamController extends GetxController {
     }
   }
 
+  // switch to host  for webinar stream
+  Future<void> swtichToHost(String webinarId, String participantid) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/stream/switchtohost");
+      final response = await http.put(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({'userId': participantid, 'webinarId': webinarId}));
+
+      if (response.statusCode == 200) {
+        print('User switched to host successfully');
+        update();
+      } else {
+        print(response.body);
+        print('User switching to host  Failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // swtich to attendee  for webinar stream
+  Future<void> swtichToattendee(String webinarId, String participantid) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/stream/switchtoattendee");
+      final response = await http.put(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                Get.find<SharedPreferences>().getString('tempToken')!
+          },
+          body: jsonEncode({'userId': participantid, 'webinarId': webinarId}));
+
+      if (response.statusCode == 200) {
+        print('User switched to attendee successfully');
+        update();
+      } else {
+        print(response.body);
+        print('User switching to attendee  Failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   // this is for handling notifications
   Future<void> showMessageNotifications(
       Map<String, dynamic> data, String currConvoId) async {

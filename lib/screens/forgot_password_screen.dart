@@ -39,12 +39,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             BoxShadow(
               offset: Offset(0, 5),
               blurRadius: 7,
-              color: Theme.of(context).accentColor.withOpacity(0.1),
+              color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.1),
             ),
             BoxShadow(
               offset: Offset(0, -5),
               blurRadius: 7,
-              color: Theme.of(context).accentColor.withOpacity(0.1),
+              color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.1),
             )
           ],
         ),
