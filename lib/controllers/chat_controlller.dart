@@ -328,17 +328,18 @@ class ChatStreamController extends GetxController {
       'time': DateTime.now().toString(),
     });
     try {
-      Uri url = Uri.parse('${AppConstants.baseURL}/chatbot/dialogflow');
+      Uri url = Uri.parse('${AppConstants.baseURL}/chatbot/getchatbotresponse');
       var response = await http.post(url, body: {
         "queryText": query,
         "sessionId": "abcd1234",
         "languageCode": "en"
       });
       // print(jsonMap.containsKey('screen'));
+      print(response.body);
       if (response.statusCode == 200) {
         try {
           Map<String, dynamic> jsonMap = await jsonDecode(response.body);
-          print(jsonMap['response']);
+          print(jsonMap);
           // print(jsonDecode(jsonMap['response']));
 
           // print(jsonDecode(jsonMap['response']).containsKey('screen'));

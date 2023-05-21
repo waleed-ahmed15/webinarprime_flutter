@@ -132,11 +132,16 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
         // data['message'] = data['from']['name'] + ' (private)';
         print('=---------------------------');
         chatMessages.add(data);
+      } else {
+        print("message received $data");
+        // data['message'] = data['from']['name'] + ' (private)';
+        print('=---------------------------');
+        chatMessages.add(data);
       }
-      print('message received $data');
-      print('=---------------------------');
+      // print('message received $data');
+      // print('=---------------------------');
 
-      chatMessages.add(data);
+      // chatMessages.add(data);
 
       // print(jsonDecode(data));
     });
@@ -196,6 +201,7 @@ class _RoomPageState extends State<RoomPage> with TickerProviderStateMixin {
       widget.room.removeListener(_onRoomDidUpdate);
       await _listener.dispose();
       await widget.room.dispose();
+      socket.dispose();
     })();
     super.dispose();
     _tabController.dispose();

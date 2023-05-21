@@ -47,15 +47,18 @@ class NotficationsTab extends StatelessWidget {
                             .displayMedium!
                             .copyWith(fontSize: 19.sp),
                       ),
-                      ExpandableText(
-                          AuthController.userNotifications[index]
-                              ['description'],
-                          maxLines: 4,
-                          expandOnTextTap: true,
-                          collapseOnTextTap: true,
-                          textAlign: TextAlign.justify,
-                          style: Theme.of(context).textTheme.displaySmall,
-                          expandText: ''),
+                      if (AuthController.userNotifications[index]
+                              ['description'] !=
+                          null)
+                        ExpandableText(
+                            AuthController.userNotifications[index]
+                                ['description'],
+                            maxLines: 4,
+                            expandOnTextTap: true,
+                            collapseOnTextTap: true,
+                            textAlign: TextAlign.justify,
+                            style: Theme.of(context).textTheme.displaySmall,
+                            expandText: ''),
                       Gap(10.h),
                       Text(
                         formmattedDateTime,
