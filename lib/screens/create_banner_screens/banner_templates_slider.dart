@@ -3,7 +3,6 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:webinarprime/screens/create_banner_screens/banner_templates/banner_template1.dart';
 import 'package:webinarprime/screens/create_banner_screens/create_banner_screen.dart';
 import 'package:webinarprime/utils/colors.dart';
 
@@ -146,8 +145,8 @@ class _BannerTemplatesState extends State<BannerTemplates> {
                     ),
                   ),
                 ),
-                const BannerTemplate1(),
-                Container(color: Colors.blue, width: 1.sw),
+                // const BannerTemplate1(),
+                // Container(color: Colors.blue, width: 1.sw),
                 // Container(color: Colors.green, width: 1.sw)
               ],
               options: CarouselOptions(
@@ -175,7 +174,7 @@ class _BannerTemplatesState extends State<BannerTemplates> {
               ),
             ),
             DotsIndicator(
-              dotsCount: 4,
+              dotsCount: 3,
               // dotsCount: popularproduct.popularProductList.isEmpty
               //     ? 1
               //     : popularproduct.popularProductList.length,

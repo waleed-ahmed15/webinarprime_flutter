@@ -25,6 +25,33 @@ class HomeScreenDrawer extends StatefulWidget {
 
 class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
   bool loading = false;
+
+  void restartappdialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Restart App'),
+          content: const Text('restart App now to apply complete Changes?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Restart.restartApp();
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Later'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -219,7 +246,8 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                           // Get.offAll(() =>home );
                           // Phoenix.rebirth(context);
                           // MyThemeController().update();
-                          Restart.restartApp();
+                          restartappdialog();
+                          // Restart.restartApp();
 
                           // Restart.restartApp();
                         },

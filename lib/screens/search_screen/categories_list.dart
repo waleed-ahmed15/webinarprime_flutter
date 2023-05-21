@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:webinarprime/utils/colors.dart';
 
 import '../../controllers/categoryController.dart';
 import '../../controllers/webinar_management_controller.dart';
@@ -151,7 +152,7 @@ class _TextBoxState extends State<TextBox> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: widget.isSelected ? Colors.blue : Colors.grey,
+            color: widget.isSelected ? AppColors.LTprimaryColor : Colors.grey,
             width: 2,
           ),
         ),

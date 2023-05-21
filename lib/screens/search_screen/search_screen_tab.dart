@@ -26,6 +26,7 @@ class _SearchScreenTabState extends State<SearchScreenTab> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          elevation: 0,
           actions: [Container()],
           titleSpacing: 0,
           automaticallyImplyLeading: false,
@@ -34,7 +35,8 @@ class _SearchScreenTabState extends State<SearchScreenTab> {
             child: TextFormField(
                 controller: searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search...',
+                  border: InputBorder.none,
+                  hintText: 'Search....',
                   hintStyle: Theme.of(context)
                       .textTheme
                       .displayMedium!
@@ -199,7 +201,7 @@ class _SearchScreenTabState extends State<SearchScreenTab> {
                     dragStartBehavior: DragStartBehavior.start,
                     activeColor: Get.isDarkMode
                         ? AppColors.LTsecondaryColor.withOpacity(0.7)
-                        : AppColors.LTprimaryColor.withOpacity(0.7),
+                        : AppColors.LTprimaryColor.withOpacity(1),
                     value: _isAscending,
                     onChanged: (value) async {
                       setState(() {
@@ -237,32 +239,6 @@ class _SearchScreenTabState extends State<SearchScreenTab> {
                       )
                     : Column(
                         children: [
-                          // const SearchFieldForSearchScreen(),
-
-                          // Gap(5.h),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.end,
-                          //   children: [
-                          //     GestureDetector(
-                          //       onTap: () {
-                          //         // scaffoldKey.currentState!.openEndDrawer();
-                          //         Get.to(() => const ShowAllWebinarScreen());
-                          //       },
-                          //       child: Text(
-                          //         'View all',
-                          //         style: Theme.of(context)
-                          //             .textTheme
-                          //             .displayMedium!
-                          //             .copyWith(
-                          //               color: Colors.blueAccent,
-                          //               fontSize: 15.sp,
-                          //               fontWeight: FontWeight.w500,
-                          //             ),
-                          //       ),
-                          //     ),
-                          //     Gap(5.w),
-                          //   ],
-                          // ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -281,7 +257,6 @@ class _SearchScreenTabState extends State<SearchScreenTab> {
                               ),
                             ],
                           ),
-
                           Expanded(
                             child: ListView.builder(
                                 itemCount: WebinarManagementController

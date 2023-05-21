@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:webinarprime/controllers/auth_controller.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
@@ -15,6 +17,7 @@ class SelectWebinarForBanner extends StatelessWidget {
       child: Scaffold(
           body: Column(
         children: [
+          Gap(10.h),
           ElevatedButton(
             onPressed: () {
               WebinarManagementController.currentWebinar.clear();
@@ -30,33 +33,52 @@ class SelectWebinarForBanner extends StatelessWidget {
               ),
             ),
             child: const Text(
-              "Create New",
+              "Custom Banner",
               style: TextStyle(fontSize: 20, color: Colors.white),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount:
-                  AuthController.otherUserProfile['created_webinars'].length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: () async {
-                    WebinarManagementController.currentWebinar.clear();
-                    await WebinarManagementController().getwebinarById(
-                        AuthController.otherUserProfile['created_webinars']
-                            [index]['_id']);
-                    Get.to(() => BannerTemplates(
-                          customBanner: false,
-                        ));
-                  },
-                  child: WebinarInfoTile(
-                    'created_webinars',
-                    index,
+          if (AuthController.otherUserProfile['created_webinars'].isEmpty)
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10.w),
+                  child: Center(
+                    child: Text(
+                      'No Webinars Created Yet',
+                      style:
+                          Theme.of(context).textTheme.displayMedium!.copyWith(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                    ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
-          )
+          if (AuthController.otherUserProfile['created_webinars'].isNotEmpty)
+            Expanded(
+              child: ListView.builder(
+                itemCount:
+                    AuthController.otherUserProfile['created_webinars'].length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () async {
+                      WebinarManagementController.currentWebinar.clear();
+                      await WebinarManagementController().getwebinarById(
+                          AuthController.otherUserProfile['created_webinars']
+                              [index]['_id']);
+                      Get.to(() => BannerTemplates(
+                            customBanner: false,
+                          ));
+                    },
+                    child: WebinarInfoTile(
+                      'created_webinars',
+                      index,
+                    ),
+                  );
+                },
+              ),
+            )
         ],
       )),
     );

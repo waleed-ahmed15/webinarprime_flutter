@@ -78,7 +78,7 @@ class _CreateBannerScreenState extends State<CreateBannerScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Screenshot saved to gallery'),
+            title: const Text('Banner saved to gallery'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -132,7 +132,7 @@ class _CreateBannerScreenState extends State<CreateBannerScreen> {
                   image: NetworkImage(
                     widget.backgroundImage,
                   ),
-                  fit: BoxFit.fill),
+                  fit: BoxFit.cover),
             ),
             child: Stack(
               children: [
@@ -444,7 +444,7 @@ class _DraggableImageWidgetState extends State<DraggableImageWidget> {
                             Text('Height:${_height.toString().split('.')[0]}'),
                             Slider(
                               min: 50,
-                              max: 300,
+                              max: 1.sh,
                               value: _height,
                               onChanged: (value) {
                                 setState(() {
