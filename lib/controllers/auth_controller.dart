@@ -944,6 +944,9 @@ class AuthController extends GetxController {
           iOS: darwinPlatformChannelSpecifics);
       String datatype = data['type'];
       String link = data['link'];
+      if (!Get.find<AuthController>().currentUser['notificationsOn']) {
+        return;
+      }
       await notificationsPlugin.show(
         0,
         data['title'],

@@ -87,7 +87,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       Get.find<AuthController>().currentUser['_id'],
     });
     Get.find<IO.Socket>().on('conversationChatMessage', (data) {
-      if (Get.currentRoute != '/ChatScreen') {
+      if (Get.currentRoute != '/ChatScreen' &&
+          data['user'] == Get.find<AuthController>().currentUser['_id']) {
+        // ShowCustomSnackBar(title: 'home msg', '121212 ');
         WebinarStreamController().showMessageNotifications(data, '');
       }
     });

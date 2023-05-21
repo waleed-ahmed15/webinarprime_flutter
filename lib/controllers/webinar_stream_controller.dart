@@ -350,7 +350,9 @@ class WebinarStreamController extends GetxController {
   Future<void> showMessageNotifications(
       Map<String, dynamic> data, String currConvoId) async {
     try {
-      // print('----------------------------------');
+      if (!Get.find<AuthController>().currentUser['notificationsOn']) {
+        return;
+      }
 
       print(data['conversation']);
       String conversationId = data['conversation']['_id'];
@@ -385,7 +387,7 @@ class WebinarStreamController extends GetxController {
       // ['from']['_id'] ==
       // Get.find<AuthController>().currentUser['_id']
 
-      if (senderId != Get.find<AuthController>().currentUser['_id'] &&
+      if (senderId['_id'] != Get.find<AuthController>().currentUser['_id'] &&
           currConvoId != conversationId) {
         print(currConvoId);
         print(conversationId);

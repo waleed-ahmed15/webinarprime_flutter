@@ -27,18 +27,21 @@ class ChatStreamController extends GetxController {
     //------------------------------- incoming messages-------------------------------------
     print('chat stream controller');
     socket.on('conversationChatMessage', (data) {
-      print(data.runtimeType);
-      print(data);
+      if (data['user'] == Get.find<AuthController>().currentUser['_id']) {
+        print(data.runtimeType);
+        print(data);
 
-      ChatStreamController.userChatmessages[data['conversation']['_id']] != null
-          ? ChatStreamController.userChatmessages[data['conversation']['_id']]
-              .add(data['message'])
-          : ChatStreamController.userChatmessages
-              .addIf(true, data['conversation']['_id'], {data['message']});
+        ChatStreamController.userChatmessages[data['conversation']['_id']] !=
+                null
+            ? ChatStreamController.userChatmessages[data['conversation']['_id']]
+                .add(data['message'])
+            : ChatStreamController.userChatmessages
+                .addIf(true, data['conversation']['_id'], {data['message']});
 
-      Get.find<ChatStreamController>().update();
-      Get.find<ChatStreamController>()
-          .getConversations(Get.find<AuthController>().currentUser['_id']);
+        Get.find<ChatStreamController>().update();
+        Get.find<ChatStreamController>()
+            .getConversations(Get.find<AuthController>().currentUser['_id']);
+      }
     });
 
     // -----------------------conversation deleted---------------------------

@@ -22,7 +22,6 @@ import 'package:webinarprime/screens/home_screen/home_screen.dart';
 import 'package:webinarprime/screens/report%20screen/report_screen.dart';
 import 'package:webinarprime/utils/app_constants.dart';
 import 'package:webinarprime/utils/styles.dart';
-import 'package:webinarprime/widgets/snackbar.dart';
 
 class ChatScreen extends StatefulWidget {
   final Map<String, dynamic> receiever;
@@ -113,10 +112,12 @@ class _ChatScreenState extends State<ChatScreen> {
         curve: Curves.easeOut,
       );
     });
+
     Get.find<IO.Socket>().on('conversationChatMessage', (data) async {
-      if (data['conversation']['_id'] != widget.ConversationId) {
-        ShowCustomSnackBar(widget.ConversationId,
-            title: data['conversation']['_id'], isError: true);
+      if (data['conversation']['_id'] != widget.ConversationId &&
+          data['user'] == Get.find<AuthController>().currentUser['_id']) {
+        // ShowCustomSnackBar(widget.ConversationId,
+        // title: data['conversation']['_id'], isError: true);
         await Get.find<WebinarStreamController>()
             .showMessageNotifications(data, widget.ConversationId);
       }
@@ -138,8 +139,9 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     // TODO: implement dispose
     // socket.dispose();
+
     _scrollController.dispose();
-    Get.find<IO.Socket>().off('conversationChatMessage');
+    // Get.find<IO.Socket>().off('conversationChatMessage');
     super.dispose();
   }
 
