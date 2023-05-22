@@ -264,9 +264,10 @@ class ChatStreamController extends GetxController {
   }
   // ban a user from conversation
 
-  Future<void> banUser(String bannedUserId) async {
+  Future<void> banUser(String bannedUserId, String conversationId) async {
     try {
-      Uri url = Uri.parse('${AppConstants.baseURL}/chat/ban-user');
+      Uri url =
+          Uri.parse('${AppConstants.baseURL}/chat/$conversationId/ban-user');
       var response = await http.post(url,
           headers: {
             'Content-Type': 'application/json',
@@ -293,9 +294,10 @@ class ChatStreamController extends GetxController {
     }
   }
 
-  Future<void> unbanUser(String bannedUserId) async {
+  Future<void> unbanUser(String bannedUserId, String conversationId) async {
     try {
-      Uri url = Uri.parse('${AppConstants.baseURL}/chat/unban-user');
+      Uri url =
+          Uri.parse('${AppConstants.baseURL}/chat/$conversationId/unban-user');
       var response = await http.post(url,
           headers: {
             'Content-Type': 'application/json',
@@ -315,7 +317,7 @@ class ChatStreamController extends GetxController {
         print(Get.find<AuthController>().currentUser['bannedChats']);
         update();
       } else {
-        print('user banning Failed');
+        print('user unbanning Failed');
       }
     } catch (e) {
       print(e);

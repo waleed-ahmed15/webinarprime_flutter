@@ -70,10 +70,46 @@ class BannedChats extends StatelessWidget {
                         color: Colors.red,
                       ),
                       onPressed: () async {
-                        await Get.find<ChatStreamController>().unbanUser(
-                            AuthController.bannedChats[index]['_id']);
-                        AuthController.bannedChats.removeAt(index);
-                        Get.find<AuthController>().update(['bannedchats']);
+                        // print(ChatStreamController.userchats[index]);
+                        // print(AuthController.bannedChats[index]['name']);
+
+                        for (var element in ChatStreamController.userchats) {
+                          // print(element);
+                          if (element['users'][0]['_id'] ==
+                              AuthController.bannedChats[index]['_id']) {
+                            print('found');
+                            print(element['users'][0]['_id']);
+                            print(element['users'][1]['_id']);
+                            print(element['_id']);
+                            await Get.find<ChatStreamController>().unbanUser(
+                                element['users'][0]['_id'], element['_id']);
+                            AuthController.bannedChats.removeAt(index);
+                            Get.find<AuthController>().update(['bannedchats']);
+
+                            break;
+
+                            // await Get.find<ChatStreamController>().unbanUser(
+                            // element['_id'], element['users'][1]['_id']);
+                          } else if (element['users'][1]['_id'] ==
+                              AuthController.bannedChats[index]['_id']) {
+                            await Get.find<ChatStreamController>().unbanUser(
+                                element['users'][0]['_id'], element['_id']);
+                            AuthController.bannedChats.removeAt(index);
+                            Get.find<AuthController>().update(['bannedchats']);
+
+                            break;
+                          }
+                          // if (element['name'] ==
+                          // AuthController.bannedChats[index]['name']) {
+                          // print(element['name']);
+                          // print(element['_id']);
+                          // Get.find<ChatStreamController>().unbanUser(
+                          // element['_id'], element['name']);
+                          // }
+                        }
+                        // print(AuthController.bannedChats[index]['_id']);
+                        // await Get.find<ChatStreamController>().unbanUser(
+                        // AuthController.bannedChats[index]['_id'],AuthController.bannedChats[index]['']);
                       },
                     ),
                   ),

@@ -229,6 +229,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () async {
                       await Get.find<ChatStreamController>().unbanUser(
                         widget.receiever['_id'],
+                        widget.ConversationId,
                       );
                     },
                     icon: Icon(
@@ -243,8 +244,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     // print(widget.receiever['_id']);
                     // print(widget.receiever['name']);
                     await Get.find<ChatStreamController>().banUser(
-                      widget.receiever['_id'],
-                    );
+                        widget.receiever['_id'], widget.ConversationId);
                   },
                   icon: Icon(
                     Icons.block,
