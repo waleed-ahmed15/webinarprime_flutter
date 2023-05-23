@@ -34,6 +34,7 @@ class WebinarManagementController extends GetxController {
   static List<dynamic> similarWebinars = [];
   static List<dynamic> searchedWebinars = [].obs;
   static List<dynamic> webinarSchedule = [].obs;
+  static List<dynamic> popularWebinars = [].obs;
   // RxList<dynamic> todos = RxList<dynamic>.empty(growable: true).obs;
   // RxList<dynamic> todos1 = RxList<dynamic>.empty(growable: true).obs;
 
@@ -1091,6 +1092,44 @@ class WebinarManagementController extends GetxController {
         print(response.body);
       } else {
         print('could not report $type');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //webinar onclick function
+  Future<void> webinar_click_count(String webinarId) async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/$webinarId/click");
+      var response = await http.post(url,
+          body: jsonEncode(
+              {"userId": Get.find<AuthController>().currentUser['_id']}));
+      if (response.statusCode == 200) {
+        print('----------------webinar clicked added----------------');
+        print(response.body.toString());
+      } else {
+        print('could not increment click webinar');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //get popular webinars
+  Future<void> getPopularWebinars() async {
+    try {
+      Uri url = Uri.parse("${AppConstants.baseURL}/webinar/get/popular");
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        popularWebinars.clear();
+        popularWebinars = jsonDecode(response.body)['webinars'];
+
+        print('----------------popular webinars fetched----------------');
+        print(popularWebinars[0]);
+        update();
+      } else {
+        print('could not fetch popular webinars');
       }
     } catch (e) {
       print(e);

@@ -71,6 +71,8 @@ class _WebinarDetailsScreenState extends State<WebinarDetailsScreen>
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
 
     floatingActionbuttonDecider();
+    Get.find<WebinarManagementController>()
+        .webinar_click_count(WebinarManagementController.currentWebinar['_id']);
 
     CanuserStream();
     super.initState();

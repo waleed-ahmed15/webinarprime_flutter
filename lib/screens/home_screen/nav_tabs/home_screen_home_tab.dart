@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:webinarprime/controllers/webinar_management_controller.dart';
 import 'package:webinarprime/screens/home_screen/widgets/carasoul_slider_home.dart';
-import 'package:webinarprime/screens/home_screen/widgets/discover_organizers_widget.dart';
 import 'package:webinarprime/screens/home_screen/widgets/webinar_dynamic_tile.dart';
 import 'package:webinarprime/screens/home_screen/widgets/webinar_info_card.dart';
 
@@ -19,7 +18,10 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
 
   @override
   void initState() {
-    WebinarManagementController().getAllwebinars().then((value) {
+    WebinarManagementController()
+        .getAllwebinars()
+        .then((value) => WebinarManagementController().getPopularWebinars())
+        .then((value) {
       setState(() {
         isloading = false;
       });
@@ -82,16 +84,6 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const DiscoverOrganizerList(),
-                          WebinarDynamicInfoTile(
-                              webinar: WebinarManagementController
-                                  .webinarsList[index]),
-                        ],
-                      );
-                    } else if (index == 4) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
                           Gap(5.h),
                           Container(
                             margin: EdgeInsets.only(left: 10.h),
@@ -120,9 +112,25 @@ class _HomeScreenHomeTabState extends State<HomeScreenHomeTab> {
                               ],
                             ),
                           ),
-                          WebinarDynamicInfoTile(
-                              webinar: WebinarManagementController
-                                  .webinarsList[index])
+                          Gap(10.h),
+                          Container(
+                            child: SizedBox(
+                              height: 300,
+                              child: ListView.builder(
+                                itemCount: WebinarManagementController
+                                    .popularWebinars.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return WebinarInfoCardItem(
+                                      webinar: WebinarManagementController
+                                          .popularWebinars[index]['_id'][0]);
+                                },
+                              ),
+                            ),
+                          )
+                          // WebinarDynamicInfoTile(
+                          //     webinar: WebinarManagementController
+                          //         .webinarsList[index])
                         ],
                       );
                     }
