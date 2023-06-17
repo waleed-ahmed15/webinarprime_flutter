@@ -168,7 +168,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                                         ),
                                       );
                                     }
-                                  } else if (screen == 'graphs-screen') {
+                                  } else if  (screen == 'graphs-screen') {
                                     if (Get.find<AuthController>()
                                             .currentUser['accountType'] ==
                                         'organizer') {

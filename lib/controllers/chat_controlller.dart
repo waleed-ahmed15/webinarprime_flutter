@@ -50,6 +50,8 @@ class ChatStreamController extends GetxController {
       if (data['action'] == 'delete') {
         print('------------------conversation deleted------------------');
         print(data);
+        deleteConversation(data['conversationId']);
+
         print('------------------conversation deleted------------------');
 
         Get.back();
@@ -58,6 +60,14 @@ class ChatStreamController extends GetxController {
         userChatmessages.remove(data['conversationId']);
 
         Get.find<ChatStreamController>().update();
+
+        Get.find<ChatStreamController>()
+            .getConversations(Get.find<AuthController>().currentUser['_id']);
+      } else if (data['action'] == 'block') {
+        print('------------------conversation blocked------------------');
+        print(data);
+        banUser(data['user'], data['conversation']);
+        print('------------------conversation blocked------------------');
 
         Get.find<ChatStreamController>()
             .getConversations(Get.find<AuthController>().currentUser['_id']);
